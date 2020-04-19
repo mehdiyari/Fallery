@@ -1,2 +1,2 @@
-# fallery
-Gallery and media(photo, video) picker for android
+# Fallery
+open source gallery and media picker for android +17

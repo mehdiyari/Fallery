@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Fallery" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge"/>
+
+    <!-- light default style -->
+    <style name="Fallery.Light">
+
+        <item name="fallery_background_color">@color/fallery_light_backgroundColor</item>
+        <item name="fallery_color_primary">@color/fallery_light_colorPrimary</item>
+        <item name="fallery_color_primary_dark">@color/fallery_light_colorPrimaryDark</item>
+        <item name="fallery_color_accent">@color/fallery_light_colorAccent</item>
+        <item name="fallery_icon_tint_color">@color/fallery_light_iconTintColor</item>
+        <item name="fallery_toolbar_icon_tint_color">@color/fallery_light_toolbarIconTintColor</item>
+        <item name="fallery_primary_text_color">@color/fallery_light_primaryTextColor</item>
+        <item name="fallery_secondary_text_color">@color/fallery_light_secondaryTextColor</item>
+        <item name="fallery_hint_text_color">@color/fallery_light_hint_text_color</item>
+
+    </style>
+
+    <!-- dracula default style -->
+    <style name="Fallery.Dracula">
+        <item name="fallery_background_color">@color/fallery_dracula_backgroundColor</item>
+        <item name="fallery_color_primary">@color/fallery_dracula_colorPrimary</item>
+        <item name="fallery_color_primary_dark">@color/fallery_dracula_colorPrimaryDark</item>
+        <item name="fallery_color_accent">@color/fallery_dracula_colorAccent</item>
+        <item name="fallery_icon_tint_color">@color/fallery_dracula_iconTintColor</item>
+        <item name="fallery_toolbar_icon_tint_color">@color/fallery_dracula_toolbarIconTintColor</item>
+        <item name="fallery_primary_text_color">@color/fallery_dracula_primaryTextColor</item>
+        <item name="fallery_secondary_text_color">@color/fallery_dracula_secondaryTextColor</item>
+        <item name="fallery_hint_text_color">@color/fallery_dracula_hint_text_color</item>
+    </style>
+
+    <style name="toolbarTitleTextAppearance">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">?attr/fallery_primary_text_color</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorControlNormal">?attr/fallery_icon_tint_color</item>
+        <item name="android:textColorPrimary">?attr/fallery_primary_text_color</item>
+        <item name="colorControlHighlight">#d8d8d8</item>
+    </style>
+
+    <style name="AppTheme.Dark.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" >
+        <item name="android:colorBackground">?attr/fallery_background_color</item>
+        <item name="android:textColor">?attr/fallery_primary_text_color</item>
+    </style>
+
+</resources>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- dracula theme colors -->
+    <color name="fallery_dracula_backgroundColor">#151e27</color>
+    <color name="fallery_dracula_colorPrimary">#212d3b</color>
+    <color name="fallery_dracula_colorPrimaryDark">#151e27</color>
+    <color name="fallery_dracula_colorAccent">#5ea3de</color>
+    <color name="fallery_dracula_iconTintColor">#7a8694</color>
+    <color name="fallery_dracula_toolbarIconTintColor">#ffffff</color>
+    <color name="fallery_dracula_primaryTextColor">#ffffff</color>
+    <color name="fallery_dracula_secondaryTextColor">#7c8896</color>
+    <color name="fallery_dracula_hint_text_color">#697686</color>
+
+    <!-- light theme colors -->
+    <color name="fallery_light_backgroundColor">#ffffff</color>
+    <color name="fallery_light_colorPrimary">#ffffff</color>
+    <color name="fallery_light_colorPrimaryDark">#F5F5F5</color>
+    <color name="fallery_light_colorAccent">#A11183</color>
+    <color name="fallery_light_iconTintColor">#504f4f</color>
+    <color name="fallery_light_toolbarIconTintColor">#504f4f</color>
+    <color name="fallery_light_primaryTextColor">#000000</color>
+    <color name="fallery_light_secondaryTextColor">#999999</color>
+    <color name="fallery_light_hint_text_color">#999999</color>
+
+
+</resources>

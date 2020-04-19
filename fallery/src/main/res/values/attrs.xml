@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="fallery_background_color" format="color" />
+    <attr name="fallery_color_primary" format="color" />
+    <attr name="fallery_color_primary_dark" format="color" />
+    <attr name="fallery_color_accent" format="color" />
+    <attr name="fallery_icon_tint_color" format="color" />
+    <attr name="fallery_toolbar_icon_tint_color" format="color" />
+    <attr name="fallery_font_family" format="reference" />
+    <attr name="fallery_primary_text_color" format="color" />
+    <attr name="fallery_secondary_text_color" format="color" />
+    <attr name="fallery_hint_text_color" format="color" />
+
+
+</resources>

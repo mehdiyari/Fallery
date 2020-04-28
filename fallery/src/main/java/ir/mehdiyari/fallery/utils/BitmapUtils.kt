@@ -1,9 +1,47 @@
 package ir.mehdiyari.fallery.utils
 
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
+import ir.mehdiyari.fallery.imageLoader.PhotoDiminution
+import java.io.File
 import java.io.FileOutputStream
 import java.util.*
+
+fun getPhotoDimension(path: String): PhotoDiminution = BitmapFactory.Options().apply {
+    inJustDecodeBounds = true
+    BitmapFactory.decodeFile(path, this)
+}.let {
+    PhotoDiminution(it.outWidth, it.outHeight)
+}
+
+fun Bitmap.Config.decodeBitmap(path: String): Bitmap? = BitmapFactory.Options()
+    .let { options ->
+        options.inPreferredConfig = this
+        BitmapFactory.decodeFile(path, options) ?: throw RuntimeException("cant decode image")
+    }
+
+fun scalePictureToSize(
+    sourcePath: String,
+    destinationPath: String,
+    width: Int,
+    height: Int
+): File = BitmapFactory.decodeFile(sourcePath).let { sourceBitmap ->
+    if (sourceBitmap.width < width && sourceBitmap.height < height) return@let File(sourcePath)
+    Bitmap.createScaledBitmap(sourceBitmap, width, height, false).let { destinationBitmap ->
+        val destFile = File(destinationPath)
+        val outputStream = FileOutputStream(destFile)
+        try {
+            destinationBitmap.compress(getCompressFormatBasedOnExtension(getFileExtensionFromPath(sourcePath) ?: "jpg"), 100, outputStream)
+        } finally {
+            outputStream.run {
+                flush()
+                close()
+            }
+        }
+        destFile
+    }
+}
 
 fun getCompressFormatBasedOnExtension(ext: String) = when (ext.toLowerCase(Locale.US)) {
     "png" -> Bitmap.CompressFormat.PNG

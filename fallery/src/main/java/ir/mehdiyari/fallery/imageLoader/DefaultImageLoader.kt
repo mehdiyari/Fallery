@@ -2,6 +2,7 @@ package ir.mehdiyari.fallery.imageLoader
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Base64
 import android.widget.ImageView
 import ir.mehdiyari.fallery.utils.*
 import kotlinx.coroutines.*
@@ -21,7 +22,7 @@ internal class DefaultImageLoader : FalleryImageLoader {
         (getPhotoDimension(path) != resizeDiminution).also { shouldResizePhoto ->
             if (shouldResizePhoto) {
                 imageLoaderScope.launch {
-                    val fileHash = getHashOfFile(path).replace("==", "")
+                    val fileHash = Base64.encodeToString(getHashOfFile(path), Base64.URL_SAFE).replace("==", "")
                     File(
                         "${context.getWritableCachePath()}/" +
                                 "$fileHash${resizeDiminution.width}_${resizeDiminution.height}." +

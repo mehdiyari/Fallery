@@ -1,6 +1,5 @@
 package ir.mehdiyari.fallery.utils
 
-import android.util.Base64
 import java.io.BufferedInputStream
 import java.io.FileInputStream
 import java.security.MessageDigest
@@ -10,7 +9,7 @@ import java.security.MessageDigest
  * @param filePath path of file
  * @param algorithm hashing algorithm(MD5, Sha-256, Sha-512)
  */
-internal fun getHashOfFile(filePath: String, algorithm: String = "MD5"): String =
+internal fun getHashOfFile(filePath: String, algorithm: String = "MD5"): ByteArray = try {
     ByteArray(DEFAULT_BUFFER_SIZE).let { buffer ->
         MessageDigest.getInstance(algorithm).let { digest ->
             BufferedInputStream(FileInputStream(filePath)).use {
@@ -23,6 +22,10 @@ internal fun getHashOfFile(filePath: String, algorithm: String = "MD5"): String 
                 }
             }
 
-            Base64.encodeToString(digest.digest(), Base64.URL_SAFE)
+            digest.digest()
         }
     }
+} catch (t:Throwable) {
+    t.printStackTrace()
+    ByteArray(0)
+}

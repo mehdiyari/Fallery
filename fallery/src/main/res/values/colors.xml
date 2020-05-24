@@ -16,7 +16,7 @@
     <!-- light theme colors -->
     <color name="fallery_light_backgroundColor">#ffffff</color>
     <color name="fallery_light_colorPrimary">#ffffff</color>
-    <color name="fallery_light_colorPrimaryDark">#000000</color>
+    <color name="fallery_light_colorPrimaryDark">#CFD8DC</color>
     <color name="fallery_light_colorAccent">#A11183</color>
     <color name="fallery_light_iconTintColor">#504f4f</color>
     <color name="fallery_light_toolbarIconTintColor">#504f4f</color>

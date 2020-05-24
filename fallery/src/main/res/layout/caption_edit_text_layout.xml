@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/appCompatEditTextCaption"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#00ffffff"
+        android:hint="@string/fallery_caption_hint_text"
+        android:textColorHint="?attr/fallery_hint_text_color"
+        android:singleLine="true"
+        android:textColor="?attr/fallery_primary_text_color"
+        android:textSize="18sp" />
+</merge>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayoutBucketItemView"
+    android:layout_width="match_parent"
+    android:layout_height="140dp"
+    android:layout_margin="2dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="?attr/selectableItemBackground">
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageViewBucketImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/fallery_place_holder_color"
+        android:scaleType="centerCrop" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/gradiant_back_bucket_info"
+        android:padding="5dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextViewBucketName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:ellipsize="marquee"
+            android:paddingEnd="8dp"
+            android:singleLine="true"
+            android:textColor="#ffffff"
+            android:textSize="16sp"
+            android:layout_toStartOf="@+id/appCompatTextViewBucketItemCount"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            tools:text="Cameras"
+            tools:ignore="RtlSymmetry" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextViewBucketItemCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="6dp"
+            android:textColor="#ffffff"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="715" />
+
+    </RelativeLayout>
+
+</FrameLayout>
+

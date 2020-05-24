@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayoutBucketItemView"
+    android:background="?attr/fallery_background_color">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        tools:ignore="UselessParent"
+        android:padding="6dp"
+        android:background="?selectableItemBackground">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageViewBucketImage"
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:scaleType="centerCrop"
+            android:src="?attr/fallery_place_holder_color"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:paddingBottom="2dp"
+            android:layout_toEndOf="@+id/imageViewBucketImage"
+            android:layout_toStartOf="@+id/appCompatImageButtonArrowNext"
+            android:layout_marginStart="8dp"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/appCompatTextViewBucketName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:singleLine="true"
+                android:textColor="?attr/fallery_primary_text_color"
+                android:textSize="16sp"
+                tools:text="Cameras"
+                android:textStyle="bold"
+                tools:ignore="RtlSymmetry" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/appCompatTextViewBucketItemCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:textColor="?attr/fallery_secondary_text_color"
+                android:textSize="13sp"
+                tools:text="715 medias" />
+
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/appCompatImageButtonArrowNext"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="#00ffffff"
+            android:src="@drawable/ic_arrow_next"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:tint="?attr/fallery_icon_tint_color"/>
+
+    </RelativeLayout>
+
+</FrameLayout>

@@ -29,7 +29,7 @@ internal class FalleryActivityModule(
         synchronized(bucketListViewModelFactory ?: this) {
             if (bucketListViewModelFactory == null) {
                 bucketListViewModelFactory =
-                    BucketListViewModelFactory(provideBucketProvider())
+                    BucketListViewModelFactory(provideBucketProvider(), provideFalleryOptions().mediaTypeFilterOptions.bucketType)
                 bucketListViewModelFactory!!
             } else bucketListViewModelFactory!!
         }

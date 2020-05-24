@@ -1,0 +1,12 @@
+<resources>
+    <string name="fallery_toolbar_title">Gallery</string>
+    <string name="fallery_caption_hint_text">Caption…</string>
+    <string name="media_count">%1$d medias</string>
+    <string name="camera">Camera</string>
+    <string name="list_mode">List mode</string>
+    <string name="access_external_storage_denied">Require storage permission in order to choosing photo or video</string>
+    <string name="access_external_storage_permanently_denied">Storage permission has been permanently denied. Please continue to the app settings menu, select \"Permissions\", and enable \"Storage\".</string>
+    <string name="continue_button">Continue</string>
+    <string name="exit_button">Exit</string>
+    <string name="cancel_button">Cancel</string>
+</resources>

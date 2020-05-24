@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/fallery_background_color"
+    tools:context=".main.ui.FalleryActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbarFalleryActivity"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="?attr/fallery_color_primary"
+            android:theme="@style/ToolbarTheme"
+            app:contentInsetStart="0dp"
+            app:contentInsetStartWithNavigation="0dp"
+            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:popupTheme="@style/AppTheme.Dark.PopupOverlay"
+            app:subtitleTextColor="?attr/fallery_secondary_text_color"
+            app:title="@string/fallery_toolbar_title"
+            app:titleTextAppearance="@style/toolbarTitleTextAppearance" />
+
+        <FrameLayout
+            android:id="@+id/frameLayoutFragmentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+
+    </LinearLayout>
+
+    <ViewStub
+        android:id="@+id/viewStubCaptionLayout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_gravity="bottom"
+        android:layout="@layout/caption_layout" />
+
+</FrameLayout>

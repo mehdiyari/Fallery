@@ -7,5 +7,5 @@ data class MediaBucket(
     val bucketPath: String,
     val displayName: String,
     val firstMediaThumbPath: String,
-    val mediaCount: Int
+    val mediaCount: Int = 1
 ) : Serializable

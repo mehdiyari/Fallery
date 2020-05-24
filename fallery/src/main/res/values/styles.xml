@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <style name="Fallery" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge"/>
 
@@ -49,7 +49,7 @@
     </style>
 
     <style name="ToolbarTheme" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-        <item name="colorControlNormal">?attr/fallery_icon_tint_color</item>
+        <item name="colorControlNormal">?attr/fallery_toolbar_icon_tint_color</item>
         <item name="android:textColorPrimary">?attr/fallery_primary_text_color</item>
         <item name="colorControlHighlight">#d8d8d8</item>
     </style>
@@ -57,6 +57,30 @@
     <style name="AppTheme.Dark.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" >
         <item name="android:colorBackground">?attr/fallery_background_color</item>
         <item name="android:textColor">?attr/fallery_primary_text_color</item>
+    </style>
+
+    <style name="Fallery_AlertDialogTheme" parent="Theme.MaterialComponents.Light.Dialog.Alert">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:colorAccent" tools:targetApi="lollipop">?attr/fallery_color_accent</item>
+        <item name="colorPrimary">?attr/fallery_color_primary</item>
+        <item name="colorPrimaryDark">?attr/fallery_color_primary_dark</item>
+        <item name="android:textColorPrimary">?attr/fallery_primary_text_color</item>
+        <item name="android:textColorAlertDialogListItem">?attr/fallery_primary_text_color</item>
+        <item name="textColorAlertDialogListItem">?attr/fallery_primary_text_color</item>
+        <item name="android:textColor">?attr/fallery_primary_text_color</item>
+        <item name="android:background">?attr/fallery_background_color</item>
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+    </style>
+
+    <style name="NegativeButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">?attr/colorAccent</item>
+    </style>
+
+    <style name="PositiveButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <item name="android:textColor">?attr/colorAccent</item>
     </style>
 
 </resources>

@@ -12,3 +12,12 @@ val bucketProjection = arrayOf(
     "COUNT(*) AS count",
     "datetaken"
 )
+
+val bucketProjectionAndroidQ = arrayOf(
+    MediaStore.Files.FileColumns._ID,
+    "bucket_id",
+    "bucket_display_name",
+    MediaStore.MediaColumns.DATA,
+    MediaStore.MediaColumns.MIME_TYPE,
+    "datetaken"
+)

@@ -2,12 +2,11 @@ package ir.mehdiyari.fallery.repo
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.database.Cursor
 import android.provider.MediaStore
 import ir.mehdiyari.fallery.models.BucketType
 import ir.mehdiyari.fallery.models.MediaBucket
 import ir.mehdiyari.fallery.utils.*
-import ir.mehdiyari.fallery.utils.getSingleBucketSelection
-import ir.mehdiyari.fallery.utils.videoPhotoBucketSelection
 import java.io.File
 import java.util.*
 
@@ -22,40 +21,87 @@ internal class MediaBucketProvider constructor(
         mutableListOf<MediaBucket>().let { bucketList ->
             // store media dates if [bucketType] == [BucketType.VIDEO_PHOTO_BUCKETS]
             val dateAddedList = mutableListOf<Pair<String, Long>>()
-
             context.contentResolver.query(
-                MediaStore.Files.getContentUri("external"), bucketProjection, getQueryByMediaType(bucketType), getQueryArgByMediaType(bucketType), "date_added DESC"
+                MediaStore.Files.getContentUri("external"),
+                if (isAndroidTenOrHigher()) bucketProjectionAndroidQ else bucketProjection,
+                getQueryByMediaType(bucketType),
+                getQueryArgByMediaType(bucketType),
+                "date_added DESC"
             )?.use { cursor ->
                 while (cursor.moveToNext()) {
-                    val id = cursor.getLong(cursor.getColumnIndex("bucket_id"))
-                    getFirstMediaThumbForBuckets(
-                        bucketType, id, cursor.getString(cursor.getColumnIndex(bucketProjection[3]))
-                    ).also { firstMediaThumb ->
-                        if (firstMediaThumb.second != 0L) dateAddedList.add(firstMediaThumb.first.path to firstMediaThumb.second)
+                    val bucketId = cursor.getLong(cursor.getColumnIndex("bucket_id"))
+                    if (isAndroidTenOrHigher())
+                        extractBucketForAndroidQAndHigher(bucketList, bucketId, bucketType, cursor)
+                    else
+                        extractBucket(bucketType, bucketId, cursor, dateAddedList, bucketList)
 
-                        bucketList.add(
-                            MediaBucket(
-                                id = cursor.getLong(cursor.getColumnIndex("bucket_id")), bucketPath = firstMediaThumb.first.path.replace(firstMediaThumb.first.name, ""), displayName = cursor.getString(cursor.getColumnIndex(bucketProjection[2])), firstMediaThumbPath = firstMediaThumb.first.path, mediaCount = cursor.getInt(cursor.getColumnIndex("count"))
-                            )
-                        )
-                    }
                 }
             }
 
-            if (bucketType == BucketType.VIDEO_PHOTO_BUCKETS && dateAddedList.isNotEmpty()) {
+            if (!isAndroidTenOrHigher() && bucketType == BucketType.VIDEO_PHOTO_BUCKETS && dateAddedList.isNotEmpty()) {
                 sortBucketList(dateAddedList.toList(), bucketList)
             } else bucketList
         }.toList().addAllMediaModel()
+
+    private fun extractBucket(
+        bucketType: BucketType,
+        bucketId: Long,
+        cursor: Cursor,
+        dateAddedList: MutableList<Pair<String, Long>>,
+        bucketList: MutableList<MediaBucket>
+    ) {
+        getFirstMediaThumbForBuckets(
+            bucketType, bucketId, cursor.getString(cursor.getColumnIndex(bucketProjection[3]))
+        ).also { firstMediaThumb ->
+            if (firstMediaThumb.second != 0L) dateAddedList.add(firstMediaThumb.first.path to firstMediaThumb.second)
+            bucketList.add(
+                MediaBucket(
+                    id = bucketId,
+                    bucketPath = firstMediaThumb.first.path.replace(firstMediaThumb.first.name, ""),
+                    displayName = cursor.getString(cursor.getColumnIndex(bucketProjection[2])),
+                    firstMediaThumbPath = firstMediaThumb.first.path,
+                    mediaCount = if (isAndroidTenOrHigher()) 0 else cursor.getInt(cursor.getColumnIndex("count"))
+                )
+            )
+        }
+    }
+
+    private fun extractBucketForAndroidQAndHigher(
+        bucketList: MutableList<MediaBucket>,
+        bucketId: Long,
+        bucketType: BucketType,
+        cursor: Cursor
+    ) {
+        bucketList.indexOfLast { it.id == bucketId }.also { index ->
+            if (index == -1) {
+                getFirstMediaThumbForBuckets(
+                    bucketType, bucketId, cursor.getString(cursor.getColumnIndex(bucketProjection[3]))
+                ).also { firstMediaThumb ->
+                    bucketList.add(
+                        MediaBucket(
+                            id = bucketId,
+                            bucketPath = firstMediaThumb.first.path.replace(firstMediaThumb.first.name, ""),
+                            displayName = cursor.getString(cursor.getColumnIndex(bucketProjection[2])),
+                            firstMediaThumbPath = firstMediaThumb.first.path,
+                            mediaCount = 1
+                        )
+                    )
+                }
+            } else {
+                bucketList[index] = bucketList[index].let { it.copy(mediaCount = it.mediaCount.plus(1)) }
+            }
+        }
+    }
 
 
     /**
      * if bucket list is not empty add AllMedia to index 0 of bucket list
      */
     private fun List<MediaBucket>.addAllMediaModel(): List<MediaBucket> = this.toMutableList().apply {
-            if (this.isNotEmpty()) {
-                add(0, MediaBucket(UUID.randomUUID().mostSignificantBits, "", "All Media", this.first().firstMediaThumbPath, this.sumBy { it.mediaCount }))
-            }
+        if (this.isNotEmpty()) {
+            add(0, MediaBucket(UUID.randomUUID().mostSignificantBits, "", "All Media", this.first().firstMediaThumbPath, this.sumBy { it.mediaCount }))
         }
+    }
 
 
     private fun sortBucketList(
@@ -93,7 +139,8 @@ internal class MediaBucketProvider constructor(
                 if (VideoMediaTypes.values().map { type -> type.value.second }
                         .firstOrNull { it.contains(file.extension.toLowerCase()) } != null) File(
                     createThumbForVideos(listOf(file.path to id), context)
-                        .first()) to pair.second
+                        .first()
+                ) to pair.second
                 else file to pair.second
             }
         }
@@ -120,7 +167,11 @@ internal class MediaBucketProvider constructor(
         }
 
         context.contentResolver.query(
-            MediaStore.Files.getContentUri("external"), arrayOf(MediaStore.MediaColumns.DATA, MediaStore.MediaColumns.DATE_ADDED), """${query.first} AND bucket_id=?""", arrayOf(*query.second, bucketId.toString()), "date_added DESC"
+            MediaStore.Files.getContentUri("external"),
+            arrayOf(MediaStore.MediaColumns.DATA, MediaStore.MediaColumns.DATE_ADDED),
+            """${query.first} AND bucket_id=?""",
+            arrayOf(*query.second, bucketId.toString()),
+            "date_added DESC"
         )?.use { cursor ->
             val path = if (cursor.moveToFirst()) {
                 cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA)) to cursor.getLong(
@@ -135,14 +186,12 @@ internal class MediaBucketProvider constructor(
     }
 
     private fun getQueryByMediaType(mediaType: BucketType): String = when (mediaType) {
-        BucketType.VIDEO_PHOTO_BUCKETS -> videoPhotoBucketSelection
-        else -> getSingleBucketSelection
+        BucketType.VIDEO_PHOTO_BUCKETS -> if (isAndroidTenOrHigher()) videoPhotoBucketSelectionAndroidQ else videoPhotoBucketSelection
+        else -> if (isAndroidTenOrHigher()) getSingleBucketSelectionAndroidQ else getSingleBucketSelection
     }
 
     private fun getQueryArgByMediaType(mediaType: BucketType): Array<String> = when (mediaType) {
-        BucketType.VIDEO_PHOTO_BUCKETS -> arrayOf(
-            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString(), MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString()
-        )
+        BucketType.VIDEO_PHOTO_BUCKETS -> arrayOf(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString(), MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString())
         BucketType.ONLY_PHOTO_BUCKETS -> arrayOf(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString())
         BucketType.ONLY_VIDEO_BUCKETS -> arrayOf(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString())
     }

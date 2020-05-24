@@ -18,7 +18,7 @@ fun getPhotoDimension(path: String): PhotoDiminution = BitmapFactory.Options().a
 fun Bitmap.Config.decodeBitmap(path: String): Bitmap? = BitmapFactory.Options()
     .let { options ->
         options.inPreferredConfig = this
-        BitmapFactory.decodeFile(path, options) ?: throw RuntimeException("cant decode image")
+        BitmapFactory.decodeFile(path, options)
     }
 
 fun scalePictureToSize(
@@ -27,7 +27,7 @@ fun scalePictureToSize(
     width: Int,
     height: Int
 ): File = BitmapFactory.decodeFile(sourcePath).let { sourceBitmap ->
-    if (sourceBitmap.width < width && sourceBitmap.height < height) return@let File(sourcePath)
+    if (sourceBitmap == null || (sourceBitmap.width < width && sourceBitmap.height < height)) return@let File(sourcePath)
     Bitmap.createScaledBitmap(sourceBitmap, width, height, false).let { destinationBitmap ->
         val destFile = File(destinationPath)
         val outputStream = FileOutputStream(destFile)

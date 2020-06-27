@@ -65,3 +65,9 @@ fun MediaMetadataRetriever.extractVideoDimension(videoPath: String): Pair<Int, I
         MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT
     ).toInt()
 }
+
+internal fun getHeightBasedOnScaledWidth(
+    originalWidth: Int,
+    originalHeight: Int,
+    scaledWidth: Int
+): Int = (originalHeight / (originalWidth.toFloat() / scaledWidth)).toInt()

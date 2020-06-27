@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/min_size_bucket_content_item"
+    android:layout_margin="1.5dp"
+    android:id="@+id/frameLayoutVideoContainer">
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageViewVideoMedia"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="?attr/fallery_place_holder_color"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewVideoTime"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:paddingTop="2dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:background="@drawable/gradiant_back_bucket_info"
+        android:gravity="start"
+        android:textStyle="bold"
+        android:textSize="10sp"
+        android:layout_marginBottom="3dp"
+        android:textColor="#ffffff"
+        android:layout_gravity="top|center"
+        android:text="00:00"
+        tools:text="02:35"
+        android:maxLength="9"
+        android:singleLine="true"
+        tools:ignore="HardcodedText,SmallSp" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_gravity="end|top"
+        android:tint="#ffffff"
+        android:src="@drawable/ic_video"
+        android:padding="2dp" />
+
+
+    <FrameLayout
+        android:id="@+id/selectedVideoToggleContainer"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_gravity="end|bottom">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageViewSelectDeselectVideo"
+            android:layout_width="23dp"
+            android:layout_height="23dp"
+            android:layout_margin="3dp"
+            android:background="@drawable/fallery_deselected_media"
+            android:layout_gravity="end|bottom"/>
+
+    </FrameLayout>
+
+</FrameLayout>

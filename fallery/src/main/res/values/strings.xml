@@ -9,4 +9,6 @@
     <string name="continue_button">Continue</string>
     <string name="exit_button">Exit</string>
     <string name="cancel_button">Cancel</string>
+    <string name="of">of</string>
+    <string name="selected_media">selected</string>
 </resources>

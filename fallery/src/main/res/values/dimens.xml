@@ -2,5 +2,8 @@
 <resources>
 
     <dimen name="fallery_bucket_max_width">140dp</dimen>
+    <dimen name="min_size_bucket_content_item">120dp</dimen>
+    <dimen name="recycler_view_bottom_padding">60dp</dimen>
+    <dimen name="caption_layout_height">45dp</dimen>
 
 </resources>

@@ -2,6 +2,7 @@ package ir.mehdiyari.fallery.main.di.module
 
 import android.content.Context
 import androidx.fragment.app.FragmentActivity
+import ir.mehdiyari.fallery.buckets.ui.bucketContent.adapter.BucketContentAdapter
 import ir.mehdiyari.fallery.imageLoader.FalleryImageLoader
 import ir.mehdiyari.fallery.main.di.component.FalleryActivityComponent
 import ir.mehdiyari.fallery.main.fallery.FalleryOptions
@@ -14,6 +15,7 @@ import ir.mehdiyari.fallery.repo.AbstractMediaBucketProvider
 import ir.mehdiyari.fallery.repo.BucketContentProvider
 import ir.mehdiyari.fallery.repo.MediaBucketProvider
 import ir.mehdiyari.fallery.utils.BucketListViewModelFactory
+import ir.mehdiyari.fallery.utils.FalleryViewModelFactory
 
 internal class FalleryActivityModule(
     private val context: Context,
@@ -88,4 +90,12 @@ internal class FalleryActivityModule(
         } else
             falleryStyleAttrs!!
     }
+
+    override fun provideBucketContentAdapter(): BucketContentAdapter = BucketContentAdapter(
+        provideImageLoader()
+    )
+
+    override fun provideFalleryViewModelFactory(): FalleryViewModelFactory = FalleryViewModelFactory(
+        provideFalleryOptions()
+    )
 }

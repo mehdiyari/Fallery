@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/min_size_bucket_content_item"
+    android:layout_margin="1.5dp"
+    android:id="@+id/frameLayoutPhotoContainer">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageViewPhotoMedia"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="?attr/fallery_place_holder_color"/>
+
+
+    <FrameLayout
+        android:id="@+id/selectedPhotoToggleContainer"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_gravity="end|bottom">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/imageViewSelectDeselectPhoto"
+            android:layout_width="23dp"
+            android:layout_height="23dp"
+            android:layout_margin="3dp"
+            android:background="@drawable/fallery_deselected_media"
+            android:layout_gravity="end|bottom"/>
+
+    </FrameLayout>
+
+
+</FrameLayout>

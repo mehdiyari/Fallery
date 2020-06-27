@@ -14,6 +14,16 @@ val bucketProjection = arrayOf(
     "datetaken"
 )
 
+internal val photoWithVideoProjection = arrayOf(
+    MediaStore.Files.FileColumns._ID,
+    MediaStore.Files.FileColumns.DATA,
+    MediaStore.Files.FileColumns.SIZE,
+    MediaStore.Files.FileColumns.MIME_TYPE,
+    MediaStore.Files.FileColumns.MEDIA_TYPE,
+    MediaStore.Files.FileColumns.DATE_ADDED
+)
+
+
 val bucketProjectionAndroidQ = arrayOf(
     MediaStore.Files.FileColumns._ID,
     "bucket_id",

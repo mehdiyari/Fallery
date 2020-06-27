@@ -6,6 +6,7 @@ import ir.mehdiyari.fallery.buckets.ui.bucketContent.adapter.BucketContentAdapte
 import ir.mehdiyari.fallery.buckets.ui.bucketList.adapter.MediaBucketDiffCallback
 import ir.mehdiyari.fallery.models.FalleryStyleAttrs
 import ir.mehdiyari.fallery.utils.BucketListViewModelFactory
+import ir.mehdiyari.fallery.utils.FalleryViewModelFactory
 
 internal interface FalleryActivityComponent : FalleryCoreComponent {
 
@@ -22,4 +23,6 @@ internal interface FalleryActivityComponent : FalleryCoreComponent {
     fun provideBucketContentAdapter(): BucketContentAdapter
 
     fun provideFalleryStyleAttrs(): FalleryStyleAttrs
+
+    fun provideFalleryViewModelFactory(): FalleryViewModelFactory
 }

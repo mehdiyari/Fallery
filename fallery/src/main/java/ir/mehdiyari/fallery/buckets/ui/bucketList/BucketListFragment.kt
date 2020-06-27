@@ -18,13 +18,12 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import ir.mehdiyari.fallery.R
 import ir.mehdiyari.fallery.buckets.ui.bucketList.adapter.BucketListAdapter
-import ir.mehdiyari.fallery.main.ui.MediaObserverInterface
+import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 import ir.mehdiyari.fallery.main.fallery.BucketRecyclerViewItemMode
 import ir.mehdiyari.fallery.main.ui.FalleryViewModel
-import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
+import ir.mehdiyari.fallery.main.ui.MediaObserverInterface
 import ir.mehdiyari.fallery.utils.*
 import kotlinx.android.synthetic.main.fragment_bucket_list.*
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -86,14 +85,9 @@ internal class BucketListFragment : Fragment() {
     }
 
     private fun initViewModel() {
-        falleryViewModel = ViewModelProvider(requireActivity())[FalleryViewModel::class.java].apply {
+        falleryViewModel = ViewModelProvider(requireActivity(),  FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideFalleryViewModelFactory())[FalleryViewModel::class.java].apply {
             bucketRecycleViewModeLiveData.observe(viewLifecycleOwner, Observer {
                 changeRecyclerViewItemModeTo(it)
-            })
-
-            storagePermissionGrantedStateLiveData.observe(viewLifecycleOwner, Observer {
-                if (it)
-                    bucketListViewModel.getBuckets()
             })
         }
 
@@ -101,6 +95,16 @@ internal class BucketListFragment : Fragment() {
             this,
             FalleryActivityComponentHolder.componentCreator(requireActivity()).provideBucketListViewModelFactory()
         )[BucketListViewModel::class.java]
+
+        lifecycleScope.launch {
+            launch {
+                falleryViewModel.storagePermissionGrantedStateFlow.collect {
+                    if (it == true) {
+                        bucketListViewModel.getBuckets()
+                    }
+                }
+            }
+        }
 
         if (FalleryActivityComponentHolder.getOrNull()?.provideFalleryOptions()?.mediaObserverEnabled == true) {
             (requireActivity() as MediaObserverInterface).getMediaObserverInstance()?.externalStorageChangeLiveData?.observe(viewLifecycleOwner, Observer {

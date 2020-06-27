@@ -14,7 +14,8 @@ class FalleryViewModel : ViewModel() {
         currentFragment.value = FalleryView.BucketList
     }
 
-
+    private val storagePermissionGrantedStateMutableStateFlow = MutableStateFlow<Boolean?>(null)
+    val storagePermissionGrantedStateFlow: StateFlow<Boolean?> = storagePermissionGrantedStateMutableStateFlow
     private val bucketRecyclerViewMode = MutableLiveData<BucketRecyclerViewItemMode>()
     val bucketRecycleViewModeLiveData: LiveData<BucketRecyclerViewItemMode> = bucketRecyclerViewMode
     private val storagePermissionGrantedStateMutableLiveData = MutableLiveData<Boolean>()
@@ -25,7 +26,7 @@ class FalleryViewModel : ViewModel() {
     }
 
     fun storagePermissionGranted() {
-        storagePermissionGrantedStateMutableLiveData.value = true
+        storagePermissionGrantedStateMutableStateFlow.value = true
     }
 
     fun openBucketWithId(it: Long) {

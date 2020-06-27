@@ -183,15 +183,4 @@ internal class MediaBucketProvider constructor(
 
         return Pair("", 0L)
     }
-
-    private fun getQueryByMediaType(mediaType: BucketType): String = when (mediaType) {
-        BucketType.VIDEO_PHOTO_BUCKETS -> if (isAndroidTenOrHigher()) videoPhotoBucketSelectionAndroidQ else videoPhotoBucketSelection
-        else -> if (isAndroidTenOrHigher()) getSingleBucketSelectionAndroidQ else getSingleBucketSelection
-    }
-
-    private fun getQueryArgByMediaType(mediaType: BucketType): Array<String> = when (mediaType) {
-        BucketType.VIDEO_PHOTO_BUCKETS -> arrayOf(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString(), MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString())
-        BucketType.ONLY_PHOTO_BUCKETS -> arrayOf(MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString())
-        BucketType.ONLY_VIDEO_BUCKETS -> arrayOf(MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString())
-    }
 }

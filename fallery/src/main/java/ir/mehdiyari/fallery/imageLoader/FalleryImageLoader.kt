@@ -6,8 +6,6 @@ import android.widget.ImageView
 /**
  * interface for loading photos and gif
  * default implementation of this without using external libraries such(glide, picasso) implemented
- * by fallery -> [DefaultImageLoader]
- * if user not set imageLoader in falleryOptions [DefaultImageLoader] doing loading images
  */
 interface FalleryImageLoader {
 

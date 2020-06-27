@@ -4,6 +4,7 @@ import androidx.annotation.StyleRes
 import ir.mehdiyari.fallery.imageLoader.FalleryImageLoader
 import ir.mehdiyari.fallery.repo.AbstractBucketContentProvider
 import ir.mehdiyari.fallery.repo.AbstractMediaBucketProvider
+import java.lang.IllegalArgumentException
 
 class FalleryBuilder {
 
@@ -59,7 +60,7 @@ class FalleryBuilder {
         return this
     }
 
-    fun imageLoader(
+    fun setImageLoader(
         imageLoader: FalleryImageLoader
     ): FalleryBuilder {
         falleryOptions = falleryOptions.copy(
@@ -132,6 +133,8 @@ class FalleryBuilder {
     }
 
     fun build(): FalleryOptions {
+        if (falleryOptions.imageLoader == null) throw IllegalArgumentException("You must set imageLoader")
+
         if (falleryOptions.cameraEnabledOptions.enabled)
             require(falleryOptions.cameraEnabledOptions.fileProviderAuthority != null) { "fileProviderAuthority must not be null" }
 

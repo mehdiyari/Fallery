@@ -7,6 +7,8 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.view.animation.Animation
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
 
@@ -36,4 +38,17 @@ internal fun Animation.setOnAnimationEndListener(onEnd: () -> Unit) {
         override fun onAnimationEnd(animation: Animation?) = onEnd()
         override fun onAnimationStart(animation: Animation?) = Unit
     })
+}
+
+internal fun EditText.hideKeyboard() {
+    try {
+        val imm =
+            context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        if (!imm.isActive(this)) {
+            return
+        }
+        imm.hideSoftInputFromWindow(windowToken, 0)
+    } catch (ignored: Throwable) {
+        ignored.printStackTrace()
+    }
 }

@@ -7,6 +7,7 @@ import androidx.annotation.StyleRes
 import ir.mehdiyari.fallery.R
 import ir.mehdiyari.fallery.imageLoader.FalleryImageLoader
 import ir.mehdiyari.fallery.models.BucketType
+import ir.mehdiyari.fallery.repo.AbstractBucketContentProvider
 import ir.mehdiyari.fallery.repo.AbstractMediaBucketProvider
 import ir.mehdiyari.fallery.utils.EnumType
 
@@ -17,6 +18,7 @@ data class FalleryOptions(
     val mediaCountOptions: MediaCountOptions,
     val imageLoader: FalleryImageLoader?,
     val bucketProviderAbstract: AbstractMediaBucketProvider?,
+    val abstractBucketContentProvider: AbstractBucketContentProvider?,
     val falleryStrings: FalleryStrings,
     @StyleRes val themeResId: Int,
     val orientationMode: Int,
@@ -30,6 +32,7 @@ data class FalleryOptions(
         CameraEnabledOptions(),
         CaptionEnabledOptions(),
         MediaCountOptions(),
+        null,
         null,
         null,
         FalleryStrings(),

@@ -9,7 +9,9 @@ import ir.mehdiyari.fallery.main.di.component.FalleryCoreComponent
 import ir.mehdiyari.fallery.buckets.ui.bucketList.adapter.MediaBucketDiffCallback
 import ir.mehdiyari.fallery.models.FalleryStyleAttrs
 import ir.mehdiyari.fallery.models.getFalleryStyleAttrs
+import ir.mehdiyari.fallery.repo.AbstractBucketContentProvider
 import ir.mehdiyari.fallery.repo.AbstractMediaBucketProvider
+import ir.mehdiyari.fallery.repo.BucketContentProvider
 import ir.mehdiyari.fallery.repo.MediaBucketProvider
 import ir.mehdiyari.fallery.utils.BucketListViewModelFactory
 
@@ -20,6 +22,7 @@ internal class FalleryActivityModule(
 ) : FalleryActivityComponent {
 
     private var abstractMediaBucketProvider: AbstractMediaBucketProvider? = null
+    private var abstractBucketContentProvider: AbstractBucketContentProvider? = null
     private var bucketListViewModelFactory: BucketListViewModelFactory? = null
     private var falleryStyleAttrs: FalleryStyleAttrs? = null
 
@@ -52,7 +55,23 @@ internal class FalleryActivityModule(
         provideFalleryBucketProvider()
     }
 
+    override fun provideBucketContentProvider(): AbstractBucketContentProvider = try {
+        falleryCoreComponent.provideBucketContentProvider()
+    } catch (ignored:Throwable) {
+        provideFalleryBucketContentProvider()
+    }
+
+
     override fun releaseCoreComponent() = falleryCoreComponent.releaseCoreComponent()
+
+    private fun provideFalleryBucketContentProvider(): AbstractBucketContentProvider =
+        synchronized(abstractBucketContentProvider ?: this) {
+            if (abstractBucketContentProvider == null) {
+                abstractBucketContentProvider = BucketContentProvider(context)
+                abstractBucketContentProvider!!
+            } else abstractBucketContentProvider!!
+        }
+
 
     private fun provideFalleryBucketProvider(): AbstractMediaBucketProvider =
         synchronized(abstractMediaBucketProvider ?: this) {

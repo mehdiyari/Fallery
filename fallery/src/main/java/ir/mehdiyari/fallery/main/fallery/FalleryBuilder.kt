@@ -2,6 +2,7 @@ package ir.mehdiyari.fallery.main.fallery
 
 import androidx.annotation.StyleRes
 import ir.mehdiyari.fallery.imageLoader.FalleryImageLoader
+import ir.mehdiyari.fallery.repo.AbstractBucketContentProvider
 import ir.mehdiyari.fallery.repo.AbstractMediaBucketProvider
 
 class FalleryBuilder {
@@ -94,6 +95,15 @@ class FalleryBuilder {
         return this
     }
 
+    fun bucketContentProvider(
+        bucketContentProvider: AbstractBucketContentProvider
+    ): FalleryBuilder {
+        falleryOptions = falleryOptions.copy(
+            abstractBucketContentProvider = bucketContentProvider
+        )
+
+        return this
+    }
 
     fun setBucketItemMode(
         bucketRecyclerViewItemMode: BucketRecyclerViewItemMode

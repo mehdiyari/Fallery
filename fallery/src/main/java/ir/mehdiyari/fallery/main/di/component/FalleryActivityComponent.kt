@@ -2,6 +2,7 @@ package ir.mehdiyari.fallery.main.di.component
 
 import android.content.Context
 import androidx.fragment.app.FragmentActivity
+import ir.mehdiyari.fallery.buckets.ui.bucketContent.adapter.BucketContentAdapter
 import ir.mehdiyari.fallery.buckets.ui.bucketList.adapter.MediaBucketDiffCallback
 import ir.mehdiyari.fallery.models.FalleryStyleAttrs
 import ir.mehdiyari.fallery.utils.BucketListViewModelFactory
@@ -17,6 +18,8 @@ internal interface FalleryActivityComponent : FalleryCoreComponent {
     fun releaseBucketListComponent()
 
     fun provideMediaBucketDiffCallback(): MediaBucketDiffCallback
+
+    fun provideBucketContentAdapter(): BucketContentAdapter
 
     fun provideFalleryStyleAttrs(): FalleryStyleAttrs
 }

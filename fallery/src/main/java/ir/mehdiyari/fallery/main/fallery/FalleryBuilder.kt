@@ -1,5 +1,6 @@
 package ir.mehdiyari.fallery.main.fallery
 
+import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
 import ir.mehdiyari.fallery.imageLoader.FalleryImageLoader
 import ir.mehdiyari.fallery.repo.AbstractBucketContentProvider
@@ -127,6 +128,14 @@ class FalleryBuilder {
     fun setMediaObserverEnabled(enable: Boolean) : FalleryBuilder {
         falleryOptions = falleryOptions.copy(
             mediaObserverEnabled = enable
+        )
+
+        return this
+    }
+
+    fun setFalleryToolbarTitleText(@StringRes titleRes: Int) : FalleryBuilder {
+        falleryOptions = falleryOptions.copy(
+            toolbarTitle = titleRes
         )
 
         return this

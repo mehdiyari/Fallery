@@ -25,7 +25,8 @@ data class FalleryOptions(
     val autoHideMediaPreviewToolbarOnSingleTap: Boolean,
     var bucketRecyclerViewItemMode: BucketRecyclerViewItemMode,
     val changeBucketRecyclerViewItemModeByToolbarIcon: Boolean,
-    var mediaObserverEnabled: Boolean
+    var mediaObserverEnabled: Boolean,
+    @StringRes var toolbarTitle: Int = R.string.fallery_toolbar_title
 ) {
     constructor() : this(
         MediaTypeFilterOptions(),
@@ -45,7 +46,7 @@ data class FalleryOptions(
     )
 }
 
-const val UNLIMITED_SELECT = -1
+const val UNLIMITED_SELECT = 0
 
 data class MediaTypeFilterOptions(
     val bucketType: BucketType,
@@ -69,8 +70,7 @@ data class CaptionEnabledOptions(
 )
 
 data class MediaCountOptions(
-    val enabled: Boolean = true,
-    val format: String = "%d %s %d %s" // [selected number] of [total number] selected
+    val enabled: Boolean = true
 )
 
 data class FalleryStrings(

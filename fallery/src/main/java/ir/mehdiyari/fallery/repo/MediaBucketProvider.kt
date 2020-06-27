@@ -80,7 +80,7 @@ internal class MediaBucketProvider constructor(
                         MediaBucket(
                             id = bucketId,
                             bucketPath = firstMediaThumb.first.path.replace(firstMediaThumb.first.name, ""),
-                            displayName = cursor.getString(cursor.getColumnIndex(bucketProjection[2])),
+                            displayName = cursor.getString(cursor.getColumnIndex(bucketProjection[2])) ?: "Unknown",
                             firstMediaThumbPath = firstMediaThumb.first.path,
                             mediaCount = 1
                         )

@@ -8,7 +8,6 @@ import ir.mehdiyari.fallery.models.BucketType
 import ir.mehdiyari.fallery.models.MediaBucket
 import ir.mehdiyari.fallery.utils.*
 import java.io.File
-import java.util.*
 
 internal class MediaBucketProvider constructor(
     private val context: Context
@@ -99,7 +98,7 @@ internal class MediaBucketProvider constructor(
      */
     private fun List<MediaBucket>.addAllMediaModel(): List<MediaBucket> = this.toMutableList().apply {
         if (this.isNotEmpty()) {
-            add(0, MediaBucket(UUID.randomUUID().mostSignificantBits, "", "All Media", this.first().firstMediaThumbPath, this.sumBy { it.mediaCount }))
+            add(0, MediaBucket(ALL_MEDIA_MODEL_ID, "", "All Media", this.first().firstMediaThumbPath, this.sumBy { it.mediaCount }))
         }
     }
 

@@ -3,14 +3,17 @@ package ir.mehdiyari.fallery.main.ui
 import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.pm.PackageManager
-import android.graphics.BlendMode
-import android.graphics.BlendModeColorFilter
-import android.graphics.Color
-import android.graphics.PorterDuff
+import android.graphics.*
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
+import android.util.Log
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.TranslateAnimation
@@ -22,29 +25,33 @@ import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import ir.mehdiyari.fallery.R
 import ir.mehdiyari.fallery.buckets.ui.bucketContent.BucketContentFragment
 import ir.mehdiyari.fallery.buckets.ui.bucketList.BucketListFragment
-import ir.mehdiyari.fallery.main.fallery.BucketRecyclerViewItemMode
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 import ir.mehdiyari.fallery.main.di.FalleryCoreComponentHolder
-import ir.mehdiyari.fallery.utils.MediaStoreObserver
-import ir.mehdiyari.fallery.utils.WRITE_EXTERNAL_REQUEST_CODE
-import ir.mehdiyari.fallery.utils.getSettingIntent
-import ir.mehdiyari.fallery.utils.permissionChecker
+import ir.mehdiyari.fallery.main.fallery.BucketRecyclerViewItemMode
+import ir.mehdiyari.fallery.utils.*
 import kotlinx.android.synthetic.main.activity_fallery.*
 import kotlinx.android.synthetic.main.caption_layout.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.InternalCoroutinesApi
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
 
+    @ExperimentalCoroutinesApi
     private lateinit var falleryViewModel: FalleryViewModel
     private val mediaStoreObserver by lazy { MediaStoreObserver(Handler(), this) }
+    private val falleryOptions by lazy { FalleryActivityComponentHolder.createOrGetComponent(this).provideFalleryOptions() }
 
     @ExperimentalCoroutinesApi
+    @InternalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         FalleryActivityComponentHolder.createOrGetComponent(this)
-        setTheme(FalleryCoreComponentHolder.getOrThrow().provideFalleryOptions().themeResId)
+        setTheme(falleryOptions.themeResId)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fallery)
         initViewModel()
@@ -52,6 +59,7 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
         initView()
     }
 
+    @ExperimentalCoroutinesApi
     private fun initialize() {
         permissionChecker(Manifest.permission.WRITE_EXTERNAL_STORAGE, granted = {
             falleryViewModel.storagePermissionGranted()
@@ -61,6 +69,7 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
     }
 
 
+    @InternalCoroutinesApi
     @ExperimentalCoroutinesApi
     private fun initViewModel() {
         falleryViewModel = ViewModelProvider(
@@ -109,21 +118,51 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
         })
     }
 
+    @ExperimentalCoroutinesApi
+    private fun setupMediaCountView(value: MediaCountModel) {
+        if (value.selectedCount <= 0) {
+            toolbarFalleryActivity.title = getString(falleryOptions.toolbarTitle)
+            toolbarFalleryActivity.setNavigationIcon(R.drawable.fallery_ic_back_arrow)
+            toolbarFalleryActivity.setNavigationOnClickListener { onBackPressed() }
+        } else {
+            toolbarFalleryActivity.setNavigationIcon(R.drawable.fallery_ic_cancel)
+            toolbarFalleryActivity.setNavigationOnClickListener { falleryViewModel.deselectAllSelections() }
+            toolbarFalleryActivity.title = SpannableStringBuilder().apply {
+                append(value.selectedCount.toString())
+                append(" ${getString(R.string.of)} ")
+                append((value.totalCount).toString())
+                append(" ${getString(R.string.selected_media)}")
+                val colorAccent = FalleryActivityComponentHolder.getOrNull()?.provideFalleryStyleAttrs()?.falleryColorAccent ?: Color.BLUE
+
+                val totalStartIndex = value.selectedCount.toString().length + 4
+                val totalEndIndex = (value.selectedCount.toString().length + 4) + value.totalCount.toString().length
+
+                setSpan(StyleSpan(Typeface.BOLD), 0, value.selectedCount.toString().length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+                setSpan(StyleSpan(Typeface.BOLD), totalStartIndex, totalEndIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+                setSpan(ForegroundColorSpan(colorAccent), 0, value.selectedCount.toString().length, 0)
+                setSpan(ForegroundColorSpan(colorAccent), totalStartIndex, totalEndIndex, 0)
+            }
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    @InternalCoroutinesApi
     private fun initView() {
         addCameraMenuItem()
         addRecyclerViewItemViewModeMenuItem()
         toolbarFalleryActivity.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.bucketListMenuItemShowRecyclerViewItemModelChanger -> {
-                    FalleryCoreComponentHolder.getOrThrow().provideFalleryOptions().also { falleryOptions ->
-                        if (falleryOptions.bucketRecyclerViewItemMode == BucketRecyclerViewItemMode.LinearStyle) {
-                            falleryOptions.bucketRecyclerViewItemMode = BucketRecyclerViewItemMode.GridStyle
-                        } else
-                            falleryOptions.bucketRecyclerViewItemMode = BucketRecyclerViewItemMode.LinearStyle
 
-                        it.icon = getRecyclerViewItemViewModeIcon(falleryOptions.bucketRecyclerViewItemMode)
-                        falleryViewModel.changeRecyclerViewItemMode(falleryOptions.bucketRecyclerViewItemMode)
-                    }
+                    if (falleryOptions.bucketRecyclerViewItemMode == BucketRecyclerViewItemMode.LinearStyle) {
+                        falleryOptions.bucketRecyclerViewItemMode = BucketRecyclerViewItemMode.GridStyle
+                    } else
+                        falleryOptions.bucketRecyclerViewItemMode = BucketRecyclerViewItemMode.LinearStyle
+
+                    it.icon = getRecyclerViewItemViewModeIcon(falleryOptions.bucketRecyclerViewItemMode)
+                    falleryViewModel.changeRecyclerViewItemMode(falleryOptions.bucketRecyclerViewItemMode)
+
                 }
             }
 
@@ -133,7 +172,7 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
 
     private fun addCameraMenuItem() {
         toolbarFalleryActivity.apply {
-            FalleryCoreComponentHolder.getOrThrow().provideFalleryOptions().cameraEnabledOptions.also {
+            falleryOptions.cameraEnabledOptions.also {
                 if (it.enabled) {
                     menu.add(0, R.id.bucketListMenuItemCamera, 1, R.string.camera).apply {
                         setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
@@ -167,20 +206,34 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
             drawable.setColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
     }
 
+    @ExperimentalCoroutinesApi
     private fun addRecyclerViewItemViewModeMenuItem() {
         toolbarFalleryActivity.apply {
-            FalleryCoreComponentHolder.getOrThrow().provideFalleryOptions().changeBucketRecyclerViewItemModeByToolbarIcon.also {
-                val mode = FalleryActivityComponentHolder.getOrNull()?.provideFalleryOptions()?.bucketRecyclerViewItemMode
+            falleryOptions.changeBucketRecyclerViewItemModeByToolbarIcon.also {
+                val mode = falleryOptions.bucketRecyclerViewItemMode
                 if (it) {
                     menu.add(0, R.id.bucketListMenuItemShowRecyclerViewItemModelChanger, 0, R.string.list_mode).apply {
                         setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
                         icon = getRecyclerViewItemViewModeIcon(mode)
                     }
+
+                    showOrHideMenusBasedOnFragment()
                 }
             }
         }
     }
 
+    @ExperimentalCoroutinesApi
+    private fun showOrHideMenusBasedOnFragment() {
+        try {
+            toolbarFalleryActivity.menu?.findItem(R.id.bucketListMenuItemShowRecyclerViewItemModelChanger)?.isVisible =
+                supportFragmentManager.findFragmentById(R.id.layoutFragmentContainer) is BucketListFragment
+        } catch (ignored: Throwable) {
+            ignored.printStackTrace()
+        }
+    }
+
+    @ExperimentalCoroutinesApi
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
@@ -195,6 +248,7 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
         }
     }
 
+    @ExperimentalCoroutinesApi
     private fun writeExternalStoragePermissionDenied() {
         AlertDialog.Builder(this@FalleryActivity, R.style.Fallery_AlertDialogTheme)
             .setMessage(R.string.access_external_storage_denied)
@@ -209,6 +263,7 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
             .show()
     }
 
+    @ExperimentalCoroutinesApi
     private fun showPermanentlyPermissionDeniedDialog() {
         AlertDialog.Builder(this@FalleryActivity, R.style.Fallery_AlertDialogTheme)
             .setMessage(R.string.access_external_storage_permanently_denied)
@@ -303,4 +358,14 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
         mediaStoreObserver
     else
         null
+
+    @ExperimentalCoroutinesApi
+    override fun onBackPressed() {
+        if (supportFragmentManager.findFragmentById(R.id.layoutFragmentContainer) is BucketListFragment && falleryViewModel.userSelectedMedias)
+            falleryViewModel.deselectAllSelections()
+        else {
+            super.onBackPressed()
+            showOrHideMenusBasedOnFragment()
+        }
+    }
 }

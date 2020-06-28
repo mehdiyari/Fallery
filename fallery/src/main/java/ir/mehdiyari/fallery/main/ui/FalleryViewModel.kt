@@ -2,9 +2,15 @@ package ir.mehdiyari.fallery.main.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import ir.mehdiyari.fallery.main.fallery.BucketRecyclerViewItemMode
+import ir.mehdiyari.fallery.main.fallery.FalleryOptions
+import ir.mehdiyari.fallery.main.fallery.UNLIMITED_SELECT
+import ir.mehdiyari.fallery.utils.BaseViewModel
 import ir.mehdiyari.fallery.utils.SingleLiveEvent
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @ExperimentalCoroutinesApi
 internal class FalleryViewModel(
@@ -33,8 +39,16 @@ internal class FalleryViewModel(
     val storagePermissionGrantedStateFlow: StateFlow<Boolean?> = storagePermissionGrantedStateMutableStateFlow
     private val bucketRecyclerViewMode = MutableLiveData<BucketRecyclerViewItemMode>()
     val bucketRecycleViewModeLiveData: LiveData<BucketRecyclerViewItemMode> = bucketRecyclerViewMode
-    private val storagePermissionGrantedStateMutableLiveData = MutableLiveData<Boolean>()
-    val storagePermissionGrantedStateLiveData: LiveData<Boolean> = storagePermissionGrantedStateMutableLiveData
+    private val mediaCountMutableStateFlow = MutableStateFlow(MediaCountModel(0, 0))
+    val mediaCountStateFlow: StateFlow<MediaCountModel> = mediaCountMutableStateFlow
+
+    private val allMediaDeselectedMutableStateFlow = MutableStateFlow(false)
+    val allMediaDeselectedStateFlow : Flow<Boolean> = allMediaDeselectedMutableStateFlow
+
+    init {
+        if (falleryOptions.captionEnabledOptions.enabled && mediaSelectionTracker.isNotEmpty())
+            captionEnabledMutableLiveData.value = falleryOptions.captionEnabledOptions.enabled
+    }
 
     fun changeRecyclerViewItemMode(bucketRecyclerViewItemMode: BucketRecyclerViewItemMode) {
         bucketRecyclerViewMode.value = bucketRecyclerViewItemMode
@@ -49,16 +63,40 @@ internal class FalleryViewModel(
         storagePermissionGrantedStateMutableStateFlow.value = true
     }
 
-    fun openBucketWithId(it: Long) {
-        currentFragment.value = FalleryView.BucketContent(it)
+    fun requestDeselectingMedia(path: String): Boolean {
+        if (!mediaSelectionTracker.contains(path)) return false
+        return mediaSelectionTracker.remove(path).also {
+            if (falleryOptions.captionEnabledOptions.enabled && it && mediaSelectionTracker.isEmpty())
+                captionEnabledMutableLiveData.value = false
+
+            if (falleryOptions.mediaCountOptions.enabled && it)
+                mediaCountMutableStateFlow.value = MediaCountModel(mediaSelectionTracker.size, totalMediaCount)
+        }
     }
-}
 
-sealed class FalleryView {
-    object BucketList : FalleryView()
-    data class BucketContent(
-        val bucketId: Long
-    ) : FalleryView()
+    fun requestSelectingMedia(path: String): Boolean {
+        mediaSelectionTracker.remove(path)
+        if (falleryOptions.mediaTypeFilterOptions.maxSelectableMedia != UNLIMITED_SELECT && falleryOptions.mediaTypeFilterOptions.maxSelectableMedia ==  mediaSelectionTracker.size) {
+            return false
+        }
 
-    object PhotoPreview : FalleryView()
+        return mediaSelectionTracker.add(path).also {
+            if (falleryOptions.captionEnabledOptions.enabled && it && mediaSelectionTracker.size == 1)
+                captionEnabledMutableLiveData.value = true
+
+            if (falleryOptions.mediaCountOptions.enabled && it)
+                mediaCountMutableStateFlow.value = MediaCountModel(mediaSelectionTracker.size, totalMediaCount)
+        }
+    }
+
+    fun deselectAllSelections() {
+        mediaSelectionTracker.clear()
+        allMediaDeselectedMutableStateFlow.value = true
+        allMediaDeselectedMutableStateFlow.value = false
+        if (falleryOptions.captionEnabledOptions.enabled)
+            captionEnabledMutableLiveData.value = false
+
+        if (falleryOptions.mediaCountOptions.enabled)
+            mediaCountMutableStateFlow.value = MediaCountModel(0, totalMediaCount)
+    }
 }

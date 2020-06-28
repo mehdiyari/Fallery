@@ -126,10 +126,9 @@ internal class BucketListFragment : Fragment() {
                 }
             })
 
-            lifecycleScope.launch(Dispatchers.Main) {
-                bucketsStateFlow.collect {
-                    bucketAdapter.submitList(it)
-                }
+            lifecycleScope.launch {
+                launch { allMediaCountChanged.collect { falleryViewModel.totalMediaCount = it } }
+                bucketsStateFlow.collect { bucketAdapter.submitList(it) }
             }
         }
     }

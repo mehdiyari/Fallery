@@ -11,10 +11,20 @@ internal class FalleryViewModel(
     private val falleryOptions: FalleryOptions
 ) : BaseViewModel() {
 
-    val currentFragment = SingleLiveEvent<FalleryView>()
+    val currentFragmentLiveData = SingleLiveEvent<FalleryView>()
+
+    val userSelectedMedias: Boolean
+        get() = mediaSelectionTracker.isNotEmpty()
+
+    val mediaSelectionTracker = mutableListOf<String>()
+    var totalMediaCount = 0
+        set(value) {
+            field = if (falleryOptions.mediaTypeFilterOptions.maxSelectableMedia == UNLIMITED_SELECT) value else falleryOptions.mediaTypeFilterOptions.maxSelectableMedia
+        }
+        get() = if (falleryOptions.mediaTypeFilterOptions.maxSelectableMedia == UNLIMITED_SELECT)  field else falleryOptions.mediaTypeFilterOptions.maxSelectableMedia
 
     init {
-        currentFragment.value = FalleryView.BucketList
+        currentFragmentLiveData.value = FalleryView.BucketList
     }
 
     private val storagePermissionGrantedStateMutableStateFlow = MutableStateFlow<Boolean?>(null)
@@ -26,6 +36,11 @@ internal class FalleryViewModel(
 
     fun changeRecyclerViewItemMode(bucketRecyclerViewItemMode: BucketRecyclerViewItemMode) {
         bucketRecyclerViewMode.value = bucketRecyclerViewItemMode
+    }
+
+    fun openBucketWithId(it: Long) {
+        currentFragmentLiveData.value = FalleryView.BucketContent(it)
+
     }
 
     fun storagePermissionGranted() {

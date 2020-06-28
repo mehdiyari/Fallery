@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
-    android:background="?attr/fallery_color_primary"
-    android:minHeight="?attr/actionBarSize">
+    android:id="@+id/relativeLayoutCaptionLayout"
+    android:layout_height="@dimen/caption_layout_height"
+    android:background="?attr/fallery_color_primary">
 
     <FrameLayout
         android:id="@+id/frameLayoutCaptionHolder"
@@ -13,11 +13,7 @@
         android:paddingStart="12dp"
         android:paddingEnd="12dp"
         android:layout_centerVertical="true"
-        android:layout_toStartOf="@+id/imageViewSendMessage">
-
-        <include layout="@layout/caption_edit_text_layout"/>
-
-    </FrameLayout>
+        android:layout_toStartOf="@+id/imageViewSendMessage"/>
 
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -29,7 +25,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentTop="true"
         android:layout_centerVertical="true"
-        android:padding="8dp"
+        android:padding="10dp"
         android:src="@drawable/fallery_icon_send"
         android:tint="?attr/fallery_icon_tint_color" />
 

@@ -27,6 +27,8 @@ internal class FalleryViewModel(
         currentFragmentLiveData.value = FalleryView.BucketList
     }
 
+    private val captionEnabledMutableLiveData = MutableLiveData<Boolean>()
+    val captionEnabledLiveData = captionEnabledMutableLiveData
     private val storagePermissionGrantedStateMutableStateFlow = MutableStateFlow<Boolean?>(null)
     val storagePermissionGrantedStateFlow: StateFlow<Boolean?> = storagePermissionGrantedStateMutableStateFlow
     private val bucketRecyclerViewMode = MutableLiveData<BucketRecyclerViewItemMode>()

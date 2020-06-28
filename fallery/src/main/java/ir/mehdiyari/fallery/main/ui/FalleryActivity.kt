@@ -12,9 +12,13 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.view.MenuItem
+import android.view.View
+import android.view.animation.TranslateAnimation
+import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -29,6 +33,7 @@ import ir.mehdiyari.fallery.utils.WRITE_EXTERNAL_REQUEST_CODE
 import ir.mehdiyari.fallery.utils.getSettingIntent
 import ir.mehdiyari.fallery.utils.permissionChecker
 import kotlinx.android.synthetic.main.activity_fallery.*
+import kotlinx.android.synthetic.main.caption_layout.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
@@ -58,8 +63,25 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
 
     @ExperimentalCoroutinesApi
     private fun initViewModel() {
-        falleryViewModel = ViewModelProvider(this)[FalleryViewModel::class.java]
-        falleryViewModel.currentFragment.observeSingleEvent(this@FalleryActivity, Observer { falleryView ->
+        falleryViewModel = ViewModelProvider(
+            this,
+            FalleryActivityComponentHolder.createOrGetComponent(this).provideFalleryViewModelFactory()
+        )[FalleryViewModel::class.java].apply {
+            captionEnabledLiveData.observe(this@FalleryActivity, Observer {
+                if (it)
+                    showCaptionLayout(withAnim = true)
+                else
+                    hideCaptionLayout(withAnim = true)
+            })
+
+            lifecycleScope.launch {
+                mediaCountStateFlow.collect {
+                    setupMediaCountView(it)
+                }
+            }
+        }
+
+        falleryViewModel.currentFragmentLiveData.observeSingleEvent(this@FalleryActivity, Observer { falleryView ->
             when (falleryView) {
                 is FalleryView.BucketList -> {
                     supportFragmentManager.beginTransaction()
@@ -198,6 +220,67 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
                 onBackPressed()
             }
             .show()
+    }
+
+    private fun hideCaptionLayout(withAnim: Boolean) {
+        prepareCaptionViewStub()
+        if (relativeLayoutCaptionLayout?.visibility == View.GONE) return
+        frameLayoutCaptionHolder.findViewById<EditText>(R.id.falleryEditTextCaption)?.hideKeyboard()
+        if (!withAnim)
+            relativeLayoutCaptionLayout?.visibility = View.GONE
+        else {
+            relativeLayoutCaptionLayout?.startAnimation(
+                TranslateAnimation(
+                    0f, 0f, 0f, (relativeLayoutCaptionLayout?.height)?.toFloat() ?: 0f
+                ).apply {
+                    fillAfter = true
+                    duration = 250
+                    setOnAnimationEndListener {
+                        relativeLayoutCaptionLayout.visibility = View.GONE
+                        relativeLayoutCaptionLayout.animation = null
+                    }
+                }
+            )
+        }
+    }
+
+    private fun showCaptionLayout(withAnim: Boolean) {
+        prepareCaptionViewStub()
+        if (relativeLayoutCaptionLayout?.visibility == View.VISIBLE) return
+        if (!withAnim)
+            relativeLayoutCaptionLayout?.visibility = View.VISIBLE
+        else {
+            relativeLayoutCaptionLayout.visibility = View.VISIBLE
+            relativeLayoutCaptionLayout?.startAnimation(
+                TranslateAnimation(
+                    0f, 0f, ((relativeLayoutCaptionLayout?.height)?.toFloat() ?: 0f), 0f
+                ).apply {
+                    fillAfter = true
+                    duration = 250
+                    setOnAnimationEndListener {
+                        relativeLayoutCaptionLayout.animation = null
+                    }
+                }
+            )
+        }
+    }
+
+    private fun prepareCaptionViewStub() {
+        if (viewStubCaptionLayout != null && viewStubCaptionLayout.parent != null) {
+            (try {
+                viewStubCaptionLayout.inflate()
+                falleryOptions.captionEnabledOptions.editTextLayoutResId.let {
+                    LayoutInflater.from(this).inflate(it, frameLayoutCaptionHolder, false).findViewById<AppCompatEditText>(R.id.falleryEditTextCaption)
+                }
+            } catch (ignored: Throwable) {
+                Log.e(FALLERY_LOG_TAG, "error while inflating captionLayoutResId. switch to default implementation")
+                LayoutInflater.from(this).inflate(R.layout.caption_edit_text_layout, frameLayoutCaptionHolder, false)
+                    .findViewById<AppCompatEditText>(R.id.falleryEditTextCaption)
+            }).also {
+                frameLayoutCaptionHolder.addView(it)
+            }
+        }
+
     }
 
     override fun onDestroy() {

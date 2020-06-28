@@ -20,16 +20,16 @@
             android:theme="@style/ToolbarTheme"
             app:contentInsetStart="0dp"
             app:contentInsetStartWithNavigation="0dp"
-            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:navigationIcon="@drawable/fallery_ic_back_arrow"
             app:popupTheme="@style/AppTheme.Dark.PopupOverlay"
             app:subtitleTextColor="?attr/fallery_secondary_text_color"
             app:title="@string/fallery_toolbar_title"
             app:titleTextAppearance="@style/toolbarTitleTextAppearance" />
 
-        <FrameLayout
-            android:id="@+id/frameLayoutFragmentContainer"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/layoutFragmentContainer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
 
     </LinearLayout>

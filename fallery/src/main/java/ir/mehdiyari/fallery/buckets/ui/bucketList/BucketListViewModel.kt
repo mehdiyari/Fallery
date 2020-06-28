@@ -16,7 +16,7 @@ import kotlin.coroutines.CoroutineContext
 internal class BucketListViewModel constructor(
     private val abstractMediaBucketProvider: AbstractMediaBucketProvider,
     private val bucketType :BucketType = BucketType.VIDEO_PHOTO_BUCKETS
-) : ViewModel() {
+) : BaseViewModel() {
 
     @ExperimentalCoroutinesApi
     private val bucketsMutableStateFlow = MutableStateFlow<List<MediaBucket>>(listOf())

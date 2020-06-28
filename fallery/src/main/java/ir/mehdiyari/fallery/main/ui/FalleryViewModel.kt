@@ -6,7 +6,10 @@ import androidx.lifecycle.ViewModel
 import ir.mehdiyari.fallery.main.fallery.BucketRecyclerViewItemMode
 import ir.mehdiyari.fallery.utils.SingleLiveEvent
 
-class FalleryViewModel : ViewModel() {
+@ExperimentalCoroutinesApi
+internal class FalleryViewModel(
+    private val falleryOptions: FalleryOptions
+) : BaseViewModel() {
 
     val currentFragment = SingleLiveEvent<FalleryView>()
 

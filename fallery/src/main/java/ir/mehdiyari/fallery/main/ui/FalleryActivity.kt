@@ -85,18 +85,24 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
             when (falleryView) {
                 is FalleryView.BucketList -> {
                     supportFragmentManager.beginTransaction()
-                        .add(R.id.frameLayoutFragmentContainer, BucketListFragment())
+                        .add(R.id.layoutFragmentContainer, BucketListFragment())
                         .commit()
+                    toolbarFalleryActivity.menu?.findItem(R.id.bucketListMenuItemShowRecyclerViewItemModelChanger)?.isVisible = true
                 }
-                is FalleryView.BucketContent -> supportFragmentManager.beginTransaction()
-                    .replace(R.id.frameLayoutFragmentContainer, BucketContentFragment().apply {
-                        arguments = Bundle().apply {
-                            putLong("bucket_id", falleryView.bucketId)
-                        }
-                    })
-                    .addToBackStack(null)
-                    .commit()
-                is FalleryView.PhotoPreview -> TODO()
+                is FalleryView.BucketContent -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.layoutFragmentContainer, BucketContentFragment().apply {
+                            arguments = Bundle().apply {
+                                putLong("bucket_id", falleryView.bucketId)
+                            }
+                        })
+                        .addToBackStack(null)
+                        .commit()
+                    toolbarFalleryActivity.menu?.findItem(R.id.bucketListMenuItemShowRecyclerViewItemModelChanger)?.isVisible = false
+                }
+                is FalleryView.PhotoPreview -> {
+                    toolbarFalleryActivity.visibility = View.GONE
+                }
                 else -> Unit
             }
 

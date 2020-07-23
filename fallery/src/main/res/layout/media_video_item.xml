@@ -55,7 +55,6 @@
             android:layout_width="23dp"
             android:layout_height="23dp"
             android:layout_margin="3dp"
-            android:background="@drawable/fallery_deselected_media"
             android:layout_gravity="end|bottom"/>
 
     </FrameLayout>

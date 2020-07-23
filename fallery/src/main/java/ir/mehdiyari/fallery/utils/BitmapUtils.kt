@@ -2,7 +2,10 @@ package ir.mehdiyari.fallery.utils
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
 import android.media.MediaMetadataRetriever
+import androidx.annotation.ColorInt
 import ir.mehdiyari.fallery.imageLoader.PhotoDiminution
 import java.io.File
 import java.io.FileOutputStream
@@ -71,3 +74,14 @@ internal fun getHeightBasedOnScaledWidth(
     originalHeight: Int,
     scaledWidth: Int
 ): Int = (originalHeight / (originalWidth.toFloat() / scaledWidth)).toInt()
+
+fun createCircleDrawableWithStroke(
+    @ColorInt backgroundColor: Int,
+    strokeWidth: Int,
+    @ColorInt strokeColor: Int
+): Drawable? {
+    val defaultDrawable = GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, intArrayOf(backgroundColor, backgroundColor))
+    defaultDrawable.cornerRadius = 300f
+    defaultDrawable.setStroke(strokeWidth, strokeColor)
+    return defaultDrawable
+}

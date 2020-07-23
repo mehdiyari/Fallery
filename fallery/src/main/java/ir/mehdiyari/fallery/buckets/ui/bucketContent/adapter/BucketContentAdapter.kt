@@ -1,6 +1,6 @@
 package ir.mehdiyari.fallery.buckets.ui.bucketContent.adapter
 
-import android.util.Log
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +18,9 @@ import kotlinx.android.synthetic.main.media_photo_item.view.*
 import kotlinx.android.synthetic.main.media_video_item.view.*
 
 class BucketContentAdapter constructor(
-    private val imageLoader: FalleryImageLoader
+    private val imageLoader: FalleryImageLoader,
+    private val selectedDrawable: Drawable,
+    private val deselectedDrawable: Drawable
 ) : ListAdapter<Media, RecyclerView.ViewHolder>(object : DiffUtil.ItemCallback<Media>() {
     override fun areItemsTheSame(oldItem: Media, newItem: Media): Boolean = oldItem.getMediaId() == newItem.getMediaId()
     override fun areContentsTheSame(oldItem: Media, newItem: Media): Boolean = oldItem == newItem
@@ -29,6 +31,7 @@ class BucketContentAdapter constructor(
     var selectedMediaTracker: MutableList<String>? = null
     var onMediaSelected: ((String) -> (Boolean))? = null
     var onMediaDeselected: ((String) -> (Boolean))? = null
+    var onMediaClick: ((String) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder = LayoutInflater.from(parent.context)
         .inflate(viewType, parent, false).let {
@@ -62,19 +65,19 @@ class BucketContentAdapter constructor(
             else
                 onMediaSelected?.invoke(path)) == true
         ) onSuccess()
-
-        Log.e("MehdiYari", "hello 121212")
     }
 
     inner class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         init {
             itemView.selectedPhotoToggleContainer.setOnClickListener {
-                Log.e("MehdiYari", "hello onCLikc")
                 onClickSelectingToggle(adapterPosition) {
                     initSelectingStateOfView(adapterPosition)
-                    Log.e("MehdiYari", "hello 3333333")
                 }
+            }
+
+            itemView.imageViewPhotoMedia.setOnClickListener {
+                onMediaClick?.invoke(getItemPath(adapterPosition))
             }
         }
 
@@ -95,9 +98,9 @@ class BucketContentAdapter constructor(
 
         private fun initSelectingStateOfView(adapterPosition: Int) {
             if (selectedMediaTracker?.contains(getItemPath(adapterPosition)) == true)
-                itemView.imageViewSelectDeselectPhoto.setBackgroundResource(R.drawable.fallery_selected_media)
+                itemView.imageViewSelectDeselectPhoto.background = selectedDrawable
             else
-                itemView.imageViewSelectDeselectPhoto.setBackgroundResource(R.drawable.fallery_deselected_media)
+                itemView.imageViewSelectDeselectPhoto.background = deselectedDrawable
         }
 
     }
@@ -116,6 +119,10 @@ class BucketContentAdapter constructor(
                 onClickSelectingToggle(adapterPosition) {
                     initSelectingStateOfView(adapterPosition)
                 }
+            }
+
+            itemView.imageViewVideoMedia.setOnClickListener {
+                onMediaClick?.invoke(getItemPath(adapterPosition))
             }
         }
 
@@ -139,9 +146,9 @@ class BucketContentAdapter constructor(
 
         private fun initSelectingStateOfView(adapterPosition: Int) {
             if (selectedMediaTracker?.contains(getItemPath(adapterPosition)) == true)
-                itemView.imageViewSelectDeselectVideo.setBackgroundResource(R.drawable.fallery_selected_media)
+                itemView.imageViewSelectDeselectVideo.background = selectedDrawable
             else
-                itemView.imageViewSelectDeselectVideo.setBackgroundResource(R.drawable.fallery_deselected_media)
+                itemView.imageViewSelectDeselectVideo.background = deselectedDrawable
         }
     }
 }

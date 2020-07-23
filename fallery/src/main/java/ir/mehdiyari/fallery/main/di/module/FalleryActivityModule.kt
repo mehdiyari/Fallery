@@ -1,6 +1,8 @@
 package ir.mehdiyari.fallery.main.di.module
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.Drawable
 import androidx.fragment.app.FragmentActivity
 import ir.mehdiyari.fallery.buckets.ui.bucketContent.adapter.BucketContentAdapter
 import ir.mehdiyari.fallery.imageLoader.FalleryImageLoader
@@ -98,4 +100,12 @@ internal class FalleryActivityModule(
     override fun provideFalleryViewModelFactory(): FalleryViewModelFactory = FalleryViewModelFactory(
         provideFalleryOptions()
     )
+
+    override fun provideSelectedDrawable(): Drawable = createCircleDrawableWithStroke(
+        provideFalleryOptions().selectedMediaToggleBackgroundColor, dpToPx(2), Color.WHITE
+    )!!
+
+    override fun provideDeselectedDrawable(): Drawable = createCircleDrawableWithStroke(
+        Color.parseColor("#54000000"), dpToPx(2), Color.WHITE
+    )!!
 }

@@ -1,39 +1,37 @@
 package ir.mehdiyari.fallery.utils
 
-import android.content.Context
 import android.graphics.Bitmap
-import android.media.MediaMetadataRetriever
 import android.media.ThumbnailUtils
 import android.os.Build
 import android.provider.MediaStore
 import android.util.Size
 import androidx.annotation.WorkerThread
-import androidx.fragment.app.FragmentActivity
+import ir.mehdiyari.fallery.imageLoader.PhotoDiminution
 import java.io.File
-import java.io.FileOutputStream
 
 
 @WorkerThread
 fun createThumbForVideos(
     videosPath: List<Pair<String, Long>>,
-    context: Context
+    cacheDir: String,
+    highQuality: Pair<Boolean, PhotoDiminution?> = false to null
 ): List<String> = mutableListOf<String>().apply {
     videosPath.forEach {
         val cachePath =
-            "${context.externalCacheDir ?: context.cacheDir}/${File(it.first).nameWithoutExtension}__${it.second}.jpg"
+            "$cacheDir/${File(it.first).nameWithoutExtension}__${it.second}.jpg"
         if (File(cachePath).exists())
             add(cachePath)
         else {
             (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 ThumbnailUtils.createVideoThumbnail(
                     File(it.first),
-                    Size(512, 384),
+                    if (!highQuality.first) Size(512, 384) else Size(highQuality.second!!.width, highQuality.second!!.height),
                     null
                 )
             } else {
                 ThumbnailUtils.createVideoThumbnail(
                     it.first,
-                    MediaStore.Images.Thumbnails.MINI_KIND
+                    if (highQuality.first) MediaStore.Images.Thumbnails.FULL_SCREEN_KIND else MediaStore.Images.Thumbnails.MINI_KIND
                 )
             }).apply {
                 this.saveBitmapToFile(
@@ -44,4 +42,15 @@ fun createThumbForVideos(
             add(cachePath)
         }
     }
+}.toList()
+
+fun createThumbForVideosOrEmpty(
+    videosPath: List<Pair<String, Long>>,
+    cacheDir: String,
+    highQuality: Pair<Boolean, PhotoDiminution?> = false to null
+): List<String> = try {
+    createThumbForVideos(videosPath, cacheDir, highQuality)
+} catch (ignored: Throwable) {
+    ignored.printStackTrace()
+    listOf("")
 }

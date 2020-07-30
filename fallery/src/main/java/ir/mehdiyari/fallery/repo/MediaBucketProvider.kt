@@ -131,15 +131,14 @@ internal class MediaBucketProvider constructor(
         bucketType: BucketType, id: Long, path: String
     ): Pair<File, Long> = when (bucketType) {
         BucketType.ONLY_PHOTO_BUCKETS -> File(path) to 0L
-        BucketType.ONLY_VIDEO_BUCKETS -> File(createThumbForVideos(listOf(path to id), context).first()) to 0L
+        BucketType.ONLY_VIDEO_BUCKETS -> File(createThumbForVideosOrEmpty(listOf(path to id), cacheDir.cacheDir).first()) to 0L
         else -> {
             getFirstMediaFromBucketByMediaType(id, bucketType).let { pair ->
                 val file = File(pair.first)
-                if (VideoMediaTypes.values().map { type -> type.value.second }
-                        .firstOrNull { it.contains(file.extension.toLowerCase()) } != null) File(
-                    createThumbForVideos(listOf(file.path to id), context)
-                        .first()
-                ) to pair.second
+                if (VideoMediaTypes.values().map { type ->
+                        type.value.second
+                    }.firstOrNull { it.contains(file.extension.toLowerCase()) } != null
+                ) File(createThumbForVideosOrEmpty(listOf(file.path to id), cacheDir.cacheDir).first()) to pair.second
                 else file to pair.second
             }
         }

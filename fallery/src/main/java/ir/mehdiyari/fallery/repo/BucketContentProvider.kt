@@ -53,7 +53,7 @@ internal class BucketContentProvider constructor(
         if (!isPhoto) mediaMetadataRetriever.setDataSource(path)
 
         val thumbnail = if (!isPhoto)
-            createThumbForVideos(listOf(Pair(path, cursor.getLong(cursor.getColumnIndex(photoWithVideoProjection[5])))), context).firstOrNull()
+            createThumbForVideosOrEmpty(listOf(Pair(path, cursor.getLong(cursor.getColumnIndex(photoWithVideoProjection[5])))), cacheDir.cacheDir).firstOrNull()
         else ""
 
         val id = cursor.getLong(cursor.getColumnIndex(photoWithVideoProjection[0]))

@@ -1,22 +1,31 @@
 package ir.mehdiyari.fallery.utils
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
+import android.provider.MediaStore
 import android.provider.Settings
 import android.view.animation.Animation
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.Toast
 import androidx.annotation.FloatRange
 import androidx.annotation.IntRange
+import androidx.core.content.FileProvider
+import ir.mehdiyari.fallery.R
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.math.floor
 
 fun divideScreenToEqualPart(
     @IntRange(from = 1) displayWidth: Int,
     @FloatRange(from = 1.toDouble()) itemWidth: Float,
     @IntRange(from = 1) minCount: Int
-): Int = Math.floor((displayWidth / itemWidth).toDouble()).toInt().let {
+): Int = floor((displayWidth / itemWidth).toDouble()).toInt().let {
     return if (it == 0)
         minCount
     else
@@ -74,3 +83,5 @@ fun Activity.getIntentForTakingPhoto(
         }
     }
 }
+
+fun generatePhotoFilename(extension: String = "jpg"): String = "photo" + SimpleDateFormat("yyyyMMdd_HHmmssSSS", Locale.US).format(Date()) + extension

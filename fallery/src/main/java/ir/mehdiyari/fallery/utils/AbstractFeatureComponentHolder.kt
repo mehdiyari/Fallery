@@ -27,7 +27,6 @@ abstract class AbstractFeatureComponentHolder<T> {
         try {
             Log.d(FALLERY_LOG_TAG, "${this::class.simpleName} has been destroyed")
             this.component = null
-            Runtime.getRuntime().gc()
         } catch (ignored: Throwable) {
             ignored.printStackTrace()
         }

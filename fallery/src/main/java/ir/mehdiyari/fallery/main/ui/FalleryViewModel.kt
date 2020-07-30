@@ -33,8 +33,10 @@ internal class FalleryViewModel(
         currentFragmentLiveData.value = FalleryView.BucketList
     }
 
-    private val captionEnabledMutableLiveData = MutableLiveData<Boolean>()
-    val captionEnabledLiveData = captionEnabledMutableLiveData
+    private val captionEnabledMutableStateFlow = MutableStateFlow<Boolean?>(null)
+    val captionEnabledStateFlow: StateFlow<Boolean?> = captionEnabledMutableStateFlow
+    private val sendActionEnabledMutableStateFlow = MutableStateFlow<Boolean?>(null)
+    val sendActionEnabledStateFlow: StateFlow<Boolean?> = sendActionEnabledMutableStateFlow
     private val storagePermissionGrantedStateMutableStateFlow = MutableStateFlow<Boolean?>(null)
     val storagePermissionGrantedStateFlow: StateFlow<Boolean?> = storagePermissionGrantedStateMutableStateFlow
     private val bucketRecyclerViewMode = MutableLiveData<BucketRecyclerViewItemMode>()
@@ -46,8 +48,12 @@ internal class FalleryViewModel(
     val allMediaDeselectedStateFlow : Flow<Boolean> = allMediaDeselectedMutableStateFlow
 
     init {
-        if (falleryOptions.captionEnabledOptions.enabled && mediaSelectionTracker.isNotEmpty())
-            captionEnabledMutableLiveData.value = falleryOptions.captionEnabledOptions.enabled
+        if (mediaSelectionTracker.isNotEmpty() && captionOrSendActionState) {
+            if (falleryOptions.captionEnabledOptions.enabled)
+                captionEnabledMutableStateFlow.value = true
+            else
+                sendActionEnabledMutableStateFlow.value = true
+        }
     }
 
     fun changeRecyclerViewItemMode(bucketRecyclerViewItemMode: BucketRecyclerViewItemMode) {
@@ -66,25 +72,33 @@ internal class FalleryViewModel(
     fun requestDeselectingMedia(path: String): Boolean {
         if (!mediaSelectionTracker.contains(path)) return false
         return mediaSelectionTracker.remove(path).also {
-            if (falleryOptions.captionEnabledOptions.enabled && it && mediaSelectionTracker.isEmpty())
-                captionEnabledMutableLiveData.value = false
+            if (it && mediaSelectionTracker.isEmpty() && captionOrSendActionState) {
+                if (falleryOptions.captionEnabledOptions.enabled)
+                    captionEnabledMutableStateFlow.value = false
+                else
+                    sendActionEnabledMutableStateFlow.value = false
+            }
 
-            if (falleryOptions.mediaCountOptions.enabled && it)
+            if (falleryOptions.mediaCountEnabled && it)
                 mediaCountMutableStateFlow.value = MediaCountModel(mediaSelectionTracker.size, totalMediaCount)
         }
     }
 
     fun requestSelectingMedia(path: String): Boolean {
         mediaSelectionTracker.remove(path)
-        if (falleryOptions.mediaTypeFilterOptions.maxSelectableMedia != UNLIMITED_SELECT && falleryOptions.mediaTypeFilterOptions.maxSelectableMedia ==  mediaSelectionTracker.size) {
+        if (falleryOptions.maxSelectableMedia != UNLIMITED_SELECT && falleryOptions.maxSelectableMedia == mediaSelectionTracker.size) {
             return false
         }
 
         return mediaSelectionTracker.add(path).also {
-            if (falleryOptions.captionEnabledOptions.enabled && it && mediaSelectionTracker.size == 1)
-                captionEnabledMutableLiveData.value = true
+            if (it && mediaSelectionTracker.size == 1 && captionOrSendActionState) {
+                if (falleryOptions.captionEnabledOptions.enabled)
+                    captionEnabledMutableStateFlow.value = true
+                else
+                    sendActionEnabledMutableStateFlow.value = true
+            }
 
-            if (falleryOptions.mediaCountOptions.enabled && it)
+            if (falleryOptions.mediaCountEnabled && it)
                 mediaCountMutableStateFlow.value = MediaCountModel(mediaSelectionTracker.size, totalMediaCount)
         }
     }
@@ -93,10 +107,15 @@ internal class FalleryViewModel(
         mediaSelectionTracker.clear()
         allMediaDeselectedMutableStateFlow.value = true
         allMediaDeselectedMutableStateFlow.value = false
-        if (falleryOptions.captionEnabledOptions.enabled)
-            captionEnabledMutableLiveData.value = false
 
-        if (falleryOptions.mediaCountOptions.enabled)
+        if (captionOrSendActionState) {
+            if (falleryOptions.captionEnabledOptions.enabled)
+                captionEnabledMutableStateFlow.value = false
+            else
+                sendActionEnabledMutableStateFlow.value = false
+        }
+
+        if (falleryOptions.mediaCountEnabled)
             mediaCountMutableStateFlow.value = MediaCountModel(0, totalMediaCount)
     }
 }

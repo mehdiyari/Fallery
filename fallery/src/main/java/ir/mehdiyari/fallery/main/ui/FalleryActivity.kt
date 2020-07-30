@@ -157,6 +157,10 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
 
             true
         }
+
+        floatingButtonSendMedia.setOnClickListener {
+            falleryViewModel.prepareSelectedResults()
+        }
     }
 
     private fun addCameraMenuItem() {
@@ -347,6 +351,77 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
         mediaStoreObserver
     else
         null
+
+    private fun showSendButton(withAnim: Boolean = true) {
+        if (frameLayoutSendMedia?.visibility == View.VISIBLE) return
+
+        if (!withAnim) {
+            frameLayoutSendMedia?.visibility = View.GONE
+            return
+        }
+
+
+        floatingButtonSendMedia.visibility = View.VISIBLE
+        floatingButtonSendMedia.startAnimation(
+            TranslateAnimation(
+                ((floatingButtonSendMedia?.height)?.toFloat() ?: 0f), 0f, 0f, 0f
+            ).apply {
+                fillAfter = true
+                duration = 200
+                setOnAnimationEndListener {
+                    floatingButtonSendMedia.animation = null
+                }
+            }
+        )
+
+        frameLayoutSendMedia.visibility = View.VISIBLE
+        frameLayoutSendMedia?.startAnimation(
+            TranslateAnimation(
+                0f, 0f, ((frameLayoutSendMedia?.height)?.toFloat() ?: 0f), 0f
+            ).apply {
+                fillAfter = true
+                duration = 200
+                setOnAnimationEndListener {
+                    frameLayoutSendMedia.animation = null
+                }
+            }
+        )
+    }
+
+    private fun hideSendButton(withAnim: Boolean = true) {
+        if (frameLayoutSendMedia?.visibility == View.GONE) return
+
+        if (!withAnim) {
+            frameLayoutSendMedia?.visibility = View.VISIBLE
+            return
+        }
+
+        floatingButtonSendMedia.startAnimation(
+            TranslateAnimation(
+                0f, ((floatingButtonSendMedia?.height)?.toFloat() ?: 0f), 0f, 0f
+            ).apply {
+                fillAfter = true
+                duration = 200
+                setOnAnimationEndListener {
+                    floatingButtonSendMedia.visibility = View.GONE
+                    floatingButtonSendMedia.animation = null
+                }
+            }
+        )
+
+        frameLayoutSendMedia?.startAnimation(
+            TranslateAnimation(
+                0f, 0f, 0f, ((frameLayoutSendMedia?.height)?.toFloat() ?: 0f)
+            ).apply {
+                fillAfter = true
+                duration = 200
+                setOnAnimationEndListener {
+                    frameLayoutSendMedia.visibility = View.GONE
+                    frameLayoutSendMedia.animation = null
+                }
+            }
+        )
+    }
 
     @ExperimentalCoroutinesApi
     override fun onBackPressed() {

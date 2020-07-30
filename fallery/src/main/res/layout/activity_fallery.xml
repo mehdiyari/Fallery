@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="false"
     android:background="?attr/fallery_background_color"
     tools:context=".main.ui.FalleryActivity">
 
@@ -40,5 +41,34 @@
         android:layout_height="@dimen/caption_layout_height"
         android:layout_gravity="bottom"
         android:layout="@layout/caption_layout" />
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingButtonSendMedia"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
+        app:fabCustomSize="65dp"
+        android:layout_gravity="bottom|right"
+        android:layoutDirection="ltr"
+        android:layout_margin="16dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/fallery_icon_send"
+        android:tint="#ffffff"
+        android:visibility="gone"
+        app:elevation="4dp"
+        app:rippleColor="#ffffff"
+        tools:visibility="visible"
+        tools:ignore="RtlHardcoded" />
+
+
+    <FrameLayout
+        android:id="@+id/frameLayoutSendMedia"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:background="?attr/fallery_background_color"
+        android:visibility="gone" />
+
 
 </FrameLayout>

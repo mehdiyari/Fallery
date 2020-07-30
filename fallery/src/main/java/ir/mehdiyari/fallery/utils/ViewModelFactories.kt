@@ -2,10 +2,12 @@ package ir.mehdiyari.fallery.utils
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import ir.mehdiyari.fallery.buckets.ui.bucketContent.BucketContentViewModel
 import ir.mehdiyari.fallery.buckets.ui.bucketList.BucketListViewModel
 import ir.mehdiyari.fallery.main.fallery.FalleryOptions
 import ir.mehdiyari.fallery.main.ui.FalleryViewModel
 import ir.mehdiyari.fallery.models.BucketType
+import ir.mehdiyari.fallery.repo.AbstractBucketContentProvider
 import ir.mehdiyari.fallery.repo.AbstractMediaBucketProvider
 
 class BucketListViewModelFactory(
@@ -22,10 +24,25 @@ class BucketListViewModelFactory(
 
 class FalleryViewModelFactory(
     private val falleryOptions: FalleryOptions
-): ViewModelProvider.Factory {
+) : ViewModelProvider.Factory {
 
+    @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T = if (modelClass.isAssignableFrom(FalleryViewModel::class.java)) {
         FalleryViewModel(falleryOptions) as T
     } else throw IllegalArgumentException("this factory is just for FalleryViewModel")
 
+}
+
+
+class BucketContentViewModelFactory constructor(
+    private val abstractBucketContentProvider: AbstractBucketContentProvider,
+    private val bucketType: BucketType
+) : ViewModelProvider.Factory {
+
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T = if (modelClass.isAssignableFrom(BucketContentViewModel::class.java)) {
+        BucketContentViewModel(
+            abstractBucketContentProvider, bucketType
+        ) as T
+    } else throw IllegalArgumentException("this factory is just for BucketContentViewModel")
 }

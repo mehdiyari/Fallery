@@ -1,6 +1,8 @@
-package ir.mehdiyari.fallery.buckets.ui.bucketContent
+package ir.mehdiyari.fallery.buckets.ui.bucketContent.content
 
+import android.Manifest
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,12 +13,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import ir.mehdiyari.fallery.R
+import ir.mehdiyari.fallery.buckets.ui.bucketContent.BucketContentViewModel
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 import ir.mehdiyari.fallery.main.ui.FalleryViewModel
 import ir.mehdiyari.fallery.main.ui.MediaObserverInterface
 import ir.mehdiyari.fallery.utils.FALLERY_LOG_TAG
 import ir.mehdiyari.fallery.utils.divideScreenToEqualPart
 import ir.mehdiyari.fallery.utils.dpToPx
+import ir.mehdiyari.fallery.utils.permissionChecker
 import kotlinx.android.synthetic.main.fragment_bucket_content.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -59,9 +63,8 @@ class BucketContentFragment : Fragment() {
             selectedMediaTracker = falleryViewModel.mediaSelectionTracker
             onMediaSelected = falleryViewModel::requestSelectingMedia
             onMediaDeselected = falleryViewModel::requestDeselectingMedia
-            getItemViewWidth = {
-                (resources.displayMetrics.widthPixels / bucketContentLayoutManager.spanCount) - dpToPx(2)
-            }
+            onMediaClick = bucketContentViewModel::showPreviewFragment
+            getItemViewWidth = { (resources.displayMetrics.widthPixels / bucketContentLayoutManager.spanCount) - dpToPx(2) }
         }
     }
 
@@ -70,14 +73,11 @@ class BucketContentFragment : Fragment() {
             requireActivity(),
             FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideFalleryViewModelFactory()
         )[FalleryViewModel::class.java]
-        bucketContentViewModel = ViewModelProvider(this, object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T = FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).let {
-                @Suppress("UNCHECKED_CAST")
-                BucketContentViewModel(
-                    it.provideBucketContentProvider(), it.provideFalleryOptions().mediaTypeFilterOptions.bucketType
-                ) as T
-            }
-        })[BucketContentViewModel::class.java]
+
+        bucketContentViewModel = ViewModelProvider(
+            requireParentFragment(),
+            FalleryActivityComponentHolder.getOrNull()!!.provideBucketContentViewModelFactory()
+        )[BucketContentViewModel::class.java]
 
         arguments?.getLong("bucket_id")?.also {
             bucketContentViewModel.getMedias(it)
@@ -107,5 +107,4 @@ class BucketContentFragment : Fragment() {
             }
         }
     }
-
 }

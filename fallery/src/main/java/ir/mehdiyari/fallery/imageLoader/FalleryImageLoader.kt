@@ -5,12 +5,11 @@ import android.widget.ImageView
 
 /**
  * interface for loading photos and gif
- * default implementation of this without using external libraries such(glide, picasso) implemented
  */
 interface FalleryImageLoader {
 
     /**
-     * load photo in path [path] into [imageView] with size [resizeDiminution]
+     * load photo in [path] into [imageView] with [resizeDiminution]
      * this method called for loading thumbnails and photos
      *
      * @param context context
@@ -26,7 +25,7 @@ interface FalleryImageLoader {
     )
 
     /**
-     * load gif in path [path] into [imageView] with size [resizeDiminution]
+     * load gif in [path] into [imageView] with [resizeDiminution]
      * this method called for loading gif photos
      *
      * @param context context

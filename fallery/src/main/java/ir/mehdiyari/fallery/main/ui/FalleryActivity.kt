@@ -54,6 +54,7 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
     @InternalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         FalleryActivityComponentHolder.createOrGetComponent(this)
+        requestedOrientation = falleryOptions.orientationMode
         setTheme(falleryOptions.themeResId)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fallery)

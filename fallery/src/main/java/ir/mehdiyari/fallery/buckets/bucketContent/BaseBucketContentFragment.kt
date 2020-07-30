@@ -1,4 +1,4 @@
-package ir.mehdiyari.fallery.buckets.ui.bucketContent
+package ir.mehdiyari.fallery.buckets.bucketContent
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,8 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import ir.mehdiyari.fallery.R
-import ir.mehdiyari.fallery.buckets.ui.bucketContent.content.BucketContentFragment
-import ir.mehdiyari.fallery.buckets.ui.bucketContent.preview.PreviewFragment
+import ir.mehdiyari.fallery.buckets.bucketContent.content.BucketContentFragment
+import ir.mehdiyari.fallery.buckets.bucketContent.preview.PreviewFragment
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi

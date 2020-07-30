@@ -3,8 +3,8 @@ package ir.mehdiyari.fallery.main.di.component
 import android.content.ContentResolver
 import android.graphics.drawable.Drawable
 import androidx.fragment.app.FragmentActivity
-import ir.mehdiyari.fallery.buckets.ui.bucketContent.adapter.BucketContentAdapter
-import ir.mehdiyari.fallery.buckets.ui.bucketList.adapter.MediaBucketDiffCallback
+import ir.mehdiyari.fallery.buckets.bucketContent.adapter.BucketContentAdapter
+import ir.mehdiyari.fallery.buckets.bucketList.adapter.MediaBucketDiffCallback
 import ir.mehdiyari.fallery.models.CacheDir
 import ir.mehdiyari.fallery.models.FalleryStyleAttrs
 import ir.mehdiyari.fallery.utils.BucketContentViewModelFactory

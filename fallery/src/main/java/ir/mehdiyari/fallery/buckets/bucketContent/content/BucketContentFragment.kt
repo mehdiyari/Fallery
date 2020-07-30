@@ -1,4 +1,4 @@
-package ir.mehdiyari.fallery.buckets.ui.bucketContent.content
+package ir.mehdiyari.fallery.buckets.bucketContent.content
 
 import android.Manifest
 import android.os.Bundle
@@ -13,7 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import ir.mehdiyari.fallery.R
-import ir.mehdiyari.fallery.buckets.ui.bucketContent.BucketContentViewModel
+import ir.mehdiyari.fallery.buckets.bucketContent.BucketContentViewModel
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 import ir.mehdiyari.fallery.main.ui.FalleryViewModel
 import ir.mehdiyari.fallery.main.ui.MediaObserverInterface

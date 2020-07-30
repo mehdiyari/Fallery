@@ -5,8 +5,8 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import androidx.fragment.app.FragmentActivity
-import ir.mehdiyari.fallery.buckets.ui.bucketContent.adapter.BucketContentAdapter
-import ir.mehdiyari.fallery.buckets.ui.bucketList.adapter.MediaBucketDiffCallback
+import ir.mehdiyari.fallery.buckets.bucketContent.adapter.BucketContentAdapter
+import ir.mehdiyari.fallery.buckets.bucketList.adapter.MediaBucketDiffCallback
 import ir.mehdiyari.fallery.imageLoader.FalleryImageLoader
 import ir.mehdiyari.fallery.main.di.component.FalleryActivityComponent
 import ir.mehdiyari.fallery.main.di.component.FalleryCoreComponent
@@ -101,7 +101,12 @@ internal class FalleryActivityModule(
     override fun provideContentResolver(): ContentResolver = context.contentResolver
 
 
-    override fun provideBucketContentAdapter(): BucketContentAdapter = BucketContentAdapter(provideImageLoader(), provideSelectedDrawable(), provideDeselectedDrawable())
+    override fun provideBucketContentAdapter(): BucketContentAdapter =
+        BucketContentAdapter(
+            provideImageLoader(),
+            provideSelectedDrawable(),
+            provideDeselectedDrawable()
+        )
 
     override fun provideFalleryViewModelFactory(): FalleryViewModelFactory = FalleryViewModelFactory(
         provideFalleryOptions()

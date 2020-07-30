@@ -1,4 +1,4 @@
-package ir.mehdiyari.fallery.buckets.ui.bucketList.adapter
+package ir.mehdiyari.fallery.buckets.bucketList.adapter
 
 import androidx.recyclerview.widget.DiffUtil
 import ir.mehdiyari.fallery.models.MediaBucket

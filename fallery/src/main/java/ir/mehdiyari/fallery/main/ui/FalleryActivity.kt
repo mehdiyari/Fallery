@@ -29,8 +29,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import ir.mehdiyari.fallery.R
-import ir.mehdiyari.fallery.buckets.ui.bucketContent.BaseBucketContentFragment
-import ir.mehdiyari.fallery.buckets.ui.bucketList.BucketListFragment
+import ir.mehdiyari.fallery.buckets.bucketContent.BaseBucketContentFragment
+import ir.mehdiyari.fallery.buckets.bucketList.BucketListFragment
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 import ir.mehdiyari.fallery.main.di.FalleryCoreComponentHolder
 import ir.mehdiyari.fallery.main.fallery.BucketRecyclerViewItemMode

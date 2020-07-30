@@ -1,10 +1,10 @@
-package ir.mehdiyari.fallery.buckets.ui.bucketContent.preview.adapter
+package ir.mehdiyari.fallery.buckets.bucketContent.preview.adapter
 
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import ir.mehdiyari.fallery.buckets.ui.bucketContent.preview.AbstractMediaPreviewFragment
-import ir.mehdiyari.fallery.buckets.ui.bucketContent.preview.PreviewFragment
+import ir.mehdiyari.fallery.buckets.bucketContent.preview.AbstractMediaPreviewFragment
+import ir.mehdiyari.fallery.buckets.bucketContent.preview.PreviewFragment
 import ir.mehdiyari.fallery.models.Media
 
 internal class MediaPreviewAdapter constructor(

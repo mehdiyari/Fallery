@@ -1,4 +1,4 @@
-package ir.mehdiyari.fallery.buckets.ui.bucketContent.preview
+package ir.mehdiyari.fallery.buckets.bucketContent.preview
 
 import android.content.ActivityNotFoundException
 import android.content.Intent

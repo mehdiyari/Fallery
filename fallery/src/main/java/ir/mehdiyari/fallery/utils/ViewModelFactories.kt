@@ -2,8 +2,8 @@ package ir.mehdiyari.fallery.utils
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import ir.mehdiyari.fallery.buckets.ui.bucketContent.BucketContentViewModel
-import ir.mehdiyari.fallery.buckets.ui.bucketList.BucketListViewModel
+import ir.mehdiyari.fallery.buckets.bucketContent.BucketContentViewModel
+import ir.mehdiyari.fallery.buckets.bucketList.BucketListViewModel
 import ir.mehdiyari.fallery.main.fallery.FalleryOptions
 import ir.mehdiyari.fallery.main.ui.FalleryViewModel
 import ir.mehdiyari.fallery.models.BucketType

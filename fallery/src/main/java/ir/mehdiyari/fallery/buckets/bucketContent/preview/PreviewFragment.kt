@@ -1,4 +1,4 @@
-package ir.mehdiyari.fallery.buckets.ui.bucketContent.preview
+package ir.mehdiyari.fallery.buckets.bucketContent.preview
 
 import android.graphics.Color
 import android.os.Bundle
@@ -12,8 +12,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
 import ir.mehdiyari.fallery.R
-import ir.mehdiyari.fallery.buckets.ui.bucketContent.BucketContentViewModel
-import ir.mehdiyari.fallery.buckets.ui.bucketContent.preview.adapter.MediaPreviewAdapter
+import ir.mehdiyari.fallery.buckets.bucketContent.BucketContentViewModel
+import ir.mehdiyari.fallery.buckets.bucketContent.preview.adapter.MediaPreviewAdapter
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 import ir.mehdiyari.fallery.main.ui.FalleryToolbarVisibilityController
 import ir.mehdiyari.fallery.main.ui.FalleryViewModel
@@ -32,7 +32,12 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
     @ExperimentalCoroutinesApi
     private lateinit var falleryViewModel: FalleryViewModel
 
-    private val mediaPreviewAdapter by lazy { MediaPreviewAdapter(this@PreviewFragment, this) }
+    private val mediaPreviewAdapter by lazy {
+        MediaPreviewAdapter(
+            this@PreviewFragment,
+            this
+        )
+    }
     private val selectedDrawable by lazy {
         FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideSelectedDrawable()
     }

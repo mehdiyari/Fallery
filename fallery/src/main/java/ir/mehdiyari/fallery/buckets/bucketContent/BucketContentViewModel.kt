@@ -1,4 +1,4 @@
-package ir.mehdiyari.fallery.buckets.ui.bucketContent
+package ir.mehdiyari.fallery.buckets.bucketContent
 
 import ir.mehdiyari.fallery.models.BucketType
 import ir.mehdiyari.fallery.models.Media

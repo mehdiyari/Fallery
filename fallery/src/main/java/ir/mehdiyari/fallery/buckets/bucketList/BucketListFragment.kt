@@ -1,4 +1,4 @@
-package ir.mehdiyari.fallery.buckets.ui.bucketList
+package ir.mehdiyari.fallery.buckets.bucketList
 
 import android.Manifest
 import android.os.Build
@@ -17,7 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import ir.mehdiyari.fallery.R
-import ir.mehdiyari.fallery.buckets.ui.bucketList.adapter.BucketListAdapter
+import ir.mehdiyari.fallery.buckets.bucketList.adapter.BucketListAdapter
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 import ir.mehdiyari.fallery.main.fallery.BucketRecyclerViewItemMode
 import ir.mehdiyari.fallery.main.ui.FalleryViewModel

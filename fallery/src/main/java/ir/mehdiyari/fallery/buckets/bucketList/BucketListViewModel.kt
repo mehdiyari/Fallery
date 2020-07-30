@@ -1,4 +1,4 @@
-package ir.mehdiyari.fallery.buckets.ui.bucketList
+package ir.mehdiyari.fallery.buckets.bucketList
 
 import android.util.Log
 import ir.mehdiyari.fallery.models.BucketType

@@ -1,4 +1,4 @@
-package ir.mehdiyari.fallery.buckets.ui.bucketList.adapter
+package ir.mehdiyari.fallery.buckets.bucketList.adapter
 
 import android.content.Context
 import android.view.LayoutInflater

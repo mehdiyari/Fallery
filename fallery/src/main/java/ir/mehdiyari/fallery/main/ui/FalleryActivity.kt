@@ -43,7 +43,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.io.File
 
-internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
+internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, FalleryToolbarVisibilityController {
 
     @ExperimentalCoroutinesApi
     private lateinit var falleryViewModel: FalleryViewModel
@@ -463,6 +463,41 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
                 }
             }
         )
+    }
+
+
+    override fun showToolbar(withAnim: Boolean) {
+        if (toolbarFalleryActivity.visibility == View.VISIBLE) return
+        if (!withAnim) {
+            toolbarFalleryActivity?.visibility = View.VISIBLE
+            return
+        }
+
+        toolbarFalleryActivity.startAnimation(TranslateAnimation(0f, 0f, -toolbarFalleryActivity.height.toFloat(), 0f).apply {
+            duration = 200
+            fillAfter = true
+            setOnAnimationEndListener {
+                toolbarFalleryActivity.visibility = View.VISIBLE
+                toolbarFalleryActivity.animation = null
+            }
+        })
+    }
+
+    override fun hideToolbar(withAnim: Boolean) {
+        if (toolbarFalleryActivity.visibility == View.GONE) return
+        if (!withAnim) {
+            toolbarFalleryActivity?.visibility = View.GONE
+            return
+        }
+
+        toolbarFalleryActivity.startAnimation(TranslateAnimation(0f, 0f, 0f, -toolbarFalleryActivity.height.toFloat()).apply {
+            duration = 200
+            fillAfter = true
+            setOnAnimationEndListener {
+                toolbarFalleryActivity.visibility = View.GONE
+                toolbarFalleryActivity.animation = null
+            }
+        })
     }
 
     @ExperimentalCoroutinesApi

@@ -29,7 +29,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import ir.mehdiyari.fallery.R
-import ir.mehdiyari.fallery.buckets.ui.bucketContent.BucketContentFragment
+import ir.mehdiyari.fallery.buckets.ui.bucketContent.BaseBucketContentFragment
 import ir.mehdiyari.fallery.buckets.ui.bucketList.BucketListFragment
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 import ir.mehdiyari.fallery.main.di.FalleryCoreComponentHolder
@@ -40,6 +40,7 @@ import kotlinx.android.synthetic.main.caption_layout.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import java.io.File
 
@@ -80,12 +81,31 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
             this,
             FalleryActivityComponentHolder.createOrGetComponent(this).provideFalleryViewModelFactory()
         )[FalleryViewModel::class.java].apply {
-            captionEnabledLiveData.observe(this@FalleryActivity, Observer {
-                if (it)
-                    showCaptionLayout(withAnim = true)
-                else
-                    hideCaptionLayout(withAnim = true)
+            resultSingleLiveEvent.observeSingleEvent(this@FalleryActivity, Observer {
+                if (it != null && it.isNotEmpty()) {
+                    finishWithOKResult(it)
+                } else {
+                    finishWithCancelResult()
+                }
             })
+
+            lifecycleScope.launch {
+                launch {
+                    sendActionEnabledStateFlow.mapNotNull { it }.collect {
+                        if (it)
+                            showSendButton()
+                        else
+                            hideSendButton()
+                    }
+                }
+
+                captionEnabledStateFlow.mapNotNull { it }.collect {
+                    if (it)
+                        showCaptionLayout(withAnim = true)
+                    else
+                        hideCaptionLayout(withAnim = true)
+                }
+            }
 
             lifecycleScope.launch {
                 mediaCountStateFlow.collect {
@@ -106,7 +126,7 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
                 }
                 is FalleryView.BucketContent -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.layoutFragmentContainer, BucketContentFragment().apply {
+                        .replace(R.id.layoutFragmentContainer, BaseBucketContentFragment().apply {
                             arguments = Bundle().apply {
                                 putLong("bucket_id", falleryView.bucketId)
                             }
@@ -231,7 +251,7 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
     @ExperimentalCoroutinesApi
     private fun addRecyclerViewItemViewModeMenuItem() {
         toolbarFalleryActivity.apply {
-            falleryOptions.changeBucketRecyclerViewItemModeByToolbarIcon.also {
+            falleryOptions.bucketItemModeToggleEnabled.also {
                 val mode = falleryOptions.bucketRecyclerViewItemMode
                 if (it) {
                     menu.add(0, R.id.bucketListMenuItemShowRecyclerViewItemModelChanger, 0, R.string.list_mode).apply {
@@ -305,6 +325,8 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
             .show()
     }
 
+    @ExperimentalCoroutinesApi
+    @Suppress("SameParameterValue")
     private fun hideCaptionLayout(withAnim: Boolean) {
         prepareCaptionViewStub()
         if (relativeLayoutCaptionLayout?.visibility == View.GONE) return
@@ -327,6 +349,8 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
         }
     }
 
+    @ExperimentalCoroutinesApi
+    @Suppress("SameParameterValue")
     private fun showCaptionLayout(withAnim: Boolean) {
         prepareCaptionViewStub()
         if (relativeLayoutCaptionLayout?.visibility == View.VISIBLE) return
@@ -348,12 +372,16 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
         }
     }
 
+    @ExperimentalCoroutinesApi
     private fun prepareCaptionViewStub() {
         if (viewStubCaptionLayout != null && viewStubCaptionLayout.parent != null) {
             (try {
                 viewStubCaptionLayout.inflate()
+                imageViewSendMessage.setOnClickListener { falleryViewModel.prepareSelectedResults() }
                 falleryOptions.captionEnabledOptions.editTextLayoutResId.let {
-                    LayoutInflater.from(this).inflate(it, frameLayoutCaptionHolder, false).findViewById<AppCompatEditText>(R.id.falleryEditTextCaption)
+                    LayoutInflater.from(this).inflate(it, frameLayoutCaptionHolder, false).findViewById<AppCompatEditText>(R.id.falleryEditTextCaption).apply {
+                        layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+                    }
                 }
             } catch (ignored: Throwable) {
                 Log.e(FALLERY_LOG_TAG, "error while inflating captionLayoutResId. switch to default implementation")
@@ -533,4 +561,20 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
     private fun handleTakingPhotoResult() {
         falleryViewModel.prepareCameraResultWithSelectedResults()
     }
+
+    private fun finishWithCancelResult() {
+        setResult(Activity.RESULT_CANCELED)
+        finish()
+    }
+
+    private fun finishWithOKResult(it: Array<String>) {
+        setResult(Activity.RESULT_OK, Intent().apply {
+            putExtra(FALLERY_MEDIAS_LIST_KEY, it)
+            if (falleryOptions.captionEnabledOptions.enabled) {
+                putExtra(FALLERY_CAPTION_KEY, frameLayoutCaptionHolder.findViewById<EditText>(R.id.falleryEditTextCaption)?.text?.toString()?.trim())
+            }
+        })
+        finish()
+    }
+
 }

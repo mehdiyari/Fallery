@@ -26,9 +26,9 @@ internal class FalleryViewModel(
     val mediaSelectionTracker = mutableListOf<String>()
     var totalMediaCount = 0
         set(value) {
-            field = if (falleryOptions.mediaTypeFilterOptions.maxSelectableMedia == UNLIMITED_SELECT) value else falleryOptions.mediaTypeFilterOptions.maxSelectableMedia
+            field = if (falleryOptions.maxSelectableMedia == UNLIMITED_SELECT) value else falleryOptions.maxSelectableMedia
         }
-        get() = if (falleryOptions.mediaTypeFilterOptions.maxSelectableMedia == UNLIMITED_SELECT)  field else falleryOptions.mediaTypeFilterOptions.maxSelectableMedia
+        get() = if (falleryOptions.maxSelectableMedia == UNLIMITED_SELECT) field else falleryOptions.maxSelectableMedia
 
     init {
         currentFragmentLiveData.value = FalleryView.BucketList
@@ -145,6 +145,10 @@ internal class FalleryViewModel(
 
     fun clearCameraPhotoFileAddress() {
         cameraTemporaryFilePath = null
+    }
+
+    fun prepareSelectedResults() {
+        resultSingleLiveEvent.value = mediaSelectionTracker.toTypedArray()
     }
 
     fun setCameraPhotoFileAddress(path: String) {

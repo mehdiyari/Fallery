@@ -8,6 +8,7 @@ import ir.mehdiyari.fallery.models.MediaBucket
 import ir.mehdiyari.fallery.repo.AbstractMediaBucketProvider
 import ir.mehdiyari.fallery.utils.BaseViewModel
 import ir.mehdiyari.fallery.utils.FALLERY_LOG_TAG
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,8 @@ import kotlinx.coroutines.launch
 
 internal class BucketListViewModel constructor(
     private val abstractMediaBucketProvider: AbstractMediaBucketProvider,
-    private val bucketType :BucketType = BucketType.VIDEO_PHOTO_BUCKETS
+    private val bucketType: BucketType = BucketType.VIDEO_PHOTO_BUCKETS,
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel() {
 
     @ExperimentalCoroutinesApi

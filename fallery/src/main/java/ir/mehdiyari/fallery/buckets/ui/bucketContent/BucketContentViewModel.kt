@@ -27,6 +27,8 @@ class BucketContentViewModel constructor(
     @ExperimentalCoroutinesApi
     val mediaList: StateFlow<List<Media>> = medias
 
+    val showPreviewFragmentLiveData = SingleLiveEvent<String>()
+
     @ExperimentalCoroutinesApi
     fun getMedias(bucketId: Long, refresh: Boolean = false) {
         if (!refresh && mediaList.value.isNotEmpty()) return
@@ -43,4 +45,14 @@ class BucketContentViewModel constructor(
                 }
         }
     }
+
+    fun showPreviewFragment(path: String) {
+        showPreviewFragmentLiveData.value = path
+    }
+
+    @ExperimentalCoroutinesApi
+    fun getIndexOfPath(path: String): Int = mediaList.value.indexOfFirst { it.getMediaPath() == path.trim() }
+
+    @ExperimentalCoroutinesApi
+    fun getMediaPathByPosition(position: Int): String? = mediaList.value.getOrNull(position)?.getMediaPath()
 }

@@ -15,6 +15,10 @@ internal const val FALLERY_LOG_TAG = "Fallery"
 internal const val WRITE_EXTERNAL_REQUEST_CODE = 100_000
 const val ALL_MEDIA_MODEL_ID = -1L
 
+const val FALLERY_MEDIAS_LIST_KEY = "fallery_result"
+const val FALLERY_CAPTION_KEY = "fallery_caption"
+internal const val TAKE_PHOTO_REQUEST_CODE = 3008
+
 internal const val videoPhotoBucketSelection =
     """(${MediaStore.Files.FileColumns.MEDIA_TYPE}=? OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}=?) AND ${MediaStore.MediaColumns.SIZE}>0) GROUP BY (bucket_id"""
 

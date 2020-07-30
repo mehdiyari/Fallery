@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/frameLayoutVideoPreviewRootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ir.mehdiyari.ariv.ui.AspectRatioImageView
+        android:id="@+id/appCompatImageViewVideoThumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/appCompatImageViewPlayVideo"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_gravity="center"
+        android:background="@drawable/fallery_play_circle"
+        android:tint="#FFFFFF"
+        android:padding="6dp"
+        android:src="@drawable/fallery_ic_play_arrow_black" />
+
+
+</FrameLayout>

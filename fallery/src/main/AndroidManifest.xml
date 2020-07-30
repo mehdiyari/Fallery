@@ -8,6 +8,7 @@
     <application
         android:requestLegacyExternalStorage="true">
         <activity
+            android:windowSoftInputMode="adjustResize"
             android:name=".main.ui.FalleryActivity"
             android:theme="@style/Fallery.Light" />
     </application>

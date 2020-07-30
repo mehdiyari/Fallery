@@ -11,6 +11,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.io.File
 
 @ExperimentalCoroutinesApi
 internal class FalleryViewModel(
@@ -43,9 +44,12 @@ internal class FalleryViewModel(
     val bucketRecycleViewModeLiveData: LiveData<BucketRecyclerViewItemMode> = bucketRecyclerViewMode
     private val mediaCountMutableStateFlow = MutableStateFlow(MediaCountModel(0, 0))
     val mediaCountStateFlow: StateFlow<MediaCountModel> = mediaCountMutableStateFlow
-
     private val allMediaDeselectedMutableStateFlow = MutableStateFlow(false)
-    val allMediaDeselectedStateFlow : Flow<Boolean> = allMediaDeselectedMutableStateFlow
+    val allMediaDeselectedStateFlow: Flow<Boolean> = allMediaDeselectedMutableStateFlow
+    private var captionOrSendActionState = true
+    private var cameraTemporaryFilePath: String? = null
+
+    val resultSingleLiveEvent = SingleLiveEvent<Array<String>>()
 
     init {
         if (mediaSelectionTracker.isNotEmpty() && captionOrSendActionState) {
@@ -117,5 +121,33 @@ internal class FalleryViewModel(
 
         if (falleryOptions.mediaCountEnabled)
             mediaCountMutableStateFlow.value = MediaCountModel(0, totalMediaCount)
+    }
+
+    fun isPhotoSelected(path: String): Boolean = mediaSelectionTracker.contains(path)
+
+    fun showSendOrCaptionLayout() {
+        captionOrSendActionState = true
+        if (mediaSelectionTracker.isNotEmpty()) {
+            if (falleryOptions.captionEnabledOptions.enabled)
+                captionEnabledMutableStateFlow.value = true
+            else
+                sendActionEnabledMutableStateFlow.value = true
+        }
+    }
+
+    fun hideSendOrCaptionLayout() {
+        captionOrSendActionState = false
+        if (falleryOptions.captionEnabledOptions.enabled)
+            captionEnabledMutableStateFlow.value = false
+        else
+            sendActionEnabledMutableStateFlow.value = false
+    }
+
+    fun clearCameraPhotoFileAddress() {
+        cameraTemporaryFilePath = null
+    }
+
+    fun setCameraPhotoFileAddress(path: String) {
+        cameraTemporaryFilePath = path
     }
 }

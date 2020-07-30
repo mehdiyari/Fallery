@@ -1,5 +1,8 @@
 package ir.mehdiyari.fallery.utils
 
+import android.content.Context
+import android.graphics.Typeface
+import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
 import android.text.Spannable
 import android.text.SpannableStringBuilder
@@ -29,8 +32,7 @@ fun Int.toReadableCount() : String = this.toLong().toReadableCount()
 fun Long.toReadableCount() : String = when {
     this < 999L -> this.toString()
     this in 1000L..999999L -> "${this / 1000L}K"
-    this > 999999L -> "${this / 1000000L}M"
-    else -> "${this / 1000000000L}B"
+    else -> "${this / 1000000L}M"
 }
 
 internal fun convertSecondToTime(second: Int): String {

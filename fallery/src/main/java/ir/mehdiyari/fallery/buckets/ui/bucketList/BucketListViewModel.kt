@@ -37,14 +37,14 @@ internal class BucketListViewModel constructor(
     val bucketListViewStateLiveData: LiveData<BucketListViewState> = falleryViewState
 
     @ExperimentalCoroutinesApi
-    fun getBuckets() {
-        if (bucketsMutableStateFlow.value.isNotEmpty() ||  falleryViewState.value == BucketListViewState.ShowLoading) return
-        falleryViewState.value = BucketListViewState.ShowLoading
-        viewModelScope.launch(Dispatchers.IO) {
+    fun getBuckets(refresh: Boolean = false) {
+        if (!refresh && bucketsStateFlow.value.isNotEmpty() || bucketListViewStateFlow.value == BucketListViewState.ShowLoading) return
+        falleryMutableViewState.value = BucketListViewState.ShowLoading
+        viewModelScope.launch(ioDispatcher) {
             try {
                 abstractMediaBucketProvider.getMediaBuckets(bucketType).also { buckets ->
-                    falleryViewState.postValue(BucketListViewState.HideLoading)
                     viewModelScope.launch(Dispatchers.Main) {
+                        falleryMutableViewState.value = BucketListViewState.HideLoading
                         bucketsMutableStateFlow.value = buckets
                         allMediaCountChangedStateFlow.value = buckets.firstOrNull()?.mediaCount ?: 0
                     }
@@ -52,7 +52,10 @@ internal class BucketListViewModel constructor(
             } catch (t: Throwable) {
                 t.printStackTrace()
                 Log.e(FALLERY_LOG_TAG, "error while fetching buckets.(${t.message})")
-                falleryViewState.postValue(BucketListViewState.ErrorInFetchingBuckets)
+                viewModelScope.launch(Dispatchers.Main) {
+                    falleryMutableViewState.value = BucketListViewState.HideLoading
+                    falleryMutableViewState.value = BucketListViewState.ErrorInFetchingBuckets
+                }
             }
         }
     }

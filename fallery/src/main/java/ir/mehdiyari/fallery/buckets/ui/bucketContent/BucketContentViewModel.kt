@@ -28,12 +28,18 @@ class BucketContentViewModel constructor(
     val mediaList: StateFlow<List<Media>> = medias
 
     @ExperimentalCoroutinesApi
-    fun getMedias(bucketId: Long) {
-        if (mediaList.value.isNotEmpty()) return
-        viewModelScope.launch(Dispatchers.IO) {
+    fun getMedias(bucketId: Long, refresh: Boolean = false) {
+        if (!refresh && mediaList.value.isNotEmpty()) return
+        val clearList = AtomicBoolean(refresh)
+        viewModelScope.launch(ioDispatcher) {
             abstractBucketContentProvider.getMediasOfBucket(bucketId, bucketType)
                 .collect {
-                    medias.value = mediaList.value.toMutableList().apply { addAll(it) }.toList()
+                    if (clearList.get()) {
+                        clearList.compareAndSet(true, false)
+                        medias.value = it
+                    } else {
+                        medias.value = mediaList.value.toMutableList().apply { addAll(it) }.toList()
+                    }
                 }
         }
     }

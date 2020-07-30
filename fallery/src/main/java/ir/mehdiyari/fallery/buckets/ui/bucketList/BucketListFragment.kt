@@ -110,7 +110,7 @@ internal class BucketListFragment : Fragment() {
             (requireActivity() as MediaObserverInterface).getMediaObserverInstance()?.externalStorageChangeLiveData?.observe(viewLifecycleOwner, Observer {
                 Log.d(FALLERY_LOG_TAG, "something changed in external Storage")
                 requireActivity().permissionChecker(Manifest.permission.WRITE_EXTERNAL_STORAGE, granted = {
-                    bucketListViewModel.getBuckets()
+                    bucketListViewModel.getBuckets(true)
                 }, denied = {
                     Log.e(FALLERY_LOG_TAG, "mediaStoreObserver -> requestBuckets -> app has not access to external storage for get buckets from mediaStore")
                 })

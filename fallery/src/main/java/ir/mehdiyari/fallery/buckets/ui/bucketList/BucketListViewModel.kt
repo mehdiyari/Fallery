@@ -1,8 +1,6 @@
 package ir.mehdiyari.fallery.buckets.ui.bucketList
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import ir.mehdiyari.fallery.models.BucketType
 import ir.mehdiyari.fallery.models.MediaBucket
 import ir.mehdiyari.fallery.repo.AbstractMediaBucketProvider
@@ -33,8 +31,11 @@ internal class BucketListViewModel constructor(
     @ExperimentalCoroutinesApi
     val bucketsStateFlow: StateFlow<List<MediaBucket>> = this.bucketsMutableStateFlow
 
-    private val falleryViewState = MutableLiveData<BucketListViewState>()
-    val bucketListViewStateLiveData: LiveData<BucketListViewState> = falleryViewState
+    @ExperimentalCoroutinesApi
+    private val falleryMutableViewState = MutableStateFlow<BucketListViewState?>(null)
+
+    @ExperimentalCoroutinesApi
+    val bucketListViewStateFlow: StateFlow<BucketListViewState?> = falleryMutableViewState
 
     @ExperimentalCoroutinesApi
     fun getBuckets(refresh: Boolean = false) {

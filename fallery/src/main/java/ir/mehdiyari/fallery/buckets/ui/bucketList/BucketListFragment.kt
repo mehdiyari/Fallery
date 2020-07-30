@@ -118,13 +118,15 @@ internal class BucketListFragment : Fragment() {
         }
 
         bucketListViewModel.apply {
-            bucketListViewStateLiveData.observe(viewLifecycleOwner, Observer {
-                when (it) {
-                    is BucketListViewState.ErrorInFetchingBuckets -> hideBucketListIfNotHideYet()
-                    is BucketListViewState.ShowLoading -> showLoading()
-                    is BucketListViewState.HideLoading -> hideLoading()
+            lifecycleScope.launch {
+                bucketListViewStateFlow.collect {
+                    when (it) {
+                        is BucketListViewState.ErrorInFetchingBuckets -> hideBucketListIfNotHideYet()
+                        is BucketListViewState.ShowLoading -> showLoading()
+                        is BucketListViewState.HideLoading -> hideLoading()
+                    }
                 }
-            })
+            }
 
             lifecycleScope.launch {
                 launch { allMediaCountChanged.collect { falleryViewModel.totalMediaCount = it } }

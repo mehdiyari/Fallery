@@ -502,6 +502,13 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
 
     @ExperimentalCoroutinesApi
     override fun onBackPressed() {
+        for (fragment in supportFragmentManager.fragments) {
+            if (fragment.isVisible && fragment.childFragmentManager.backStackEntryCount > 1) {
+                fragment.childFragmentManager.popBackStack()
+                return
+            }
+        }
+
         if (supportFragmentManager.findFragmentById(R.id.layoutFragmentContainer) is BucketListFragment && falleryViewModel.userSelectedMedias)
             falleryViewModel.deselectAllSelections()
         else {

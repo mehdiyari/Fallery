@@ -52,3 +52,25 @@ internal fun EditText.hideKeyboard() {
         ignored.printStackTrace()
     }
 }
+
+fun Activity.getIntentForTakingPhoto(
+    fileProviderAuthority: String,
+    imageFile: File
+): Intent? = Intent(MediaStore.ACTION_IMAGE_CAPTURE).let { takePictureIntent ->
+    takePictureIntent.resolveActivity(packageManager).let {
+        if (it == null) {
+            Toast.makeText(this, R.string.camera_not_found, Toast.LENGTH_SHORT).show()
+            return null
+        }
+
+        try {
+            imageFile.parentFile?.mkdirs()
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, fileProviderAuthority, imageFile))
+            takePictureIntent
+        } catch (t: Throwable) {
+            t.printStackTrace()
+            Toast.makeText(this, R.string.something_went_wrong, Toast.LENGTH_SHORT).show()
+            null
+        }
+    }
+}

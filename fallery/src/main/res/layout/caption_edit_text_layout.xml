@@ -8,5 +8,4 @@
     android:textColorHint="?attr/fallery_hint_text_color"
     android:singleLine="true"
     android:textColor="?attr/fallery_primary_text_color"
-    android:textSize="18sp"
     xmlns:android="http://schemas.android.com/apk/res/android" />

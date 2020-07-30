@@ -2,8 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:id="@+id/relativeLayoutCaptionLayout"
+    android:layoutDirection="ltr"
     android:layout_height="@dimen/caption_layout_height"
     android:background="?attr/fallery_color_primary">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/top_shadow" />
 
     <FrameLayout
         android:id="@+id/frameLayoutCaptionHolder"

@@ -52,6 +52,16 @@ internal fun convertSecondToTime(second: Int): String {
     return time
 }
 
+/**
+ * [use] extension function does not work properly on [MediaMetadataRetriever]. this
+ * utility function release automatically when [function] invoked
+ * @receiver MediaMetadataRetriever
+ * @param function Function1<MediaMetadataRetriever, Unit>
+ */
+internal inline fun MediaMetadataRetriever.autoClose(function: (MediaMetadataRetriever) -> Unit) {
+    function(this)
+    release()
+}
 
 internal fun createMediaCountSpannable(context: Context, value: MediaCountModel, colorAccent: Int) = SpannableStringBuilder().apply {
     append(value.selectedCount.toString())

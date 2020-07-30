@@ -1,11 +1,12 @@
 package ir.mehdiyari.fallery.repo
 
-import android.content.Context
+import android.content.ContentResolver
 import android.database.Cursor
 import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
 import ir.mehdiyari.fallery.imageLoader.PhotoDiminution
 import ir.mehdiyari.fallery.models.BucketType
+import ir.mehdiyari.fallery.models.CacheDir
 import ir.mehdiyari.fallery.models.Media
 import ir.mehdiyari.fallery.utils.*
 import kotlinx.coroutines.flow.Flow
@@ -13,13 +14,14 @@ import kotlinx.coroutines.flow.flow
 import kotlin.random.Random
 
 internal class BucketContentProvider constructor(
-    private val context: Context
+    private val contentResolver: ContentResolver,
+    private val cacheDir: CacheDir
 ) : AbstractBucketContentProvider {
 
     override suspend fun getMediasOfBucket(bucketId: Long, bucketType: BucketType): Flow<List<Media>> = flow {
         val medias = mutableListOf<Media>()
         val mediaMetadataRetriever = MediaMetadataRetriever()
-        context.contentResolver.query(
+        contentResolver.query(
             MediaStore.Files.getContentUri("external"),
             photoWithVideoProjection,
             "${getSimpleQueryByMediaType(bucketType)} ${if (bucketId == ALL_MEDIA_MODEL_ID) "" else "AND bucket_id=?"}",
@@ -78,7 +80,7 @@ internal class BucketContentProvider constructor(
     }
 
     private fun getSimpleQueryByMediaType(mediaType: BucketType): String = when (mediaType) {
-        BucketType.VIDEO_PHOTO_BUCKETS ->  "(${MediaStore.Files.FileColumns.MEDIA_TYPE}=? OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}=?)"
+        BucketType.VIDEO_PHOTO_BUCKETS -> "(${MediaStore.Files.FileColumns.MEDIA_TYPE}=? OR ${MediaStore.Files.FileColumns.MEDIA_TYPE}=?)"
         else -> "${MediaStore.Files.FileColumns.MEDIA_TYPE}=?"
     }
 

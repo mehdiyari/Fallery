@@ -25,6 +25,10 @@ internal interface FalleryActivityComponent : FalleryCoreComponent {
 
     fun provideFalleryStyleAttrs(): FalleryStyleAttrs
 
+    fun provideCacheDir(): CacheDir
+
+    fun provideContentResolver(): ContentResolver
+
     fun provideFalleryViewModelFactory(): FalleryViewModelFactory
 
     fun provideSelectedDrawable(): Drawable

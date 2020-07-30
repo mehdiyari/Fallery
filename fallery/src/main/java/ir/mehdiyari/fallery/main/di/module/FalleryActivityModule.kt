@@ -1,5 +1,6 @@
 package ir.mehdiyari.fallery.main.di.module
 
+import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
@@ -10,6 +11,7 @@ import ir.mehdiyari.fallery.main.di.component.FalleryActivityComponent
 import ir.mehdiyari.fallery.main.fallery.FalleryOptions
 import ir.mehdiyari.fallery.main.di.component.FalleryCoreComponent
 import ir.mehdiyari.fallery.buckets.ui.bucketList.adapter.MediaBucketDiffCallback
+import ir.mehdiyari.fallery.models.CacheDir
 import ir.mehdiyari.fallery.models.FalleryStyleAttrs
 import ir.mehdiyari.fallery.models.getFalleryStyleAttrs
 import ir.mehdiyari.fallery.repo.AbstractBucketContentProvider
@@ -30,13 +32,11 @@ internal class FalleryActivityModule(
     private var bucketListViewModelFactory: BucketListViewModelFactory? = null
     private var falleryStyleAttrs: FalleryStyleAttrs? = null
 
-    override fun provideApplicationContext(): Context = context
-
     override fun provideBucketListViewModelFactory(): BucketListViewModelFactory =
         synchronized(bucketListViewModelFactory ?: this) {
             if (bucketListViewModelFactory == null) {
                 bucketListViewModelFactory =
-                    BucketListViewModelFactory(provideBucketProvider(), provideFalleryOptions().mediaTypeFilterOptions.bucketType)
+                    BucketListViewModelFactory(provideBucketProvider(), provideFalleryOptions().mediaTypeFilter)
                 bucketListViewModelFactory!!
             } else bucketListViewModelFactory!!
         }
@@ -71,7 +71,7 @@ internal class FalleryActivityModule(
     private fun provideFalleryBucketContentProvider(): AbstractBucketContentProvider =
         synchronized(abstractBucketContentProvider ?: this) {
             if (abstractBucketContentProvider == null) {
-                abstractBucketContentProvider = BucketContentProvider(context)
+                abstractBucketContentProvider = BucketContentProvider(provideContentResolver(), provideCacheDir())
                 abstractBucketContentProvider!!
             } else abstractBucketContentProvider!!
         }
@@ -80,7 +80,7 @@ internal class FalleryActivityModule(
     private fun provideFalleryBucketProvider(): AbstractMediaBucketProvider =
         synchronized(abstractMediaBucketProvider ?: this) {
             if (abstractMediaBucketProvider == null) {
-                abstractMediaBucketProvider = MediaBucketProvider(context)
+                abstractMediaBucketProvider = MediaBucketProvider(provideCacheDir(), provideContentResolver())
                 abstractMediaBucketProvider!!
             } else abstractMediaBucketProvider!!
         }
@@ -93,9 +93,12 @@ internal class FalleryActivityModule(
             falleryStyleAttrs!!
     }
 
-    override fun provideBucketContentAdapter(): BucketContentAdapter = BucketContentAdapter(
-        provideImageLoader()
-    )
+    override fun provideCacheDir(): CacheDir = CacheDir(context.externalCacheDir?.path ?: context.cacheDir.path)
+
+    override fun provideContentResolver(): ContentResolver = context.contentResolver
+
+
+    override fun provideBucketContentAdapter(): BucketContentAdapter = BucketContentAdapter(provideImageLoader(), provideSelectedDrawable(), provideDeselectedDrawable())
 
     override fun provideFalleryViewModelFactory(): FalleryViewModelFactory = FalleryViewModelFactory(
         provideFalleryOptions()

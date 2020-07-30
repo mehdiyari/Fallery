@@ -1,16 +1,18 @@
 package ir.mehdiyari.fallery.repo
 
 import android.annotation.SuppressLint
-import android.content.Context
+import android.content.ContentResolver
 import android.database.Cursor
 import android.provider.MediaStore
 import ir.mehdiyari.fallery.models.BucketType
+import ir.mehdiyari.fallery.models.CacheDir
 import ir.mehdiyari.fallery.models.MediaBucket
 import ir.mehdiyari.fallery.utils.*
 import java.io.File
 
 internal class MediaBucketProvider constructor(
-    private val context: Context
+    private val cacheDir: CacheDir,
+    private val contentResolver: ContentResolver
 ) : AbstractMediaBucketProvider {
 
     /**
@@ -20,7 +22,7 @@ internal class MediaBucketProvider constructor(
         mutableListOf<MediaBucket>().let { bucketList ->
             // store media dates if [bucketType] == [BucketType.VIDEO_PHOTO_BUCKETS]
             val dateAddedList = mutableListOf<Pair<String, Long>>()
-            context.contentResolver.query(
+            contentResolver.query(
                 MediaStore.Files.getContentUri("external"),
                 if (isAndroidTenOrHigher()) bucketProjectionAndroidQ else bucketProjection,
                 getQueryByMediaType(bucketType),
@@ -164,7 +166,7 @@ internal class MediaBucketProvider constructor(
             )
         }
 
-        context.contentResolver.query(
+        contentResolver.query(
             MediaStore.Files.getContentUri("external"),
             arrayOf(MediaStore.MediaColumns.DATA, MediaStore.MediaColumns.DATE_ADDED),
             """${query.first} AND bucket_id=?""",

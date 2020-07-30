@@ -1,9 +1,12 @@
 package ir.mehdiyari.fallery.main.fallery
 
+import android.content.pm.ActivityInfo
+import android.graphics.Color
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
+import androidx.viewpager2.widget.ViewPager2
 import ir.mehdiyari.fallery.R
 import ir.mehdiyari.fallery.imageLoader.FalleryImageLoader
 import ir.mehdiyari.fallery.models.BucketType
@@ -12,72 +15,65 @@ import ir.mehdiyari.fallery.repo.AbstractMediaBucketProvider
 import ir.mehdiyari.fallery.utils.EnumType
 
 data class FalleryOptions(
-    val mediaTypeFilterOptions: MediaTypeFilterOptions,
+    val mediaTypeFilter: BucketType = BucketType.VIDEO_PHOTO_BUCKETS,
+    val maxSelectableMedia: Int = UNLIMITED_SELECT,
     val cameraEnabledOptions: CameraEnabledOptions,
     val captionEnabledOptions: CaptionEnabledOptions,
-    val mediaCountOptions: MediaCountOptions,
+    val mediaCountEnabled: Boolean,
     val imageLoader: FalleryImageLoader?,
     val bucketProviderAbstract: AbstractMediaBucketProvider?,
     val abstractBucketContentProvider: AbstractBucketContentProvider?,
-    val falleryStrings: FalleryStrings,
     @StyleRes val themeResId: Int,
     val orientationMode: Int,
-    val autoHideMediaPreviewToolbarOnSingleTap: Boolean,
     var bucketRecyclerViewItemMode: BucketRecyclerViewItemMode,
-    val changeBucketRecyclerViewItemModeByToolbarIcon: Boolean,
+    val bucketItemModeToggleEnabled: Boolean,
     var mediaObserverEnabled: Boolean,
-    @StringRes var toolbarTitle: Int = R.string.fallery_toolbar_title
+    @StringRes var toolbarTitle: Int = R.string.fallery_toolbar_title,
+    val mediaPreviewPageTransformer: ViewPager2.PageTransformer? = null,
+    val mediaPreviewScrollOrientation: Int = ViewPager2.ORIENTATION_HORIZONTAL,
+    val selectedMediaToggleBackgroundColor: Int = Color.GREEN,
+    val onVideoPlayClick: ((path: String) -> Unit)? = null
 ) {
     constructor() : this(
-        MediaTypeFilterOptions(),
-        CameraEnabledOptions(),
-        CaptionEnabledOptions(),
-        MediaCountOptions(),
-        null,
-        null,
-        null,
-        FalleryStrings(),
-        R.style.Fallery_Light,
-        13, //SCREEN_ORIENTATION_FULL_USER
-        true,
-        BucketRecyclerViewItemMode.GridStyle,
-        true,
-        true
+        mediaTypeFilter = BucketType.VIDEO_PHOTO_BUCKETS,
+        maxSelectableMedia = UNLIMITED_SELECT,
+        cameraEnabledOptions = CameraEnabledOptions(),
+        captionEnabledOptions = CaptionEnabledOptions(),
+        mediaCountEnabled = true,
+        imageLoader = null,
+        bucketProviderAbstract = null,
+        abstractBucketContentProvider = null,
+        themeResId = R.style.Fallery_Light,
+        orientationMode = ActivityInfo.SCREEN_ORIENTATION_USER,
+        bucketRecyclerViewItemMode = BucketRecyclerViewItemMode.GridStyle,
+        bucketItemModeToggleEnabled = true,
+        mediaObserverEnabled = true,
+        toolbarTitle = R.string.fallery_toolbar_title,
+        mediaPreviewPageTransformer = null,
+        mediaPreviewScrollOrientation = ViewPager2.ORIENTATION_HORIZONTAL,
+        selectedMediaToggleBackgroundColor = Color.GREEN,
+        onVideoPlayClick = null
     )
 }
 
 const val UNLIMITED_SELECT = 0
 
-data class MediaTypeFilterOptions(
-    val bucketType: BucketType,
-    val maxSelectablePhoto: Int = UNLIMITED_SELECT,
-    val maxSelectableVideo: Int = UNLIMITED_SELECT,
-    val maxSelectableMedia: Int = UNLIMITED_SELECT
-) {
-    constructor() : this(BucketType.VIDEO_PHOTO_BUCKETS)
-}
-
 data class CameraEnabledOptions(
     val enabled: Boolean = false,
     val fileProviderAuthority: String? = null,
     val directory: String? = null
-)
+) {
+    constructor(enabled: Boolean, fileProviderAuthority: String) : this(enabled, fileProviderAuthority, null)
+}
 
 data class CaptionEnabledOptions(
     val enabled: Boolean = false,
     @DrawableRes val sendIcon: Int = R.drawable.fallery_icon_send,
     @LayoutRes val editTextLayoutResId: Int = R.layout.caption_edit_text_layout
-)
+) {
+    constructor(enabled: Boolean) : this(enabled, R.drawable.fallery_icon_send, R.layout.caption_edit_text_layout)
+}
 
-data class MediaCountOptions(
-    val enabled: Boolean = true
-)
-
-data class FalleryStrings(
-    @StringRes val bucketsToolbarTitle: Int = R.string.fallery_toolbar_title,
-    @StringRes val captionHint: Int = R.string.fallery_caption_hint_text,
-    @StringRes val mediaCount: Int = R.string.media_count
-)
 
 enum class BucketRecyclerViewItemMode constructor(override var value: Int) : EnumType<Int> {
     GridStyle(R.layout.grid_bucket_item_view),

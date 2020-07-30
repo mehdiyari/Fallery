@@ -1,26 +1,52 @@
 package ir.mehdiyari.fallery.main.fallery
 
+import android.content.pm.ActivityInfo
 import androidx.annotation.StringRes
 import androidx.annotation.StyleRes
+import androidx.viewpager2.widget.ViewPager2
+import ir.mehdiyari.fallery.R
 import ir.mehdiyari.fallery.imageLoader.FalleryImageLoader
+import ir.mehdiyari.fallery.models.BucketType
 import ir.mehdiyari.fallery.repo.AbstractBucketContentProvider
 import ir.mehdiyari.fallery.repo.AbstractMediaBucketProvider
-import java.lang.IllegalArgumentException
 
+/**
+ * Builder for [FalleryOptions]
+ */
 class FalleryBuilder {
 
     private var falleryOptions = FalleryOptions()
 
+    /**
+     * filter buckets that contains [bucketType]
+     */
     fun mediaTypeFiltering(
-        mediaTypeFilterOptions: MediaTypeFilterOptions
+        bucketType: BucketType
     ): FalleryBuilder {
         falleryOptions = falleryOptions.copy(
-            mediaTypeFilterOptions = mediaTypeFilterOptions
+            mediaTypeFilter = bucketType
         )
         return this
     }
 
-    fun cameraEnabled(
+    /**
+     * set [maxSelectableMedia] as max media count selected by user. default value is [UNLIMITED_SELECT]
+     */
+    fun setMaxSelectableMedia(
+        maxSelectableMedia: Int
+    ): FalleryBuilder {
+        falleryOptions = falleryOptions.copy(
+            maxSelectableMedia = maxSelectableMedia
+        )
+        return this
+    }
+
+
+    /**
+     * enable or disable taking photo from camera in fallery.
+     * if you enable camera you must set [CameraEnabledOptions.fileProviderAuthority]
+     */
+    fun setCameraEnabledOptions(
         cameraEnabledOptions: CameraEnabledOptions
     ): FalleryBuilder {
         falleryOptions = falleryOptions.copy(
@@ -29,7 +55,15 @@ class FalleryBuilder {
         return this
     }
 
-    fun captionEnabled(
+    /**
+     * enable or disable sending caption with medias. and customize editText and send icon.
+     *
+     * note: if you are using customEditText(like emojiEdiText) in your app you can pass
+     * editText as layout res to [CaptionEnabledOptions.editTextLayoutResId]. its important
+     * your customEditText is root of layout file and id must be equal to [R.id.falleryEditTextCaption]
+     * @return FalleryBuilder
+     */
+    fun setCaptionEnabledOptions(
         captionEnabledOptions: CaptionEnabledOptions
     ): FalleryBuilder {
         falleryOptions = falleryOptions.copy(
@@ -38,20 +72,33 @@ class FalleryBuilder {
         return this
     }
 
-    fun mediaCountEnabled(
-        mediaCountOptions: MediaCountOptions
+    /**
+     * enable or disable showing media count
+     */
+    fun setMediaCountEnabled(
+        enable: Boolean
     ): FalleryBuilder {
-        falleryOptions = falleryOptions.copy(mediaCountOptions = mediaCountOptions)
+        falleryOptions = falleryOptions.copy(mediaCountEnabled = enable)
         return this
     }
 
-    fun theme(
+    /**
+     * set current theme of fallery. fallery support dracula [R.style.Fallery_Dracula]
+     * and light [R.style.Fallery_Light] theme internally. but you can create and set your own theme.
+     * @param theme Int style res of fallery theme
+     */
+    fun setTheme(
         @StyleRes theme: Int
     ): FalleryBuilder {
+
         falleryOptions = falleryOptions.copy(themeResId = theme)
         return this
     }
 
+    /**
+     * set orientation of FalleryActivity. default value is [ActivityInfo.SCREEN_ORIENTATION_USER]
+     * @param orientationMode Int require ActivityInfo.ScreenOrientation constants
+     */
     fun setOrientation(
         orientationMode: Int
     ): FalleryBuilder {
@@ -61,43 +108,43 @@ class FalleryBuilder {
         return this
     }
 
+    /**
+     * fallery does not use image loading libraries like glide, picasso internally.
+     * you must implement [FalleryImageLoader] and load requested photo or gif into their image view.
+     * with glide, picasso or custom image loader
+     * @param imageLoader FalleryImageLoader implement of [FalleryImageLoader]
+     */
     fun setImageLoader(
         imageLoader: FalleryImageLoader
     ): FalleryBuilder {
         falleryOptions = falleryOptions.copy(
             imageLoader = imageLoader
         )
+
         return this
     }
 
-    fun setAutoHideMediaPreviewToolbarOnSingleTap(
-        enable: Boolean
+    /**
+     * set your custom bucket provider by implement [AbstractMediaBucketProvider]
+     * Note: If you want to create custom gallery you must implement [AbstractBucketContentProvider] too.
+     * for more information for create custom gallery with fallery check it http://mehdiyari.ir/?s=Fallery
+     * @param bucketProvider AbstractMediaBucketProvider custom implementation of [AbstractMediaBucketProvider]
+     */
+    fun setBucketListProvider(
+        bucketProvider: AbstractMediaBucketProvider
     ): FalleryBuilder {
         falleryOptions = falleryOptions.copy(
-            autoHideMediaPreviewToolbarOnSingleTap = enable
+            bucketProviderAbstract = bucketProvider
         )
         return this
     }
 
-    fun falleryStrings(
-        falleryStrings: FalleryStrings
-    ): FalleryBuilder {
-        falleryOptions = falleryOptions.copy(
-            falleryStrings = falleryStrings
-        )
-        return this
-    }
-
-    fun bucketProvider(
-        bucketProviderAbstract: AbstractMediaBucketProvider
-    ): FalleryBuilder {
-        falleryOptions = falleryOptions.copy(
-            bucketProviderAbstract = bucketProviderAbstract
-        )
-        return this
-    }
-
-    fun bucketContentProvider(
+    /**
+     * set your custom bucket content provider by implement [AbstractBucketContentProvider]
+     * note: if you want create custom gallery with fallery please check it http://mehdiyari.ir/?s=Fallery
+     * @param bucketContentProvider AbstractBucketContentProvider custom implementation of [AbstractBucketContentProvider]
+     */
+    fun setBucketContentProvider(
         bucketContentProvider: AbstractBucketContentProvider
     ): FalleryBuilder {
         falleryOptions = falleryOptions.copy(
@@ -107,6 +154,10 @@ class FalleryBuilder {
         return this
     }
 
+    /**
+     * set default [bucketRecyclerViewItemMode]. you can enable or disable
+     * changing bucket item mode by user with [setBucketItemModeToggleEnabled]
+     */
     fun setBucketItemMode(
         bucketRecyclerViewItemMode: BucketRecyclerViewItemMode
     ): FalleryBuilder {
@@ -116,16 +167,23 @@ class FalleryBuilder {
         return this
     }
 
-    fun setChangeBucketRecyclerViewItemModeByToolbarIcon(
+    /**
+     * enable or disable changing bucket item mode by user
+     */
+    fun setBucketItemModeToggleEnabled(
         enable: Boolean
     ): FalleryBuilder {
         falleryOptions = falleryOptions.copy(
-            changeBucketRecyclerViewItemModeByToolbarIcon = enable
+            bucketItemModeToggleEnabled = enable
         )
         return this
     }
 
-    fun setMediaObserverEnabled(enable: Boolean) : FalleryBuilder {
+    /**
+     * if new media add or remove in the device, fallery reload the buckets or bucket content. by defaults
+     * media observer is enable if you want to disable it just pass false to [setMediaObserverEnabled]
+     */
+    fun setMediaObserverEnabled(enable: Boolean): FalleryBuilder {
         falleryOptions = falleryOptions.copy(
             mediaObserverEnabled = enable
         )
@@ -133,7 +191,10 @@ class FalleryBuilder {
         return this
     }
 
-    fun setFalleryToolbarTitleText(@StringRes titleRes: Int) : FalleryBuilder {
+    /**
+     * set toolbar title text of falleryActivity
+     */
+    fun setFalleryToolbarTitleText(@StringRes titleRes: Int): FalleryBuilder {
         falleryOptions = falleryOptions.copy(
             toolbarTitle = titleRes
         )
@@ -141,8 +202,56 @@ class FalleryBuilder {
         return this
     }
 
+    /**
+     * set orientation for photo preview viewPager
+     */
+    fun setMediaPreviewViewPagerOrientation(@ViewPager2.Orientation orientation: Int): FalleryBuilder {
+        falleryOptions = falleryOptions.copy(
+            mediaPreviewScrollOrientation = orientation
+        )
+
+        return this
+    }
+
+    /**
+     * set pagerTransformer for photo preview viewPager
+     */
+    fun setMediaPreviewPageTransformer(pageTransformer: ViewPager2.PageTransformer?): FalleryBuilder {
+        falleryOptions = falleryOptions.copy(
+            mediaPreviewPageTransformer = pageTransformer
+        )
+
+        return this
+    }
+
+    /**
+     * set toggle background color when media selected
+     */
+    fun setSelectedMediaToggleBackgroundColor(
+        color: Int
+    ): FalleryBuilder {
+        falleryOptions = falleryOptions.copy(
+            selectedMediaToggleBackgroundColor = color
+        )
+
+        return this
+    }
+
+    /**
+     * set onClick listener for video play toggle
+     */
+    fun setOnVideoPlayClick(
+        onClick: (path: String) -> Unit
+    ): FalleryBuilder {
+        falleryOptions = falleryOptions.copy(
+            onVideoPlayClick = onClick
+        )
+
+        return this
+    }
+
     fun build(): FalleryOptions {
-        if (falleryOptions.imageLoader == null) throw IllegalArgumentException("You must set imageLoader")
+        require(falleryOptions.imageLoader != null) { "You must set imageLoader" }
 
         if (falleryOptions.cameraEnabledOptions.enabled)
             require(falleryOptions.cameraEnabledOptions.fileProviderAuthority != null) { "fileProviderAuthority must not be null" }

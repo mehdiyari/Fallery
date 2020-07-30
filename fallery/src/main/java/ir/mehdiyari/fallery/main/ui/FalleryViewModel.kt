@@ -163,4 +163,10 @@ internal class FalleryViewModel(
                 sendActionEnabledMutableStateFlow.value = false
         }
     }
+
+    fun prepareCameraResultWithSelectedResults() {
+        if (cameraTemporaryFilePath != null) {
+            resultSingleLiveEvent.value = mediaSelectionTracker.apply { add(cameraTemporaryFilePath!!) }.toTypedArray()
+        }
+    }
 }

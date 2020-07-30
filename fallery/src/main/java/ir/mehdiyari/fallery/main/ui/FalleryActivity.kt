@@ -1,23 +1,25 @@
 package ir.mehdiyari.fallery.main.ui
 
 import android.Manifest
+import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.*
+import android.graphics.BlendMode
+import android.graphics.BlendModeColorFilter
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
-import android.text.style.StyleSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.animation.TranslateAnimation
 import android.widget.EditText
+import android.widget.FrameLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
@@ -39,6 +41,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.io.File
 
 internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
 
@@ -155,6 +158,7 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
                     falleryViewModel.changeRecyclerViewItemMode(falleryOptions.bucketRecyclerViewItemMode)
 
                 }
+                R.id.bucketListMenuItemCamera -> takePhoto()
             }
 
             true
@@ -169,13 +173,35 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
         toolbarFalleryActivity.apply {
             falleryOptions.cameraEnabledOptions.also {
                 if (it.enabled) {
-                    menu.add(0, R.id.bucketListMenuItemCamera, 1, R.string.camera).apply {
-                        setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
-                        icon = AppCompatResources.getDrawable(
-                            this@FalleryActivity,
-                            R.drawable.fallery_icon_camera
-                        )?.also(::setToolbarColorToMenuItemDrawable)
+                    if (it.fileProviderAuthority != null) {
+                        menu.add(0, R.id.bucketListMenuItemCamera, 1, R.string.camera).apply {
+                            setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
+                            icon = AppCompatResources.getDrawable(
+                                this@FalleryActivity,
+                                R.drawable.fallery_icon_camera
+                            )?.also(::setToolbarColorToMenuItemDrawable)
+                        }
+                    } else {
+                        throw IllegalArgumentException("cant taking photo without fileProviderAuthority")
                     }
+                }
+            }
+        }
+    }
+
+
+    @ExperimentalCoroutinesApi
+    private fun takePhoto() {
+        falleryOptions.cameraEnabledOptions.also {
+            val filename = generatePhotoFilename()
+            (if (it.directory != null) {
+                File(it.directory, filename)
+            } else {
+                File(FalleryActivityComponentHolder.getOrNull()!!.provideCacheDir().cacheDir, filename)
+            }).also { temporaryFile ->
+                getIntentForTakingPhoto(it.fileProviderAuthority!!, temporaryFile)?.also { takePhotoIntent ->
+                    startActivityForResult(takePhotoIntent, TAKE_PHOTO_REQUEST_CODE)
+                    falleryViewModel.setCameraPhotoFileAddress(temporaryFile.path)
                 }
             }
         }
@@ -446,5 +472,22 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
             super.onBackPressed()
             showOrHideMenusBasedOnFragment()
         }
+    }
+
+    @ExperimentalCoroutinesApi
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == TAKE_PHOTO_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                handleTakingPhotoResult()
+            } else {
+                falleryViewModel.clearCameraPhotoFileAddress()
+            }
+        }
+    }
+
+    @ExperimentalCoroutinesApi
+    private fun handleTakingPhotoResult() {
+        falleryViewModel.prepareCameraResultWithSelectedResults()
     }
 }

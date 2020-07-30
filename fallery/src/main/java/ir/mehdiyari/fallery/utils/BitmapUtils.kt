@@ -69,6 +69,11 @@ fun MediaMetadataRetriever.extractVideoDimension(videoPath: String): Pair<Int, I
     ).toInt()
 }
 
+
+fun MediaMetadataRetriever.getVideoSize() : PhotoDiminution = PhotoDiminution(
+    extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT).toInt(), extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH).toInt()
+)
+
 internal fun getHeightBasedOnScaledWidth(
     originalWidth: Int,
     originalHeight: Int,

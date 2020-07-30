@@ -4,7 +4,6 @@ import android.database.ContentObserver
 import android.net.Uri
 import android.os.Handler
 import android.provider.MediaStore
-import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 
@@ -35,19 +34,13 @@ internal class MediaStoreObserver constructor(
         )
     }
 
-    override fun onChange(selfChange: Boolean) {
-        Log.e("MediaStoreObserver", "onChange($selfChange)")
-        super.onChange(selfChange)
-    }
-
     override fun onChange(selfChange: Boolean, uri: Uri?) {
-        Log.e("MediaStoreObserver", "onChange($selfChange, $uri)")
-        super.onChange(selfChange, uri)
         externalStorageChangeMutableLiveData.value = uri
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun onDestroy() {
+        context.lifecycle.removeObserver(this)
         context.contentResolver.unregisterContentObserver(this)
     }
 }

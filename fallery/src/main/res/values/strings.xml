@@ -11,4 +11,7 @@
     <string name="cancel_button">Cancel</string>
     <string name="of">of</string>
     <string name="selected_media">selected</string>
+    <string name="camera_not_found">Please install camera app first</string>
+    <string name="something_went_wrong">Somthing went wrong</string>
+    <string name="no_video_player_found">No media player found on device</string>
 </resources>

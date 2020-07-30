@@ -1,0 +1,17 @@
+<resources>
+    <string name="fallery_toolbar_title">گالری</string>
+    <string name="fallery_caption_hint_text">پیام…</string>
+    <string name="media_count">%1$d مدیا</string>
+    <string name="camera">دوربین</string>
+    <string name="list_mode">حالت نمایش لیست</string>
+    <string name="access_external_storage_denied">برنامه برای انتخاب مدیا نیاز به دسترسی به فضای ذخیره سازی دارد.</string>
+    <string name="access_external_storage_permanently_denied">دسترسی به فضای ذخیره سازی محدود شده است. لطفا به تنظیمات اپلیکیشن برورید و روی گزینه /"مجوز ها/" ضربه بزنید و سپس گزینه مجوز /"فضای ذخیره سازی/" را فعال کنید</string>
+    <string name="continue_button">ادامه</string>
+    <string name="exit_button">خروج</string>
+    <string name="cancel_button">لغو</string>
+    <string name="of">از</string>
+    <string name="selected_media">انتخاب شده است</string>
+    <string name="camera_not_found">لطفا ابتدا یک اپلیکیشن دوربین نصب کنید</string>
+    <string name="something_went_wrong">مشکلی پیش امده است</string>
+    <string name="no_video_player_found">هیچ پخش کننده ویدیویی برروی دستگاه پیدا نشد.</string>
+</resources>

@@ -150,4 +150,17 @@ internal class FalleryViewModel(
     fun setCameraPhotoFileAddress(path: String) {
         cameraTemporaryFilePath = path
     }
+
+    fun validateSelections() {
+        val validatedList = mediaSelectionTracker.filter { File(it).exists() }
+        mediaSelectionTracker.clear()
+        mediaSelectionTracker.addAll(validatedList)
+        mediaCountMutableStateFlow.value = MediaCountModel(mediaSelectionTracker.size, totalMediaCount)
+        if (mediaSelectionTracker.isEmpty()) {
+            if (falleryOptions.captionEnabledOptions.enabled)
+                captionEnabledMutableStateFlow.value = false
+            else
+                sendActionEnabledMutableStateFlow.value = false
+        }
+    }
 }

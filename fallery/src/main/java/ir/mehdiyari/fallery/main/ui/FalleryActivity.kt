@@ -90,6 +90,8 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
             }
         }
 
+        observeMediaStopChanges()
+
         falleryViewModel.currentFragmentLiveData.observeSingleEvent(this@FalleryActivity, Observer { falleryView ->
             when (falleryView) {
                 is FalleryView.BucketList -> {
@@ -335,6 +337,19 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
             }
         }
 
+    }
+
+    @ExperimentalCoroutinesApi
+    private fun observeMediaStopChanges() {
+        if (FalleryActivityComponentHolder.getOrNull()?.provideFalleryOptions()?.mediaObserverEnabled == true) {
+            getMediaObserverInstance()?.externalStorageChangeLiveData?.observe(this, Observer {
+                permissionChecker(Manifest.permission.WRITE_EXTERNAL_STORAGE, granted = {
+                    falleryViewModel.validateSelections()
+                }, denied = {
+                    Log.e(FALLERY_LOG_TAG, "mediaStoreObserver -> getMedias -> app has not access to external storage for get medias of bucket from mediaStore")
+                })
+            })
+        }
     }
 
     override fun onDestroy() {

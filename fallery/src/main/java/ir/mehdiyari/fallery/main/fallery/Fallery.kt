@@ -1,26 +1,41 @@
+@file:JvmName("Fallery")
+
 package ir.mehdiyari.fallery.main.fallery
 
 import android.app.Activity
 import android.content.Intent
 import androidx.fragment.app.Fragment
-import ir.mehdiyari.fallery.main.ui.FalleryActivity
 import ir.mehdiyari.fallery.main.di.FalleryCoreComponentHolder
+import ir.mehdiyari.fallery.main.ui.FalleryActivity
+import ir.mehdiyari.fallery.utils.FALLERY_CAPTION_KEY
+import ir.mehdiyari.fallery.utils.FALLERY_MEDIAS_LIST_KEY
 
-object Fallery {
-
-    fun startFalleryInActivity(requestCode: Int, activity: Activity, falleryOptions: FalleryOptions) {
-        FalleryCoreComponentHolder.createComponent(falleryOptions)
-        activity.startActivityForResult(Intent(activity, FalleryActivity::class.java), requestCode)
-    }
-
-    fun startFalleryInFragment(requestCode: Int, fragment: Fragment, falleryOptions: FalleryOptions) {
-        FalleryCoreComponentHolder.createComponent(falleryOptions)
-        fragment.startActivityForResult(Intent(fragment.requireContext(), FalleryActivity::class.java), requestCode)
-    }
-
+@JvmName("startFalleryFromActivityWithOptions")
+fun Activity.startFalleryWithOptions(requestCode: Int, falleryOptions: FalleryOptions) {
+    FalleryCoreComponentHolder.createComponent(falleryOptions)
+    startActivityForResult(Intent(this, FalleryActivity::class.java), requestCode)
 }
 
-fun Activity.startFalleryWithOptions(requestCode: Int, falleryOptions: FalleryOptions) = Fallery.startFalleryInActivity(requestCode, this, falleryOptions)
-fun Fragment.startFalleryWithOptions(requestCode: Int, falleryOptions: FalleryOptions) = Fallery.startFalleryInFragment(requestCode, this, falleryOptions)
-fun Activity.startFallery(requestCode: Int) = Fallery.startFalleryInActivity(requestCode, this, FalleryOptions())
-fun Fragment.startFallery(requestCode: Int) = Fallery.startFalleryInFragment(requestCode, this, FalleryOptions())
+@JvmName("startFalleryFromFragmentWithOptions")
+fun Fragment.startFalleryWithOptions(requestCode: Int, falleryOptions: FalleryOptions) {
+    FalleryCoreComponentHolder.createComponent(falleryOptions)
+    startActivityForResult(Intent(this.requireContext(), FalleryActivity::class.java), requestCode)
+}
+
+@JvmName("startFalleryFromActivity")
+fun Activity.startFallery(requestCode: Int) = this.startFalleryWithOptions(requestCode, FalleryOptions())
+
+@JvmName("startFalleryFromFragment")
+fun Fragment.startFallery(requestCode: Int) = this.startFalleryWithOptions(requestCode, FalleryOptions())
+
+@JvmName("getResultMediasFromIntent")
+fun Intent.getFalleryResultMediasFromIntent(): Array<String>? {
+    if (this.hasExtra(FALLERY_MEDIAS_LIST_KEY)) {
+        return this.getStringArrayExtra(FALLERY_MEDIAS_LIST_KEY)
+    } else {
+        throw IllegalArgumentException("input intent has no extra with key $FALLERY_MEDIAS_LIST_KEY")
+    }
+}
+
+@JvmName("getCaptionFromIntent")
+fun Intent.getFalleryCaptionFromIntent(): String? = this.getStringExtra(FALLERY_CAPTION_KEY)

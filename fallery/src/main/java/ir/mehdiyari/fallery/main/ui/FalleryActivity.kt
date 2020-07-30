@@ -127,22 +127,11 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface {
         } else {
             toolbarFalleryActivity.setNavigationIcon(R.drawable.fallery_ic_cancel)
             toolbarFalleryActivity.setNavigationOnClickListener { falleryViewModel.deselectAllSelections() }
-            toolbarFalleryActivity.title = SpannableStringBuilder().apply {
-                append(value.selectedCount.toString())
-                append(" ${getString(R.string.of)} ")
-                append((value.totalCount).toString())
-                append(" ${getString(R.string.selected_media)}")
-                val colorAccent = FalleryActivityComponentHolder.getOrNull()?.provideFalleryStyleAttrs()?.falleryColorAccent ?: Color.BLUE
-
-                val totalStartIndex = value.selectedCount.toString().length + 4
-                val totalEndIndex = (value.selectedCount.toString().length + 4) + value.totalCount.toString().length
-
-                setSpan(StyleSpan(Typeface.BOLD), 0, value.selectedCount.toString().length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-                setSpan(StyleSpan(Typeface.BOLD), totalStartIndex, totalEndIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-
-                setSpan(ForegroundColorSpan(colorAccent), 0, value.selectedCount.toString().length, 0)
-                setSpan(ForegroundColorSpan(colorAccent), totalStartIndex, totalEndIndex, 0)
-            }
+            toolbarFalleryActivity.title = createMediaCountSpannable(
+                context = this,
+                value = value,
+                colorAccent = FalleryActivityComponentHolder.getOrNull()?.provideFalleryStyleAttrs()?.falleryColorAccent ?: Color.BLUE
+            )
         }
     }
 

@@ -1,6 +1,12 @@
 package ir.mehdiyari.fallery.utils
 
 import android.provider.MediaStore
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import android.text.style.StyleSpan
+import ir.mehdiyari.fallery.R
+import ir.mehdiyari.fallery.main.ui.MediaCountModel
 
 internal const val FALLERY_LOG_TAG = "Fallery"
 internal const val WRITE_EXTERNAL_REQUEST_CODE = 100_000
@@ -44,4 +50,20 @@ internal fun convertSecondToTime(second: Int): String {
     time += String.format("%02d", secondC)
 
     return time
+}
+
+
+internal fun createMediaCountSpannable(context: Context, value: MediaCountModel, colorAccent: Int) = SpannableStringBuilder().apply {
+    append(value.selectedCount.toString())
+    append(" ${context.getString(R.string.of)} ")
+    append((value.totalCount).toString())
+    append(" ${context.getString(R.string.selected_media)}")
+    val totalStartIndex = value.selectedCount.toString().length + 4
+    val totalEndIndex = (value.selectedCount.toString().length + 4) + value.totalCount.toString().length
+
+    setSpan(StyleSpan(Typeface.BOLD), 0, value.selectedCount.toString().length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    setSpan(StyleSpan(Typeface.BOLD), totalStartIndex, totalEndIndex, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+    setSpan(ForegroundColorSpan(colorAccent), 0, value.selectedCount.toString().length, 0)
+    setSpan(ForegroundColorSpan(colorAccent), totalStartIndex, totalEndIndex, 0)
 }

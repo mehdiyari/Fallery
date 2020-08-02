@@ -2,6 +2,7 @@ package ir.mehdiyari.fallery.main.ui
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import ir.mehdiyari.fallery.R
 import ir.mehdiyari.fallery.main.fallery.BucketRecyclerViewItemMode
 import ir.mehdiyari.fallery.main.fallery.FalleryOptions
 import ir.mehdiyari.fallery.main.fallery.UNLIMITED_SELECT
@@ -18,7 +19,7 @@ internal class FalleryViewModel(
     private val falleryOptions: FalleryOptions
 ) : BaseViewModel() {
 
-    val currentFragmentLiveData = SingleLiveEvent<FalleryView>()
+    val currentFragmentLiveData = SingleLiveEvent<FalleryView?>()
 
     val userSelectedMedias: Boolean
         get() = mediaSelectionTracker.isNotEmpty()
@@ -50,6 +51,7 @@ internal class FalleryViewModel(
     private var cameraTemporaryFilePath: String? = null
 
     val resultSingleLiveEvent = SingleLiveEvent<Array<String>>()
+    val showErrorSingleLiveEvent = SingleLiveEvent<Int>()
 
     init {
         if (mediaSelectionTracker.isNotEmpty() && captionOrSendActionState) {
@@ -64,8 +66,8 @@ internal class FalleryViewModel(
         bucketRecyclerViewMode.value = bucketRecyclerViewItemMode
     }
 
-    fun openBucketWithId(it: Long) {
-        currentFragmentLiveData.value = FalleryView.BucketContent(it)
+    fun openBucketWithId(it: Long, bucketName: String) {
+        currentFragmentLiveData.value = FalleryView.BucketContent(it, bucketName)
 
     }
 

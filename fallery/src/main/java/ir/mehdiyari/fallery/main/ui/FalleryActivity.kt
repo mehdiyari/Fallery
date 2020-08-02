@@ -20,6 +20,7 @@ import android.view.View
 import android.view.animation.TranslateAnimation
 import android.widget.EditText
 import android.widget.FrameLayout
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
@@ -127,12 +128,14 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
         falleryViewModel.currentFragmentLiveData.observeSingleEvent(this@FalleryActivity, Observer { falleryView ->
             when (falleryView) {
                 is FalleryView.BucketList -> {
+                    toolbarFalleryActivity.title = getString(falleryOptions.toolbarTitle)
                     supportFragmentManager.beginTransaction()
                         .add(R.id.layoutFragmentContainer, BucketListFragment())
                         .commit()
                     toolbarFalleryActivity.menu?.findItem(R.id.bucketListMenuItemShowRecyclerViewItemModelChanger)?.isVisible = true
                 }
                 is FalleryView.BucketContent -> {
+                    toolbarFalleryActivity.title = falleryView.bucketName
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.layoutFragmentContainer, BaseBucketContentFragment().apply {
                             arguments = Bundle().apply {
@@ -143,9 +146,6 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
                         .commit()
                     toolbarFalleryActivity.menu?.findItem(R.id.bucketListMenuItemShowRecyclerViewItemModelChanger)?.isVisible = false
                 }
-                is FalleryView.PhotoPreview -> {
-                    toolbarFalleryActivity.visibility = View.GONE
-                }
                 else -> Unit
             }
 
@@ -155,7 +155,10 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
     @ExperimentalCoroutinesApi
     private fun setupMediaCountView(value: MediaCountModel) {
         if (value.selectedCount <= 0) {
-            toolbarFalleryActivity.title = getString(falleryOptions.toolbarTitle)
+            toolbarFalleryActivity.title =
+                if (falleryViewModel.currentFragmentLiveData.value is FalleryView.BucketContent) falleryViewModel.currentFragmentLiveData.value!!.let { it as FalleryView.BucketContent }.bucketName else getString(
+                    falleryOptions.toolbarTitle
+                )
             toolbarFalleryActivity.setNavigationIcon(R.drawable.fallery_ic_back_arrow)
             toolbarFalleryActivity.setNavigationOnClickListener { onBackPressed() }
         } else {
@@ -547,7 +550,13 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
 
         if (supportFragmentManager.findFragmentById(R.id.layoutFragmentContainer) is BucketListFragment && falleryViewModel.userSelectedMedias)
             falleryViewModel.deselectAllSelections()
-        else {
+        else if (supportFragmentManager.findFragmentById(R.id.layoutFragmentContainer) is BaseBucketContentFragment) {
+            super.onBackPressed()
+            if (!falleryViewModel.userSelectedMedias) {
+                toolbarFalleryActivity.title = getString(falleryOptions.toolbarTitle)
+            }
+            falleryViewModel.currentFragmentLiveData.value = null
+        } else {
             super.onBackPressed()
             showOrHideMenusBasedOnFragment()
         }
@@ -584,5 +593,4 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
         })
         finish()
     }
-
 }

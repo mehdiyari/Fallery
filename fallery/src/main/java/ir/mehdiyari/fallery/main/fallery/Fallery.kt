@@ -22,12 +22,6 @@ fun Fragment.startFalleryWithOptions(requestCode: Int, falleryOptions: FalleryOp
     startActivityForResult(Intent(this.requireContext(), FalleryActivity::class.java), requestCode)
 }
 
-@JvmName("startFalleryFromActivity")
-fun Activity.startFallery(requestCode: Int) = this.startFalleryWithOptions(requestCode, FalleryOptions())
-
-@JvmName("startFalleryFromFragment")
-fun Fragment.startFallery(requestCode: Int) = this.startFalleryWithOptions(requestCode, FalleryOptions())
-
 @JvmName("getResultMediasFromIntent")
 fun Intent.getFalleryResultMediasFromIntent(): Array<String>? {
     if (this.hasExtra(FALLERY_MEDIAS_LIST_KEY)) {

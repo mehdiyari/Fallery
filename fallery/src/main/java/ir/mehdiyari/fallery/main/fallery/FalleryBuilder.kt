@@ -236,6 +236,19 @@ class FalleryBuilder constructor(private var falleryOptions: FalleryOptions = Fa
         return this
     }
 
+    /**
+     * if true fallery request external storage permission from user
+     */
+    fun setGrantExternalStoragePermission(
+        grantExternalStoragePermission: Boolean
+    ): FalleryBuilder {
+        falleryOptions = falleryOptions.copy(
+            grantExternalStoragePermission = grantExternalStoragePermission
+        )
+
+        return this
+    }
+
     fun build(): FalleryOptions {
         require(falleryOptions.imageLoader != null) { "You must set imageLoader" }
 

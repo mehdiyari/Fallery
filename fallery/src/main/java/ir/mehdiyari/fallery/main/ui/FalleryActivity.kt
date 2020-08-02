@@ -67,11 +67,15 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
 
     @ExperimentalCoroutinesApi
     private fun initialize() {
-        permissionChecker(Manifest.permission.WRITE_EXTERNAL_STORAGE, granted = {
+        if (!falleryOptions.grantExternalStoragePermission) {
             falleryViewModel.storagePermissionGranted()
-        }, denied = {
-            requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), WRITE_EXTERNAL_REQUEST_CODE)
-        })
+        } else {
+            permissionChecker(Manifest.permission.WRITE_EXTERNAL_STORAGE, granted = {
+                falleryViewModel.storagePermissionGranted()
+            }, denied = {
+                requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), WRITE_EXTERNAL_REQUEST_CODE)
+            })
+        }
     }
 
 
@@ -407,13 +411,17 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
 
     @ExperimentalCoroutinesApi
     private fun observeMediaStopChanges() {
-        if (FalleryActivityComponentHolder.getOrNull()?.provideFalleryOptions()?.mediaObserverEnabled == true) {
+        if (falleryOptions.mediaObserverEnabled) {
             getMediaObserverInstance()?.externalStorageChangeLiveData?.observe(this, Observer {
-                permissionChecker(Manifest.permission.WRITE_EXTERNAL_STORAGE, granted = {
+                if (!falleryOptions.grantExternalStoragePermission) {
                     falleryViewModel.validateSelections()
-                }, denied = {
-                    Log.e(FALLERY_LOG_TAG, "mediaStoreObserver -> getMedias -> app has not access to external storage for get medias of bucket from mediaStore")
-                })
+                } else {
+                    permissionChecker(Manifest.permission.WRITE_EXTERNAL_STORAGE, granted = {
+                        falleryViewModel.validateSelections()
+                    }, denied = {
+                        Log.e(FALLERY_LOG_TAG, "mediaStoreObserver -> getMedias -> app has not access to external storage for get medias of bucket from mediaStore")
+                    })
+                }
             })
         }
     }

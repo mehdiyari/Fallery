@@ -94,12 +94,16 @@ class BucketContentFragment : Fragment() {
 
         if (FalleryActivityComponentHolder.getOrNull()?.provideFalleryOptions()?.mediaObserverEnabled == true) {
             (requireActivity() as MediaObserverInterface).getMediaObserverInstance()?.externalStorageChangeLiveData?.observe(viewLifecycleOwner, Observer {
-                requireActivity().permissionChecker(Manifest.permission.WRITE_EXTERNAL_STORAGE, granted = {
-                    Log.d(FALLERY_LOG_TAG, "mediaStoreOnChanged -> refresh medias in bucket")
+                if (!FalleryActivityComponentHolder.getOrNull()!!.provideFalleryOptions().grantExternalStoragePermission) {
                     bucketContentViewModel.getMedias(arguments?.getLong("bucket_id")!!, true)
-                }, denied = {
-                    Log.e(FALLERY_LOG_TAG, "mediaStoreObserver -> getMedias -> app has not access to external storage for get medias of bucket from mediaStore")
-                })
+                } else {
+                    requireActivity().permissionChecker(Manifest.permission.WRITE_EXTERNAL_STORAGE, granted = {
+                        Log.d(FALLERY_LOG_TAG, "mediaStoreOnChanged -> refresh medias in bucket")
+                        bucketContentViewModel.getMedias(arguments?.getLong("bucket_id")!!, true)
+                    }, denied = {
+                        Log.e(FALLERY_LOG_TAG, "mediaStoreObserver -> getMedias -> app has not access to external storage for get medias of bucket from mediaStore")
+                    })
+                }
             })
         }
 

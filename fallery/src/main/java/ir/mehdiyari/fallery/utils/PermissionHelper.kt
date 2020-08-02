@@ -6,13 +6,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 
 
-inline fun AppCompatActivity.permissionChecker(
+internal inline fun AppCompatActivity.permissionChecker(
     permission: String,
     granted: () -> Unit = {},
     denied: () -> Unit = {}
 ) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-       if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
             denied()
         } else {
             granted()
@@ -22,7 +22,7 @@ inline fun AppCompatActivity.permissionChecker(
     }
 }
 
-inline fun FragmentActivity.permissionChecker(
+internal inline fun FragmentActivity.permissionChecker(
     permission: String, granted: () -> Unit, denied: () -> Unit
 ) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

@@ -32,7 +32,8 @@ data class FalleryOptions(
     val mediaPreviewPageTransformer: ViewPager2.PageTransformer? = null,
     val mediaPreviewScrollOrientation: Int = ViewPager2.ORIENTATION_HORIZONTAL,
     val selectedMediaToggleBackgroundColor: Int = Color.parseColor("#A11183"),
-    val onVideoPlayClick: ((path: String) -> Unit)? = null
+    val onVideoPlayClick: ((path: String) -> Unit)? = null,
+    val grantExternalStoragePermission: Boolean = true
 ) {
     constructor(falleryImageLoader: FalleryImageLoader?) : this(
         mediaTypeFilter = BucketType.VIDEO_PHOTO_BUCKETS,
@@ -52,7 +53,8 @@ data class FalleryOptions(
         mediaPreviewPageTransformer = null,
         mediaPreviewScrollOrientation = ViewPager2.ORIENTATION_HORIZONTAL,
         selectedMediaToggleBackgroundColor = Color.parseColor("#A11183"),
-        onVideoPlayClick = null
+        onVideoPlayClick = null,
+        grantExternalStoragePermission = true
     )
 }
 

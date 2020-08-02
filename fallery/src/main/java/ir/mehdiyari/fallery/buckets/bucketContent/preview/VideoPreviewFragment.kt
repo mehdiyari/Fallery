@@ -6,6 +6,7 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,10 +16,7 @@ import ir.mehdiyari.fallery.R
 import ir.mehdiyari.fallery.imageLoader.PhotoDiminution
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 import ir.mehdiyari.fallery.models.Media
-import ir.mehdiyari.fallery.utils.autoClose
-import ir.mehdiyari.fallery.utils.createThumbForVideos
-import ir.mehdiyari.fallery.utils.getHeightBasedOnScaledWidth
-import ir.mehdiyari.fallery.utils.getVideoSize
+import ir.mehdiyari.fallery.utils.*
 import kotlinx.android.synthetic.main.fragment_video_preview.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,21 +37,27 @@ internal class VideoPreviewFragment : AbstractMediaPreviewFragment() {
     private fun loadVideoThumbnail(video: Media.Video) {
         setupVideoToggleOnClickListener(video)
         MediaMetadataRetriever().autoClose { videoMetadataRetriever ->
-            videoMetadataRetriever.setDataSource(video.path)
-            val videoOriginalSize = videoMetadataRetriever.getVideoSize()
+            var videoOriginalSize = PhotoDiminution(0, 0)
+            try {
+                videoMetadataRetriever.setDataSource(video.path)
+                videoOriginalSize = videoMetadataRetriever.getVideoSize()
+            } catch (t: Throwable) {
+                Log.e(FALLERY_LOG_TAG, "cant load video size from video path")
+            }
+
             val displayMetrics = requireActivity().resources.displayMetrics
             lifecycleScope.launch(Dispatchers.IO) {
                 try {
-                    createThumbForVideos(
+                    createThumbForVideosOrEmpty(
                         videosPath = listOf(video.path to video.id),
                         cacheDir = FalleryActivityComponentHolder.getOrNull()!!.provideCacheDir().cacheDir,
                         highQuality = true to PhotoDiminution(
                             if (videoOriginalSize.widthIsNotSet()) displayMetrics.widthPixels else videoOriginalSize.width,
-                            if (videoOriginalSize.heightIsNotSet()) displayMetrics.heightPixels else videoOriginalSize.height
+                            if (videoOriginalSize.heightIsNotSet()) video.thumbnail.height else videoOriginalSize.height
                         )
                     ).also {
                         launch(Dispatchers.Main) {
-                            if (it.isEmpty())
+                            if (it.isEmpty() || it.firstOrNull()?.isEmpty() == true)
                                 showDefaultThumbnail(displayMetrics, video.thumbnail.path)
                             else
                                 showVideoThumbnail(it, displayMetrics, videoOriginalSize)

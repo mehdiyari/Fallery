@@ -89,8 +89,8 @@ internal class FalleryViewModel(
     }
 
     fun requestSelectingMedia(path: String): Boolean {
-        mediaSelectionTracker.remove(path)
         if (falleryOptions.maxSelectableMedia != UNLIMITED_SELECT && falleryOptions.maxSelectableMedia == mediaSelectionTracker.size) {
+            showErrorSingleLiveEvent.value = R.string.fallery_error_max_selectable
             return false
         }
 

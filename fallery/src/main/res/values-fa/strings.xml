@@ -14,4 +14,5 @@
     <string name="camera_not_found">لطفا ابتدا یک اپلیکیشن دوربین نصب کنید</string>
     <string name="something_went_wrong">مشکلی پیش امده است</string>
     <string name="no_video_player_found">هیچ پخش کننده ویدیویی برروی دستگاه پیدا نشد.</string>
+    <string name="fallery_error_max_selectable">شما فقط میتوانید %1$d مدیا را انتخاب کنید.</string>
 </resources>

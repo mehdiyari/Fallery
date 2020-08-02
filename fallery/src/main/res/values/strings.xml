@@ -14,4 +14,5 @@
     <string name="camera_not_found">Please install camera app first</string>
     <string name="something_went_wrong">Somthing went wrong</string>
     <string name="no_video_player_found">No media player found on device</string>
+    <string name="fallery_error_max_selectable">You can only choose %1$d Media</string>
 </resources>

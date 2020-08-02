@@ -80,7 +80,15 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
         falleryViewModel = ViewModelProvider(
             this,
             FalleryActivityComponentHolder.createOrGetComponent(this).provideFalleryViewModelFactory()
-        )[FalleryViewModel::class.java].apply {
+        )[FalleryViewModel::class.java]
+
+        falleryViewModel.apply {
+            showErrorSingleLiveEvent.observeSingleEvent(this@FalleryActivity, Observer {
+                if (it != null && it == R.string.fallery_error_max_selectable) {
+                    Toast.makeText(this@FalleryActivity, getString(it, falleryOptions.maxSelectableMedia), Toast.LENGTH_SHORT).show()
+                }
+            })
+
             resultSingleLiveEvent.observeSingleEvent(this@FalleryActivity, Observer {
                 if (it != null && it.isNotEmpty()) {
                     finishWithOKResult(it)

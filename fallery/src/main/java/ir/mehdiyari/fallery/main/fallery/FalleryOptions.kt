@@ -31,16 +31,16 @@ data class FalleryOptions(
     @StringRes var toolbarTitle: Int = R.string.fallery_toolbar_title,
     val mediaPreviewPageTransformer: ViewPager2.PageTransformer? = null,
     val mediaPreviewScrollOrientation: Int = ViewPager2.ORIENTATION_HORIZONTAL,
-    val selectedMediaToggleBackgroundColor: Int = Color.GREEN,
+    val selectedMediaToggleBackgroundColor: Int = Color.parseColor("#A11183"),
     val onVideoPlayClick: ((path: String) -> Unit)? = null
 ) {
-    constructor() : this(
+    constructor(falleryImageLoader: FalleryImageLoader?) : this(
         mediaTypeFilter = BucketType.VIDEO_PHOTO_BUCKETS,
         maxSelectableMedia = UNLIMITED_SELECT,
         cameraEnabledOptions = CameraEnabledOptions(),
         captionEnabledOptions = CaptionEnabledOptions(),
         mediaCountEnabled = true,
-        imageLoader = null,
+        imageLoader = falleryImageLoader,
         bucketProviderAbstract = null,
         abstractBucketContentProvider = null,
         themeResId = R.style.Fallery_Light,
@@ -51,7 +51,7 @@ data class FalleryOptions(
         toolbarTitle = R.string.fallery_toolbar_title,
         mediaPreviewPageTransformer = null,
         mediaPreviewScrollOrientation = ViewPager2.ORIENTATION_HORIZONTAL,
-        selectedMediaToggleBackgroundColor = Color.GREEN,
+        selectedMediaToggleBackgroundColor = Color.parseColor("#A11183"),
         onVideoPlayClick = null
     )
 }

@@ -13,9 +13,7 @@ import ir.mehdiyari.fallery.repo.AbstractMediaBucketProvider
 /**
  * Builder for [FalleryOptions]
  */
-class FalleryBuilder {
-
-    private var falleryOptions = FalleryOptions()
+class FalleryBuilder constructor(private var falleryOptions: FalleryOptions = FalleryOptions(null)) {
 
     /**
      * filter buckets that contains [bucketType]

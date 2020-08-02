@@ -17,7 +17,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import ir.mehdiyari.fallery.R
-import ir.mehdiyari.fallery.buckets.bucketList.adapter.BucketListAdapter
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 import ir.mehdiyari.fallery.main.fallery.BucketRecyclerViewItemMode
 import ir.mehdiyari.fallery.main.ui.FalleryViewModel
@@ -60,7 +59,7 @@ internal class BucketListFragment : Fragment() {
 
         bucketAdapter.apply {
             onBucketClick = {
-               falleryViewModel.openBucketWithId(it)
+                falleryViewModel.openBucketWithId(it, bucketListViewModel.getBucketNameById(it))
             }
 
             getImageViewWidth = {
@@ -78,7 +77,10 @@ internal class BucketListFragment : Fragment() {
     }
 
     private fun initViewModel() {
-        falleryViewModel = ViewModelProvider(requireActivity(),  FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideFalleryViewModelFactory())[FalleryViewModel::class.java].apply {
+        falleryViewModel = ViewModelProvider(
+            requireActivity(),
+            FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideFalleryViewModelFactory()
+        )[FalleryViewModel::class.java].apply {
             bucketRecycleViewModeLiveData.observe(viewLifecycleOwner, Observer {
                 changeRecyclerViewItemModeTo(it)
             })
@@ -112,11 +114,11 @@ internal class BucketListFragment : Fragment() {
 
         bucketListViewModel.apply {
             lifecycleScope.launch {
-                bucketListViewStateFlow.collect {
+                loadingViewStateFlow.collect {
                     when (it) {
-                        is BucketListViewState.ErrorInFetchingBuckets -> hideBucketListIfNotHideYet()
-                        is BucketListViewState.ShowLoading -> showLoading()
-                        is BucketListViewState.HideLoading -> hideLoading()
+                        is LoadingViewState.Error -> showErrorLayout()
+                        is LoadingViewState.ShowLoading -> showLoading()
+                        is LoadingViewState.HideLoading -> hideLoading()
                     }
                 }
             }
@@ -137,13 +139,16 @@ internal class BucketListFragment : Fragment() {
     }
 
 
-    private fun hideBucketListIfNotHideYet() {
+    private fun showErrorLayout() {
+        hideLoading()
         recyclerViewBuckets.visibility = View.GONE
-        // show no bucket found view
+        errorLayoutBucketList.show()
+        errorLayoutBucketList.setOnRetryClickListener { bucketListViewModel.retry() }
     }
 
 
     private fun showLoading() {
+        errorLayoutBucketList.hide()
         contentLoadingProgressBarBucketList.show()
         if (recyclerViewBuckets.visibility == View.VISIBLE) {
             recyclerViewBuckets.startAnimation(
@@ -158,6 +163,7 @@ internal class BucketListFragment : Fragment() {
     }
 
     private fun hideLoading() {
+        errorLayoutBucketList.hide()
         contentLoadingProgressBarBucketList.hide()
         recyclerViewBuckets.visibility = View.INVISIBLE
         recyclerViewBuckets.startAnimation(

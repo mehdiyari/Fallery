@@ -1,14 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/recyclerViewBucketContent"
-    android:layout_width="match_parent"
+<FrameLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layoutDirection="ltr"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:listitem="@layout/media_video_item"
-    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-    app:spanCount="3"
-    android:background="?attr/fallery_background_color"
-    android:clipToPadding="false"
-    android:paddingBottom="@dimen/recycler_view_bottom_padding"/>
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewBucketContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layoutDirection="ltr"
+        tools:listitem="@layout/media_video_item"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:spanCount="3"
+        android:background="?attr/fallery_background_color"
+        android:clipToPadding="false"
+        android:visibility="gone"
+        android:paddingBottom="@dimen/recycler_view_bottom_padding" />
+
+    <ir.mehdiyari.fallery.utils.ErrorLayout
+        android:id="@+id/errorLayoutBucketContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
+    <androidx.core.widget.ContentLoadingProgressBar
+        android:id="@+id/contentLoadingProgressBarBucketContent"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_gravity="center" />
+
+</FrameLayout>

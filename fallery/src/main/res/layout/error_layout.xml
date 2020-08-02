@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="?attr/fallery_background_color"
+    android:layout_height="wrap_content"
+    android:id="@+id/linearLayoutRootLayout"
+    android:padding="5dp">
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:padding="5dp"
+        android:tint="?attr/fallery_icon_tint_color"
+        android:src="@drawable/ic_error" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewErrorMessage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/something_went_wrong"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:textColor="?attr/fallery_primary_text_color"
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:textSize="18sp" />
+
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewRetry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/retry"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:textStyle="bold"
+        android:textColor="#06A9F8"
+        android:singleLine="true"
+        android:padding="8dp"
+        android:ellipsize="marquee"
+        android:textSize="16sp" />
+
+
+</LinearLayout>

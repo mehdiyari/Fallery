@@ -15,6 +15,12 @@
         android:paddingBottom="@dimen/recycler_view_bottom_padding"
         android:visibility="gone" />
 
+    <ir.mehdiyari.fallery.utils.ErrorLayout
+        android:id="@+id/errorLayoutBucketList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
+
     <androidx.core.widget.ContentLoadingProgressBar
         android:id="@+id/contentLoadingProgressBarBucketList"
         style="?android:attr/progressBarStyleLarge"

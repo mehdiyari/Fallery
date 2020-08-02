@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import ir.mehdiyari.fallery.R
 import ir.mehdiyari.fallery.buckets.bucketContent.BucketContentViewModel
+import ir.mehdiyari.fallery.buckets.bucketList.LoadingViewState
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 import ir.mehdiyari.fallery.main.ui.FalleryViewModel
 import ir.mehdiyari.fallery.main.ui.MediaObserverInterface
@@ -23,12 +24,10 @@ import ir.mehdiyari.fallery.utils.dpToPx
 import ir.mehdiyari.fallery.utils.permissionChecker
 import kotlinx.android.synthetic.main.fragment_bucket_content.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
-@InternalCoroutinesApi
 class BucketContentFragment : Fragment() {
 
     private lateinit var bucketContentViewModel: BucketContentViewModel
@@ -77,7 +76,17 @@ class BucketContentFragment : Fragment() {
         bucketContentViewModel = ViewModelProvider(
             requireParentFragment(),
             FalleryActivityComponentHolder.getOrNull()!!.provideBucketContentViewModelFactory()
-        )[BucketContentViewModel::class.java]
+        )[BucketContentViewModel::class.java].apply {
+            lifecycleScope.launch {
+                loadingViewStateFlow.collect {
+                    when (it) {
+                        is LoadingViewState.ShowLoading -> showLoading()
+                        is LoadingViewState.HideLoading -> hideLoading()
+                        is LoadingViewState.Error -> showErrorLayout()
+                    }
+                }
+            }
+        }
 
         arguments?.getLong("bucket_id")?.also {
             bucketContentViewModel.getMedias(it)
@@ -106,5 +115,26 @@ class BucketContentFragment : Fragment() {
                     bucketContentAdapter.notifyDataSetChanged()
             }
         }
+    }
+
+    private fun showErrorLayout() {
+        hideLoading()
+        recyclerViewBucketContent.visibility = View.GONE
+        errorLayoutBucketContent.show()
+        errorLayoutBucketContent.setOnRetryClickListener {
+            bucketContentViewModel.retry(arguments!!.getLong("bucket_id"))
+        }
+    }
+
+    private fun showLoading() {
+        errorLayoutBucketContent.hide()
+        recyclerViewBucketContent.visibility = View.GONE
+        contentLoadingProgressBarBucketContent.show()
+    }
+
+    private fun hideLoading() {
+        errorLayoutBucketContent.hide()
+        recyclerViewBucketContent.visibility = View.VISIBLE
+        contentLoadingProgressBarBucketContent.hide()
     }
 }

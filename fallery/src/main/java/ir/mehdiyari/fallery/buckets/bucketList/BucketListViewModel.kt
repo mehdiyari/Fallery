@@ -32,20 +32,25 @@ internal class BucketListViewModel constructor(
     val bucketsStateFlow: StateFlow<List<MediaBucket>> = this.bucketsMutableStateFlow
 
     @ExperimentalCoroutinesApi
-    private val falleryMutableViewState = MutableStateFlow<BucketListViewState?>(null)
+    private val loadingMutableStateFlow = MutableStateFlow<LoadingViewState?>(null)
 
     @ExperimentalCoroutinesApi
-    val bucketListViewStateFlow: StateFlow<BucketListViewState?> = falleryMutableViewState
+    val loadingViewStateFlow: StateFlow<LoadingViewState?> = loadingMutableStateFlow
+
+
+    fun getBucketNameById(id: Long): String = bucketsStateFlow.value.firstOrNull {
+        id == it.id
+    }?.displayName ?: "Unknown"
 
     @ExperimentalCoroutinesApi
     fun getBuckets(refresh: Boolean = false) {
-        if (!refresh && bucketsStateFlow.value.isNotEmpty() || bucketListViewStateFlow.value == BucketListViewState.ShowLoading) return
-        falleryMutableViewState.value = BucketListViewState.ShowLoading
+        if (!refresh && bucketsStateFlow.value.isNotEmpty() || loadingViewStateFlow.value == LoadingViewState.ShowLoading) return
+        loadingMutableStateFlow.value = LoadingViewState.ShowLoading
         viewModelScope.launch(ioDispatcher) {
             try {
                 abstractMediaBucketProvider.getMediaBuckets(bucketType).also { buckets ->
                     viewModelScope.launch(Dispatchers.Main) {
-                        falleryMutableViewState.value = BucketListViewState.HideLoading
+                        loadingMutableStateFlow.value = LoadingViewState.HideLoading
                         bucketsMutableStateFlow.value = buckets
                         allMediaCountChangedStateFlow.value = buckets.firstOrNull()?.mediaCount ?: 0
                     }
@@ -54,11 +59,16 @@ internal class BucketListViewModel constructor(
                 t.printStackTrace()
                 Log.e(FALLERY_LOG_TAG, "error while fetching buckets.(${t.message})")
                 viewModelScope.launch(Dispatchers.Main) {
-                    falleryMutableViewState.value = BucketListViewState.HideLoading
-                    falleryMutableViewState.value = BucketListViewState.ErrorInFetchingBuckets
+                    loadingMutableStateFlow.value = LoadingViewState.HideLoading
+                    loadingMutableStateFlow.value = LoadingViewState.Error
                 }
             }
         }
+    }
+
+    @ExperimentalCoroutinesApi
+    fun retry() {
+        getBuckets(true)
     }
 }
 

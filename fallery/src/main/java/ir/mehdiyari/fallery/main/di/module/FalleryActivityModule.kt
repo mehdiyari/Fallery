@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import androidx.fragment.app.FragmentActivity
 import ir.mehdiyari.fallery.buckets.bucketContent.adapter.BucketContentAdapter
+import ir.mehdiyari.fallery.buckets.bucketList.adapter.BucketListAdapter
 import ir.mehdiyari.fallery.buckets.bucketList.adapter.MediaBucketDiffCallback
 import ir.mehdiyari.fallery.imageLoader.FalleryImageLoader
 import ir.mehdiyari.fallery.main.di.component.FalleryActivityComponent
@@ -93,7 +94,7 @@ internal class FalleryActivityModule(
     }
 
     override fun provideBucketContentViewModelFactory(): BucketContentViewModelFactory = BucketContentViewModelFactory(
-        provideFalleryBucketContentProvider(), provideFalleryOptions().mediaTypeFilter
+        provideBucketContentProvider(), provideFalleryOptions().mediaTypeFilter
     )
 
     override fun provideCacheDir(): CacheDir = CacheDir(context.externalCacheDir?.path ?: context.cacheDir.path)

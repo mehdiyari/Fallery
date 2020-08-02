@@ -125,30 +125,18 @@ class FalleryBuilder {
     }
 
     /**
-     * set your custom bucket provider by implement [AbstractMediaBucketProvider]
-     * Note: If you want to create custom gallery you must implement [AbstractBucketContentProvider] too.
-     * for more information for create custom gallery with fallery check it http://mehdiyari.ir/?s=Fallery
-     * @param bucketProvider AbstractMediaBucketProvider custom implementation of [AbstractMediaBucketProvider]
-     */
-    fun setBucketListProvider(
-        bucketProvider: AbstractMediaBucketProvider
-    ): FalleryBuilder {
-        falleryOptions = falleryOptions.copy(
-            bucketProviderAbstract = bucketProvider
-        )
-        return this
-    }
-
-    /**
+     * set your custom bucket provider by implement [AbstractMediaBucketProvider] and
      * set your custom bucket content provider by implement [AbstractBucketContentProvider]
      * note: if you want create custom gallery with fallery please check it http://mehdiyari.ir/?s=Fallery
      * @param bucketContentProvider AbstractBucketContentProvider custom implementation of [AbstractBucketContentProvider]
      */
-    fun setBucketContentProvider(
-        bucketContentProvider: AbstractBucketContentProvider
+    fun setContentProviders(
+        bucketContentProvider: AbstractBucketContentProvider,
+        bucketProvider: AbstractMediaBucketProvider
     ): FalleryBuilder {
         falleryOptions = falleryOptions.copy(
-            abstractBucketContentProvider = bucketContentProvider
+            abstractBucketContentProvider = bucketContentProvider,
+            bucketProviderAbstract = bucketProvider
         )
 
         return this

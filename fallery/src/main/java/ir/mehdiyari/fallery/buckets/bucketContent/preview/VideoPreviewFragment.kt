@@ -93,6 +93,7 @@ internal class VideoPreviewFragment : AbstractMediaPreviewFragment() {
                 requireContext(),
                 appCompatImageViewVideoThumbnail,
                 PhotoDiminution(displayMetrics.widthPixels, displayMetrics.widthPixels / 2),
+                R.color.fallery_black,
                 thumbnailPath
             )
     }
@@ -114,6 +115,7 @@ internal class VideoPreviewFragment : AbstractMediaPreviewFragment() {
                         scaledWidth = displayMetrics.widthPixels
                     )
                 ),
+                placeHolderColor = R.color.fallery_black,
                 path = thumbList.first()
             )
     }

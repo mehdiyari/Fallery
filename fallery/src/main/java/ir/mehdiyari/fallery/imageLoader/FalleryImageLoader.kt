@@ -21,6 +21,7 @@ interface FalleryImageLoader {
         context: Context,
         imageView: ImageView,
         resizeDiminution: PhotoDiminution,
+        placeHolderColor: Int,
         path: String
     )
 
@@ -37,6 +38,7 @@ interface FalleryImageLoader {
         context: Context,
         imageView: ImageView,
         resizeDiminution: PhotoDiminution,
+        placeHolderColor: Int,
         path: String
     )
 

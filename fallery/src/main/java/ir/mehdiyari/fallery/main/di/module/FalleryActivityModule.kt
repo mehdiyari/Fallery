@@ -105,7 +105,8 @@ internal class FalleryActivityModule(
         BucketContentAdapter(
             provideImageLoader(),
             provideSelectedDrawable(),
-            provideDeselectedDrawable()
+            provideDeselectedDrawable(),
+            provideFalleryStyleAttrs().falleryPlaceHolderColor
         )
 
     override fun provideFalleryViewModelFactory(): FalleryViewModelFactory = FalleryViewModelFactory(
@@ -119,4 +120,10 @@ internal class FalleryActivityModule(
     override fun provideDeselectedDrawable(): Drawable = createCircleDrawableWithStroke(
         Color.parseColor("#54000000"), dpToPx(2), Color.WHITE
     )!!
+
+    override fun provideBucketListAdapter(): BucketListAdapter = BucketListAdapter(
+        mediaBucketDiffCallback = provideMediaBucketDiffCallback(),
+        imageLoader = provideImageLoader(),
+        placeHolderColor = provideFalleryStyleAttrs().falleryPlaceHolderColor
+    )
 }

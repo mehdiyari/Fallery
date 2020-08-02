@@ -2,6 +2,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/min_size_bucket_content_item"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="1.5dp"
     android:id="@+id/frameLayoutPhotoContainer">
 
@@ -9,8 +10,7 @@
         android:id="@+id/imageViewPhotoMedia"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="?attr/fallery_place_holder_color"/>
+        android:scaleType="centerCrop" />
 
 
     <FrameLayout

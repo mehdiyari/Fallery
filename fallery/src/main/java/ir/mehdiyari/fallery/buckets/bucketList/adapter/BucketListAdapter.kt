@@ -19,7 +19,8 @@ import ir.mehdiyari.fallery.utils.toReadableCount
 
 internal class BucketListAdapter constructor(
     mediaBucketDiffCallback: MediaBucketDiffCallback,
-    private val imageLoader: FalleryImageLoader
+    private val imageLoader: FalleryImageLoader,
+    private val placeHolderColor: Int
 ) : ListAdapter<MediaBucket, BucketListAdapter.BucketViewHolder>(mediaBucketDiffCallback) {
 
     var onBucketClick: ((bucketId: Long) -> (Unit))? = null
@@ -67,9 +68,21 @@ internal class BucketListAdapter constructor(
                         val widthScale = originalDim.width / dimension.width.toFloat()
                         val newHeight = originalDim.height / widthScale
                         if (dimension.isNotSet())
-                            imageLoader.loadPhoto(this.context, imageView, getDefaultDimension(this.context), currentBucket.firstMediaThumbPath)
+                            imageLoader.loadPhoto(
+                                context = this.context,
+                                imageView = imageView,
+                                resizeDiminution = getDefaultDimension(this.context),
+                                placeHolderColor = placeHolderColor,
+                                path = currentBucket.firstMediaThumbPath
+                            )
                         else
-                            imageLoader.loadPhoto(this.context, imageView, dimension.copy(height = newHeight.toInt()), currentBucket.firstMediaThumbPath)
+                            imageLoader.loadPhoto(
+                                context = this.context,
+                                imageView = imageView,
+                                resizeDiminution = dimension.copy(height = newHeight.toInt()),
+                                placeHolderColor = placeHolderColor,
+                                path = currentBucket.firstMediaThumbPath
+                            )
                     }
                     appCompatTextViewBucketName.text = currentBucket.displayName
                     appCompatTextViewBucketItemCount.text = setMediaCountBasedOnLayout(currentBucket.mediaCount)
@@ -77,7 +90,7 @@ internal class BucketListAdapter constructor(
             }
         }
 
-        private fun setMediaCountBasedOnLayout(mediaCount: Int): String = when(viewHolderId) {
+        private fun setMediaCountBasedOnLayout(mediaCount: Int): String = when (viewHolderId) {
             R.layout.linear_bucket_item_view -> this@BucketViewHolder.itemView.context.getString(R.string.media_count, mediaCount)
             else -> mediaCount.toReadableCount()
         }

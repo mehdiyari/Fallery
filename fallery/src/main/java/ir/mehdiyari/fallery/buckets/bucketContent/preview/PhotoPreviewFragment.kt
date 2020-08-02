@@ -30,9 +30,9 @@ internal class PhotoPreviewFragment : AbstractMediaPreviewFragment() {
         val height = if (width != photo.width) getHeightBasedOnScaledWidth(photo.width, photo.height, width) else photo.height
         FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideImageLoader().apply {
             if (photo.isGif())
-                loadGif(requireContext(), photoView, PhotoDiminution(width, height), photo.path)
+                loadGif(requireContext(), photoView, PhotoDiminution(width, height), R.color.fallery_black, photo.path)
             else
-                loadPhoto(requireContext(), photoView, PhotoDiminution(width, height), photo.path)
+                loadPhoto(requireContext(), photoView, PhotoDiminution(width, height), R.color.fallery_black, photo.path)
         }
     }
 

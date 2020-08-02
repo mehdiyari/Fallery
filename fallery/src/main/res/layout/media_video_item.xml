@@ -11,8 +11,7 @@
         android:id="@+id/imageViewVideoMedia"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="?attr/fallery_place_holder_color"/>
+        android:scaleType="centerCrop" />
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textViewVideoTime"

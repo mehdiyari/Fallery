@@ -20,7 +20,8 @@ import kotlinx.android.synthetic.main.media_video_item.view.*
 class BucketContentAdapter constructor(
     private val imageLoader: FalleryImageLoader,
     private val selectedDrawable: Drawable,
-    private val deselectedDrawable: Drawable
+    private val deselectedDrawable: Drawable,
+    private val placeHolderColor: Int
 ) : ListAdapter<Media, RecyclerView.ViewHolder>(object : DiffUtil.ItemCallback<Media>() {
     override fun areItemsTheSame(oldItem: Media, newItem: Media): Boolean = oldItem.getMediaId() == newItem.getMediaId()
     override fun areContentsTheSame(oldItem: Media, newItem: Media): Boolean = oldItem == newItem
@@ -90,6 +91,7 @@ class BucketContentAdapter constructor(
                         context = itemView.context,
                         imageView = itemView.imageViewPhotoMedia,
                         resizeDiminution = dimension,
+                        placeHolderColor = placeHolderColor,
                         path = currentPhoto.path
                     )
                 }
@@ -135,7 +137,8 @@ class BucketContentAdapter constructor(
                         context = itemView.context,
                         imageView = itemView.imageViewVideoMedia,
                         resizeDiminution = dimension,
-                        path = currentVideo.path
+                        placeHolderColor = placeHolderColor,
+                        path = currentVideo.thumbnail.path
                     )
 
                     itemView.textViewVideoTime.text = convertSecondToTime(currentVideo.duration.toInt())

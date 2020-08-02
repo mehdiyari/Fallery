@@ -21,7 +21,6 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:scaleType="centerCrop"
-            android:src="?attr/fallery_place_holder_color"
             />
 
         <LinearLayout

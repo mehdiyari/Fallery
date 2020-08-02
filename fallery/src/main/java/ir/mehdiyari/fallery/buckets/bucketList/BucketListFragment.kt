@@ -34,14 +34,7 @@ internal class BucketListFragment : Fragment() {
     private lateinit var bucketListViewModel: BucketListViewModel
     private lateinit var falleryViewModel: FalleryViewModel
 
-    private val bucketAdapter by lazy {
-        FalleryActivityComponentHolder.getOrNull().let {
-            BucketListAdapter(
-                mediaBucketDiffCallback = it!!.provideMediaBucketDiffCallback(),
-                imageLoader = it.provideImageLoader()
-            )
-        }
-    }
+    private val bucketAdapter by lazy { FalleryActivityComponentHolder.getOrNull()!!.provideBucketListAdapter() }
 
     private lateinit var gridLayoutManager: GridLayoutManager
 

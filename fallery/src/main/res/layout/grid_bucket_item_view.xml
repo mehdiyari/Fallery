@@ -14,7 +14,6 @@
         android:id="@+id/imageViewBucketImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?attr/fallery_place_holder_color"
         android:scaleType="centerCrop" />
 
     <RelativeLayout

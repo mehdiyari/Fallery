@@ -1,0 +1,13 @@
+*.iml
+/local.properties
+/.idea/*
+.DS_Store
+/build
+/.gradle/*
+/captures
+.externalNativeBuild
+.cxx
+*.lock
+libs/
+proguard-rules.pro
+/fallery/build/*

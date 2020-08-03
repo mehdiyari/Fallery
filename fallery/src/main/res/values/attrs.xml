@@ -12,6 +12,7 @@
     <attr name="fallery_secondary_text_color" format="color" />
     <attr name="fallery_hint_text_color" format="color" />
     <attr name="fallery_place_holder_color" format="color" />
+    <attr name="fallery_toolbar_text_color" format="color" />
 
 
 </resources>

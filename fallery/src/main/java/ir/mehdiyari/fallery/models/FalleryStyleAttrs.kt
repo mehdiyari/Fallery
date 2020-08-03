@@ -14,7 +14,8 @@ internal data class FalleryStyleAttrs(
     val falleryPrimaryTextColor: Int = 0,
     val fallerySecondaryTextColor: Int = 0,
     val falleryHintTextColor: Int = 0,
-    val falleryPlaceHolderColor: Int = 0
+    val falleryPlaceHolderColor: Int = 0,
+    val falleryToolbarTextColor: Int = 0
 )
 
 internal fun FragmentActivity.getFalleryStyleAttrs(): FalleryStyleAttrs = this.theme.let { activityTheme ->
@@ -51,6 +52,9 @@ internal fun FragmentActivity.getFalleryStyleAttrs(): FalleryStyleAttrs = this.t
 
     activityTheme.resolveAttribute(R.attr.fallery_place_holder_color, typeValue, true)
     falleryStyleAttrs = falleryStyleAttrs.copy(falleryPlaceHolderColor = typeValue.data)
+
+    activityTheme.resolveAttribute(R.attr.fallery_toolbar_text_color, typeValue, true)
+    falleryStyleAttrs = falleryStyleAttrs.copy(falleryToolbarTextColor = typeValue.data)
 
 
     falleryStyleAttrs

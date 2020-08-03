@@ -20,6 +20,7 @@
             android:background="?attr/fallery_color_primary"
             android:theme="@style/ToolbarTheme"
             app:contentInsetStart="0dp"
+            app:titleTextColor="?attr/fallery_toolbar_text_color"
             app:contentInsetStartWithNavigation="0dp"
             app:navigationIcon="@drawable/fallery_ic_back_arrow"
             app:popupTheme="@style/AppTheme.Dark.PopupOverlay"
@@ -42,6 +43,14 @@
         android:layout_gravity="bottom"
         android:layout="@layout/caption_layout" />
 
+    <FrameLayout
+        android:id="@+id/frameLayoutSendMedia"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:background="?attr/fallery_background_color"
+        android:visibility="gone" />
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingButtonSendMedia"
@@ -60,15 +69,6 @@
         app:rippleColor="#ffffff"
         tools:visibility="visible"
         tools:ignore="RtlHardcoded" />
-
-
-    <FrameLayout
-        android:id="@+id/frameLayoutSendMedia"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="bottom"
-        android:background="?attr/fallery_background_color"
-        android:visibility="gone" />
 
 
 </FrameLayout>

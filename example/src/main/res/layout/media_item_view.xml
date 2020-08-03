@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/frameLayoutBucketItemView"
+    android:layout_width="match_parent"
+    android:layout_height="250dp"
+    android:minHeight="140dp"
+    android:clickable="true"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
+    android:focusable="true">
+
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/imageViewMediaPhoto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:src="@color/blue_600"
+        app:riv_corner_radius="12dp"
+        android:scaleType="centerCrop"
+        app:riv_border_width="0.7dp"
+        app:riv_border_color="#37000000" />
+
+    <RelativeLayout
+        android:id="@+id/captionContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@drawable/background_caption"
+        android:padding="5dp">
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/appCompatTextViewCaption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="6dp"
+            android:ellipsize="marquee"
+            android:paddingEnd="8dp"
+            android:singleLine="true"
+            android:textColor="#ffffff"
+            android:textSize="16sp"
+            tools:ignore="RtlSymmetry"
+            tools:text="Cameras" />
+
+    </RelativeLayout>
+
+</FrameLayout>
+

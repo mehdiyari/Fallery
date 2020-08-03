@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menuDefaultOptions"
+        android:title="@string/menu_title_default_options"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuFilterTypePhoto"
+        android:title="@string/menu_title_filter_type_photo"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuFilterTypeVideo"
+        android:title="@string/menu_title_filter_type_video"
+        app:showAsAction="ifRoom" />
+
+
+    <item
+        android:id="@+id/menuCustomOnlineGallery"
+        android:title="@string/menu_title_customGalleryOnline"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuMaxSelectable"
+        android:title="@string/menu_title_maxSelectable"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuCameraEnabled"
+        android:title="@string/menu_title_camera_enabled"
+        app:showAsAction="ifRoom" />
+
+
+    <item
+        android:id="@+id/menuWithCaption"
+        android:title="@string/menu_title_with_caption"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuWitCustomCaptionEditText"
+        android:title="@string/menu_title_with_custom_editText"
+        app:showAsAction="ifRoom" />
+
+
+    <item
+        android:id="@+id/menuLandscapeOrientation"
+        android:title="@string/menu_title_menuLandscapeOrientation"
+        app:showAsAction="ifRoom" />
+
+
+    <item
+        android:id="@+id/menuBucketListModeGrid"
+        android:title="@string/menu_title_bucketListMode"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuBucketListModeVertical"
+        android:title="@string/menu_title_bucketListMode_vertical"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuPreviewScrollOrientation"
+        android:title="@string/menu_title_scroll_orientation"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuDraculaTheme"
+        android:title="@string/menu_title_dracula_theme"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuCustomTheme"
+        android:title="@string/menu_title_custome_theme"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuWithCustomSelectToggleBackColor"
+        android:title="@string/menu_title_customSelectBackColor"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuWithCustomVideoToggleOnClick"
+        android:title="@string/menu_title_customVideoOnClick"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/menuGrantExternalStoragePermission"
+        android:title="@string/menu_title_GrantExternalStoragePermission"
+        app:showAsAction="ifRoom" />
+
+</menu>

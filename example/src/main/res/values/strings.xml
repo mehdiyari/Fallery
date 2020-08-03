@@ -1,3 +1,25 @@
 <resources>
-    <string name="app_name">Fallery</string>
+    <string name="app_name" translatable="false">Fallery</string>
+    <string name="description" translatable="false">Gallery and media picker for Android</string>
+    <string name="menu_title_default_options" translatable="false">Default Options</string>
+    <string name="menu_title_with_caption" translatable="false">With Caption</string>
+    <string name="menu_title_without_caption" translatable="false">Without Caption</string>
+    <string name="menu_title_dracula_theme" translatable="false">Dracula Theme</string>
+    <string name="menu_title_light_theme" translatable="false">Light Theme</string>
+    <string name="menu_title_filter_type_photo" translatable="false">Media Filter Type | Only Photos</string>
+    <string name="menu_title_camera_enabled" translatable="false">Camera Enabled</string>
+    <string name="menu_title_menuLandscapeOrientation" translatable="false">Landscape Orientation</string>
+    <string name="menu_title_bucketListMode" translatable="false">Bucket List Mode Grid</string>
+    <string name="menu_title_scroll_orientation" translatable="false">ViewPager Vertical Orientation</string>
+    <string name="menu_title_customSelectBackColor" translatable="false">Selected Media Toggle Color</string>
+    <string name="menu_title_with_custom_editText" translatable="false">Custom Caption EditText</string>
+    <string name="menu_title_customVideoOnClick" translatable="false">Custom Video Toggle OnClick</string>
+    <string name="menu_title_maxSelectable" translatable="false">Max Selectable</string>
+    <string name="menu_clear" translatable="false">Clear</string>
+    <string name="no_media_selected_message" translatable="false">No media selected. Tap + to open Fallery and select media</string>
+    <string name="menu_title_bucketListMode_vertical" translatable="false">Bucket List Mode Linear</string>
+    <string name="menu_title_filter_type_video" translatable="false">Media Filter Type | Only Videos</string>
+    <string name="menu_title_customGalleryOnline" translatable="false">Custom Gallery Online</string>
+    <string name="menu_title_GrantExternalStoragePermission" translatable="false">Disable Automatically Grant External Storage Permission</string>
+    <string name="menu_title_custome_theme" translatable="false">Custom Theme</string>
 </resources>

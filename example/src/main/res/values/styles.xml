@@ -1,11 +1,36 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:colorAccent" tools:ignore="NewApi">@color/colorAccent</item>
+        <item name="fontFamily">@font/default_font</item>
     </style>
 
+    <style name="ItemTextAppearance">
+        <item name="android:textSize">15sp</item>
+    </style>
+
+
+    <style name="Fallery_Blue_Theme">
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="fallery_background_color">#ffffff</item>
+        <item name="fallery_color_primary">@color/colorPrimary</item>
+        <item name="fallery_color_primary_dark">@color/colorPrimaryDark</item>
+        <item name="fallery_color_accent">@color/colorAccent</item>
+        <item name="fallery_icon_tint_color">#504f4f</item>
+        <item name="fallery_toolbar_icon_tint_color">#FFFFFF</item>
+        <item name="fallery_primary_text_color">#000000</item>
+        <item name="fallery_secondary_text_color">#999999</item>
+        <item name="fallery_hint_text_color">#999999</item>
+        <item name="fallery_place_holder_color">#EEEEEE</item>
+        <item name="fallery_toolbar_text_color">#FFFFFF</item>
+    </style>
 </resources>

@@ -14,12 +14,12 @@ import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class BaseBucketContentFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_base_bucket_content, container, false)
 
-    @ExperimentalCoroutinesApi
     @InternalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

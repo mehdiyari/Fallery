@@ -30,6 +30,7 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
 
     private lateinit var bucketContentViewModel: BucketContentViewModel
 
+    private var currentPagePosition: Int? = null
     
     private lateinit var falleryViewModel: FalleryViewModel
 
@@ -47,12 +48,12 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
         FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideDeselectedDrawable()
     }
 
-    
     private val pageSelectedCallback by lazy {
         object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 showToolbarWithAnimation()
                 checkForSelection(position)
+                currentPagePosition = position
             }
         }
     }
@@ -70,10 +71,16 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
         falleryToolbarVisibilityController.hideToolbar(false)
     }
 
-
+    override fun onSaveInstanceState(outState: Bundle) {
+        currentPagePosition?.let { p ->
+            outState.putInt("current_page", p)
+        }
+        super.onSaveInstanceState(outState)
+    }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        currentPagePosition = savedInstanceState?.getInt("current_page")
         initViewModel()
         initView()
     }
@@ -86,7 +93,6 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
             viewPagerMediaPreview.adapter = mediaPreviewAdapter
     }
 
-    
     private fun initView() {
         FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideFalleryOptions().apply {
             viewPagerMediaPreview.orientation = mediaPreviewScrollOrientation
@@ -106,16 +112,21 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
         }
 
         imageViewBackButton.setOnClickListener { requireActivity().onBackPressed() }
+
+        // Restore current page position
+        currentPagePosition?.let {p ->
+            viewPagerMediaPreview.post {
+                viewPagerMediaPreview.currentItem = p
+            }
+        }
     }
 
-    
     private fun checkForSelection(position: Int) {
         appCompatImageButtonMediaSelect.background = bucketContentViewModel.getMediaPathByPosition(position).let {
             if (it != null && falleryViewModel.isPhotoSelected(it)) selectedDrawable else deselectDrawable
         }
     }
 
-    
     private fun initViewModel() {
         falleryViewModel = ViewModelProvider(
             requireActivity(),
@@ -189,22 +200,18 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
         }
     }
 
-
-    
     override fun onStop() {
         viewPagerMediaPreview.unregisterOnPageChangeCallback(pageSelectedCallback)
         viewPagerMediaPreview.adapter = null
         super.onStop()
     }
 
-    
     override fun onDestroyView() {
         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         falleryViewModel.showSendOrCaptionLayout()
         falleryToolbarVisibilityController.showToolbar(false)
         super.onDestroyView()
     }
-
 
     // onViewPager Click
     override fun onClick(v: View?) {

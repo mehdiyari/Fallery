@@ -1,8 +1,7 @@
 package ir.mehdiyari.fallery.utils
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 
 class FileUtilsKtTest {
 

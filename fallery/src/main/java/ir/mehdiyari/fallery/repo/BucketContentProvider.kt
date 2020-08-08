@@ -29,7 +29,7 @@ internal class BucketContentProvider constructor(
             "${MediaStore.Files.FileColumns.DATE_ADDED} DESC"
         )?.use { cursor ->
             if (cursor.count == 0) {
-                emit(listOf<Media>())
+                emit(listOf())
             } else {
                 while (cursor.moveToNext()) {
                     medias.add(getMediaFromCursor(cursor, mediaMetadataRetriever))

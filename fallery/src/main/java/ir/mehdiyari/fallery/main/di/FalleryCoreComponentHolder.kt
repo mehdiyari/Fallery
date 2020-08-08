@@ -1,8 +1,8 @@
 package ir.mehdiyari.fallery.main.di
 
-import ir.mehdiyari.fallery.main.fallery.FalleryOptions
 import ir.mehdiyari.fallery.main.di.component.FalleryCoreComponent
 import ir.mehdiyari.fallery.main.di.component.FalleryCoreComponentBuilder
+import ir.mehdiyari.fallery.main.fallery.FalleryOptions
 
 internal object FalleryCoreComponentHolder {
 

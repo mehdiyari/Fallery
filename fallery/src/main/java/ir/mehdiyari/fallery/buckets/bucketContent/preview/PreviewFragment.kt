@@ -25,11 +25,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class PreviewFragment : Fragment(), View.OnClickListener {
 
     private lateinit var bucketContentViewModel: BucketContentViewModel
 
-    @ExperimentalCoroutinesApi
     private lateinit var falleryViewModel: FalleryViewModel
 
     private val mediaPreviewAdapter by lazy {
@@ -38,6 +38,7 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
             this
         )
     }
+
     private val selectedDrawable by lazy {
         FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideSelectedDrawable()
     }
@@ -46,7 +47,6 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
         FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideDeselectedDrawable()
     }
 
-    @ExperimentalCoroutinesApi
     private val pageSelectedCallback by lazy {
         object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -77,15 +77,12 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
         falleryToolbarVisibilityController.hideToolbar(false)
     }
 
-
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
         initView()
     }
 
-    @ExperimentalCoroutinesApi
     override fun onStart() {
         super.onStart()
         viewPagerMediaPreview.registerOnPageChangeCallback(pageSelectedCallback)
@@ -93,7 +90,7 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
             viewPagerMediaPreview.adapter = mediaPreviewAdapter
     }
 
-    @ExperimentalCoroutinesApi
+
     private fun initView() {
         FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideFalleryOptions().apply {
             viewPagerMediaPreview.orientation = mediaPreviewScrollOrientation
@@ -115,14 +112,12 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
         imageViewBackButton.setOnClickListener { requireActivity().onBackPressed() }
     }
 
-    @ExperimentalCoroutinesApi
     private fun checkForSelection(position: Int) {
         appCompatImageButtonMediaSelect.background = bucketContentViewModel.getMediaPathByPosition(position).let {
             if (it != null && falleryViewModel.isPhotoSelected(it)) selectedDrawable else deselectDrawable
         }
     }
 
-    @ExperimentalCoroutinesApi
     private fun initViewModel() {
         falleryViewModel = ViewModelProvider(
             requireActivity(),
@@ -195,22 +190,18 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
         }
     }
 
-
-    @ExperimentalCoroutinesApi
     override fun onStop() {
         viewPagerMediaPreview.unregisterOnPageChangeCallback(pageSelectedCallback)
         viewPagerMediaPreview.adapter = null
         super.onStop()
     }
 
-    @ExperimentalCoroutinesApi
     override fun onDestroyView() {
         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         falleryViewModel.showSendOrCaptionLayout()
         falleryToolbarVisibilityController.showToolbar(false)
         super.onDestroyView()
     }
-
 
     // onViewPager Click
     override fun onClick(v: View?) {

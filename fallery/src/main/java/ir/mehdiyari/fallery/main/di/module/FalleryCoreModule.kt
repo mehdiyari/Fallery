@@ -1,12 +1,11 @@
 package ir.mehdiyari.fallery.main.di.module
 
 import ir.mehdiyari.fallery.imageLoader.FalleryImageLoader
-import ir.mehdiyari.fallery.main.fallery.FalleryOptions
 import ir.mehdiyari.fallery.main.di.component.FalleryCoreComponent
+import ir.mehdiyari.fallery.main.fallery.FalleryOptions
 import ir.mehdiyari.fallery.repo.AbstractBucketContentProvider
 import ir.mehdiyari.fallery.repo.AbstractMediaBucketProvider
 import ir.mehdiyari.fallery.repo.MediaBucketProvider
-import java.lang.NullPointerException
 
 internal class FalleryCoreModule constructor(
     private val falleryOptions: FalleryOptions

@@ -4,32 +4,34 @@ import android.database.ContentObserver
 import android.net.Uri
 import android.os.Handler
 import android.provider.MediaStore
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.*
+import java.lang.ref.WeakReference
 
 internal class MediaStoreObserver constructor(
     handler: Handler,
-    val context: FragmentActivity
+    val context: WeakReference<AppCompatActivity>
 ) : ContentObserver(handler), LifecycleObserver {
 
     private val externalStorageChangeMutableLiveData = MutableLiveData<Uri>()
     val externalStorageChangeLiveData: LiveData<Uri> = externalStorageChangeMutableLiveData
 
-    init {
-        context.lifecycle.addObserver(this)
-        context.contentResolver.registerContentObserver(
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    fun registerObservers() {
+        context.get()?.lifecycle?.addObserver(this)
+        context.get()?.contentResolver?.registerContentObserver(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true, this
         )
 
-        context.contentResolver.registerContentObserver(
+        context.get()?.contentResolver?.registerContentObserver(
             MediaStore.Images.Media.INTERNAL_CONTENT_URI, true, this
         )
 
-        context.contentResolver.registerContentObserver(
+        context.get()?.contentResolver?.registerContentObserver(
             MediaStore.Video.Media.EXTERNAL_CONTENT_URI, true, this
         )
 
-        context.contentResolver.registerContentObserver(
+        context.get()?.contentResolver?.registerContentObserver(
             MediaStore.Video.Media.INTERNAL_CONTENT_URI, true, this
         )
     }
@@ -38,9 +40,9 @@ internal class MediaStoreObserver constructor(
         externalStorageChangeMutableLiveData.value = uri
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onDestroy() {
-        context.lifecycle.removeObserver(this)
-        context.contentResolver.unregisterContentObserver(this)
+        context.get()?.lifecycle?.removeObserver(this)
+        context.get()?.contentResolver?.unregisterContentObserver(this)
     }
 }

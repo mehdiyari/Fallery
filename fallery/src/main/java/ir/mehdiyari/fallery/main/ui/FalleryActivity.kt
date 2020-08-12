@@ -44,12 +44,13 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import java.io.File
+import java.lang.ref.WeakReference
 
 @OptIn(ExperimentalCoroutinesApi::class, InternalCoroutinesApi::class)
 internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, FalleryToolbarVisibilityController {
 
     private lateinit var falleryViewModel: FalleryViewModel
-    private val mediaStoreObserver by lazy { MediaStoreObserver(Handler(), this) }
+    private val mediaStoreObserver by lazy { MediaStoreObserver(Handler(), WeakReference(this)) }
     private val falleryOptions by lazy { FalleryActivityComponentHolder.createOrGetComponent(this).provideFalleryOptions() }
 
     override fun onCreate(savedInstanceState: Bundle?) {

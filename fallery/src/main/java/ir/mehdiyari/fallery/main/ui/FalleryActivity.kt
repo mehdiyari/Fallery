@@ -547,8 +547,9 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
             falleryViewModel.currentFragmentLiveData.value = null
         } else {
             super.onBackPressed()
-            showOrHideMenusBasedOnFragment()
         }
+
+        showOrHideMenusBasedOnFragment()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

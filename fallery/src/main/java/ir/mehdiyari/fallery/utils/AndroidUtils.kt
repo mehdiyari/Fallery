@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.floor
 
-fun divideScreenToEqualPart(
+internal fun divideScreenToEqualPart(
     @IntRange(from = 1) displayWidth: Int,
     @FloatRange(from = 1.toDouble()) itemWidth: Float,
     @IntRange(from = 1) minCount: Int
@@ -32,14 +32,14 @@ fun divideScreenToEqualPart(
         it
 }
 
-fun dpToPx(dp: Int): Int = (dp * Resources.getSystem().displayMetrics.density).toInt()
-fun pxToDp(px: Int): Int = (px / Resources.getSystem().displayMetrics.density).toInt()
+internal fun dpToPx(dp: Int): Int = (dp * Resources.getSystem().displayMetrics.density).toInt()
+
 fun getSettingIntent(activity: Context): Intent = Intent().apply {
     action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
     data = Uri.fromParts("package", activity.packageName, null)
 }
 
-fun isAndroidTenOrHigher(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+internal fun isAndroidTenOrHigher(): Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
 
 internal fun Animation.setOnAnimationEndListener(onEnd: () -> Unit) {
     this.setAnimationListener(object : Animation.AnimationListener {
@@ -62,7 +62,7 @@ internal fun EditText.hideKeyboard() {
     }
 }
 
-fun Activity.getIntentForTakingPhoto(
+internal fun Activity.getIntentForTakingPhoto(
     fileProviderAuthority: String,
     imageFile: File
 ): Intent? = Intent(MediaStore.ACTION_IMAGE_CAPTURE).let { takePictureIntent ->
@@ -84,4 +84,4 @@ fun Activity.getIntentForTakingPhoto(
     }
 }
 
-fun generatePhotoFilename(extension: String = "jpg"): String = "photo" + SimpleDateFormat("yyyyMMdd_HHmmssSSS", Locale.US).format(Date()) + extension
+internal fun generatePhotoFilename(extension: String = "jpg"): String = "photo" + SimpleDateFormat("yyyyMMdd_HHmmssSSS", Locale.US).format(Date()) + extension

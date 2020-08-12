@@ -23,6 +23,7 @@
         <item name="fallery_place_holder_color">@color/fallery_light_place_holder_color</item>
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
         <item name="fallery_toolbar_text_color">@color/fallery_light_toolbar_text_color</item>
+        <item name="android:windowBackground">@color/fallery_light_backgroundColor</item>
     </style>
 
     <!-- dracula default style -->
@@ -45,6 +46,8 @@
         <item name="fallery_place_holder_color">@color/fallery_dracula_place_holder_color</item>
         <item name="fallery_toolbar_text_color">@color/fallery_dracula_toolbar_text_color</item>
         <item name="toolbarNavigationButtonStyle">@style/Toolbar.Button.Navigation.Tinted</item>
+        <item name="android:windowBackground">@color/fallery_dracula_backgroundColor</item>
+
     </style>
 
     <style name="toolbarTitleTextAppearance">

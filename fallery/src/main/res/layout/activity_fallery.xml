@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="false"
-    android:background="?attr/fallery_background_color"
     tools:context=".main.ui.FalleryActivity">
 
     <LinearLayout
@@ -68,7 +67,7 @@
         app:elevation="4dp"
         app:rippleColor="#ffffff"
         tools:visibility="visible"
-        tools:ignore="RtlHardcoded" />
+        tools:ignore="RtlHardcoded,UnusedAttribute" />
 
 
 </FrameLayout>

@@ -36,7 +36,11 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             tools:text="Cameras"
-            tools:ignore="RtlSymmetry" />
+            tools:ignore="RtlSymmetry"
+            android:layout_marginLeft="6dp"
+            android:paddingRight="8dp"
+            android:layout_toLeftOf="@+id/appCompatTextViewBucketItemCount"
+            android:layout_alignParentLeft="true" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/appCompatTextViewBucketItemCount"
@@ -48,7 +52,9 @@
             android:textColor="#ffffff"
             android:textSize="14sp"
             android:textStyle="bold"
-            tools:text="715" />
+            tools:text="715"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="6dp" />
 
     </RelativeLayout>
 

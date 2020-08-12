@@ -16,7 +16,8 @@
         android:background="?attr/fallery_background_color"
         android:clipToPadding="false"
         android:visibility="gone"
-        android:paddingBottom="@dimen/recycler_view_bottom_padding" />
+        android:paddingBottom="@dimen/recycler_view_bottom_padding"
+        tools:ignore="UnusedAttribute" />
 
     <ir.mehdiyari.fallery.utils.ErrorLayout
         android:id="@+id/errorLayoutBucketContent"

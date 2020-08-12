@@ -4,7 +4,6 @@ import android.Manifest
 import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionManager
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -65,8 +64,7 @@ internal class BucketListFragment : Fragment() {
             getImageViewWidth = {
                 if (recyclerViewBuckets.layoutManager is GridLayoutManager) {
                     (recyclerViewBuckets.layoutManager as GridLayoutManager).let { gridLayoutManager ->
-                        val displayMetric = DisplayMetrics()
-                        requireActivity().windowManager.defaultDisplay.getRealMetrics(displayMetric)
+                        val displayMetric = requireActivity().resources.displayMetrics
                         (((displayMetric.widthPixels - dpToPx(3) * (gridLayoutManager.spanCount - 1)) / gridLayoutManager.spanCount) * 0.5).toInt()
                     }
                 } else {

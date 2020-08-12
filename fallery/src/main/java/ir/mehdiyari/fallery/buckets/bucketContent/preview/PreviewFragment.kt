@@ -2,9 +2,7 @@ package ir.mehdiyari.fallery.buckets.bucketContent.preview
 
 import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.TranslateAnimation
 import androidx.fragment.app.Fragment
@@ -26,7 +24,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class PreviewFragment : Fragment(), View.OnClickListener {
+internal class PreviewFragment : Fragment(R.layout.fragment_preview), View.OnClickListener {
 
     private lateinit var bucketContentViewModel: BucketContentViewModel
 
@@ -59,9 +57,6 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
     private val falleryToolbarVisibilityController: FalleryToolbarVisibilityController by lazy {
         requireActivity() as FalleryToolbarVisibilityController
     }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_preview, container, false)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -111,9 +106,9 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
     }
 
     private fun checkForSelection(position: Int) {
-        appCompatImageButtonMediaSelect.background = bucketContentViewModel.getMediaPathByPosition(position).let {
+        appCompatImageButtonMediaSelect.setImageDrawable(bucketContentViewModel.getMediaPathByPosition(position).let {
             if (it != null && falleryViewModel.isPhotoSelected(it)) selectedDrawable else deselectDrawable
-        }
+        })
     }
 
     private fun initViewModel() {

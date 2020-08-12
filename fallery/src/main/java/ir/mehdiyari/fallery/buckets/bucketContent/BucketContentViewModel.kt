@@ -16,28 +16,23 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
 
-
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class BucketContentViewModel constructor(
     private val abstractBucketContentProvider: AbstractBucketContentProvider,
     private val bucketType: BucketType,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel() {
 
-    @ExperimentalCoroutinesApi
     private val medias = MutableStateFlow<List<Media>>(listOf())
 
-    @ExperimentalCoroutinesApi
     val mediaList: StateFlow<List<Media>> = medias
 
     val showPreviewFragmentLiveData = SingleLiveEvent<String>()
 
-    @ExperimentalCoroutinesApi
     private val loadingMutableStateFlow = MutableStateFlow<LoadingViewState?>(null)
 
-    @ExperimentalCoroutinesApi
     val loadingViewStateFlow: StateFlow<LoadingViewState?> = loadingMutableStateFlow
 
-    @ExperimentalCoroutinesApi
     fun getMedias(bucketId: Long, refresh: Boolean = false) {
         if (!refresh && mediaList.value.isNotEmpty()) return
         val clearList = AtomicBoolean(refresh)
@@ -66,10 +61,8 @@ internal class BucketContentViewModel constructor(
         showPreviewFragmentLiveData.value = path
     }
 
-    @ExperimentalCoroutinesApi
     fun getIndexOfPath(path: String): Int = mediaList.value.indexOfFirst { it.getMediaPath() == path.trim() }
 
-    @ExperimentalCoroutinesApi
     fun getMediaPathByPosition(position: Int): String? = mediaList.value.getOrNull(position)?.getMediaPath()
 
     fun retry(bucketId: Long) {

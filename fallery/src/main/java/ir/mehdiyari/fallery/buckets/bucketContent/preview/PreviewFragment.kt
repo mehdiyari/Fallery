@@ -52,6 +52,7 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
             override fun onPageSelected(position: Int) {
                 showToolbarWithAnimation()
                 checkForSelection(position)
+                saveCurrentPosition(position)
             }
         }
     }
@@ -69,6 +70,12 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
         falleryToolbarVisibilityController.hideToolbar(false)
     }
 
+    private fun saveCurrentPosition(position: Int) {
+        arguments?.putString(
+            "from_media_path",
+            bucketContentViewModel.getMediaPathByPosition(position)
+        )
+    }
 
     @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -139,7 +146,6 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
                 mediaPreviewAdapter.medias = it
                 arguments?.getString("from_media_path", null).also { path ->
                     if (path != null) {
-                        arguments?.remove("from_media_path")
                         viewPagerMediaPreview.post {
                             viewPagerMediaPreview.setCurrentItem(bucketContentViewModel.getIndexOfPath(path).apply(this@PreviewFragment::checkForSelection), false)
                         }

@@ -4,7 +4,6 @@ import android.Manifest
 import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionManager
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -27,7 +26,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-@ExperimentalCoroutinesApi
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class BucketListFragment : Fragment() {
 
     private lateinit var bucketListViewModel: BucketListViewModel
@@ -65,8 +64,7 @@ internal class BucketListFragment : Fragment() {
             getImageViewWidth = {
                 if (recyclerViewBuckets.layoutManager is GridLayoutManager) {
                     (recyclerViewBuckets.layoutManager as GridLayoutManager).let { gridLayoutManager ->
-                        val displayMetric = DisplayMetrics()
-                        requireActivity().windowManager.defaultDisplay.getRealMetrics(displayMetric)
+                        val displayMetric = requireActivity().resources.displayMetrics
                         (((displayMetric.widthPixels - dpToPx(3) * (gridLayoutManager.spanCount - 1)) / gridLayoutManager.spanCount) * 0.5).toInt()
                     }
                 } else {
@@ -91,7 +89,7 @@ internal class BucketListFragment : Fragment() {
             FalleryActivityComponentHolder.componentCreator(requireActivity()).provideBucketListViewModelFactory()
         )[BucketListViewModel::class.java]
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             launch {
                 falleryViewModel.storagePermissionGrantedStateFlow.collect {
                     if (it == true) {
@@ -117,7 +115,7 @@ internal class BucketListFragment : Fragment() {
         }
 
         bucketListViewModel.apply {
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 loadingViewStateFlow.collect {
                     when (it) {
                         is LoadingViewState.Error -> showErrorLayout()
@@ -127,7 +125,7 @@ internal class BucketListFragment : Fragment() {
                 }
             }
 
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 launch { allMediaCountChanged.collect { falleryViewModel.totalMediaCount = it } }
                 bucketsStateFlow.collect { bucketAdapter.submitList(it) }
             }
@@ -189,4 +187,9 @@ internal class BucketListFragment : Fragment() {
             minCount = 2
         )
     } else 1
+
+    override fun onDestroyView() {
+        recyclerViewBuckets.adapter = null
+        super.onDestroyView()
+    }
 }

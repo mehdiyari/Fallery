@@ -1,7 +1,7 @@
 package ir.mehdiyari.fallery.repo
 
-import ir.mehdiyari.fallery.models.MediaBucket
 import ir.mehdiyari.fallery.models.BucketType
+import ir.mehdiyari.fallery.models.MediaBucket
 
 interface AbstractMediaBucketProvider {
 

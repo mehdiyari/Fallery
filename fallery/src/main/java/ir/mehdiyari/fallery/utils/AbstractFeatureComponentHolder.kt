@@ -9,10 +9,6 @@ abstract class AbstractFeatureComponentHolder<T> {
     private var component: T? = null
     private var activity : WeakReference<FragmentActivity>? = null
 
-    fun setComponent(component: T) {
-        if (this.component == null) this.component = component
-    }
-
     fun createOrGetComponent(activity: FragmentActivity): T {
         if (this.component == null) component = componentCreator(activity).also {
             this.activity = WeakReference(activity)

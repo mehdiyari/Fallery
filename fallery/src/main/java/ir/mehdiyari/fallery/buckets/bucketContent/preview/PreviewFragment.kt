@@ -2,9 +2,7 @@ package ir.mehdiyari.fallery.buckets.bucketContent.preview
 
 import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.TranslateAnimation
 import androidx.fragment.app.Fragment
@@ -25,11 +23,11 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-internal class PreviewFragment : Fragment(), View.OnClickListener {
+@OptIn(ExperimentalCoroutinesApi::class)
+internal class PreviewFragment : Fragment(R.layout.fragment_preview), View.OnClickListener {
 
     private lateinit var bucketContentViewModel: BucketContentViewModel
 
-    @ExperimentalCoroutinesApi
     private lateinit var falleryViewModel: FalleryViewModel
 
     private val mediaPreviewAdapter by lazy {
@@ -46,12 +44,12 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
         FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideDeselectedDrawable()
     }
 
-    @ExperimentalCoroutinesApi
     private val pageSelectedCallback by lazy {
         object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 showToolbarWithAnimation()
                 checkForSelection(position)
+                saveCurrentPosition(position)
             }
         }
     }
@@ -60,24 +58,25 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
         requireActivity() as FalleryToolbarVisibilityController
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_preview, container, false)
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         requireActivity().window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         falleryToolbarVisibilityController.hideToolbar(false)
     }
 
+    private fun saveCurrentPosition(position: Int) {
+        arguments?.putString(
+            "from_media_path",
+            bucketContentViewModel.getMediaPathByPosition(position)
+        )
+    }
 
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initViewModel()
         initView()
     }
 
-    @ExperimentalCoroutinesApi
     override fun onStart() {
         super.onStart()
         viewPagerMediaPreview.registerOnPageChangeCallback(pageSelectedCallback)
@@ -85,7 +84,6 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
             viewPagerMediaPreview.adapter = mediaPreviewAdapter
     }
 
-    @ExperimentalCoroutinesApi
     private fun initView() {
         FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideFalleryOptions().apply {
             viewPagerMediaPreview.orientation = mediaPreviewScrollOrientation
@@ -107,21 +105,19 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
         imageViewBackButton.setOnClickListener { requireActivity().onBackPressed() }
     }
 
-    @ExperimentalCoroutinesApi
     private fun checkForSelection(position: Int) {
-        appCompatImageButtonMediaSelect.background = bucketContentViewModel.getMediaPathByPosition(position).let {
+        appCompatImageButtonMediaSelect.setImageDrawable(bucketContentViewModel.getMediaPathByPosition(position).let {
             if (it != null && falleryViewModel.isPhotoSelected(it)) selectedDrawable else deselectDrawable
-        }
+        })
     }
 
-    @ExperimentalCoroutinesApi
     private fun initViewModel() {
         falleryViewModel = ViewModelProvider(
             requireActivity(),
             FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideFalleryViewModelFactory()
         )[FalleryViewModel::class.java].apply {
             hideSendOrCaptionLayout()
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 mediaCountStateFlow.collect { setupMediaCountView(it) }
             }
         }
@@ -131,7 +127,7 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
             FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideBucketContentViewModelFactory()
         )[BucketContentViewModel::class.java]
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             bucketContentViewModel.mediaList.collect {
                 if (viewPagerMediaPreview == null)
                     viewPagerMediaPreview.adapter = mediaPreviewAdapter
@@ -139,7 +135,6 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
                 mediaPreviewAdapter.medias = it
                 arguments?.getString("from_media_path", null).also { path ->
                     if (path != null) {
-                        arguments?.remove("from_media_path")
                         viewPagerMediaPreview.post {
                             viewPagerMediaPreview.setCurrentItem(bucketContentViewModel.getIndexOfPath(path).apply(this@PreviewFragment::checkForSelection), false)
                         }
@@ -189,18 +184,17 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
     }
 
 
-    @ExperimentalCoroutinesApi
     override fun onStop() {
         viewPagerMediaPreview.unregisterOnPageChangeCallback(pageSelectedCallback)
         viewPagerMediaPreview.adapter = null
         super.onStop()
     }
 
-    @ExperimentalCoroutinesApi
     override fun onDestroyView() {
         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         falleryViewModel.showSendOrCaptionLayout()
         falleryToolbarVisibilityController.showToolbar(false)
+        viewPagerMediaPreview.adapter = null
         super.onDestroyView()
     }
 

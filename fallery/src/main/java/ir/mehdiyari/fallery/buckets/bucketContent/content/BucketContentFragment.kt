@@ -27,7 +27,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-@ExperimentalCoroutinesApi
+@OptIn(ExperimentalCoroutinesApi::class)
 class BucketContentFragment : Fragment() {
 
     private lateinit var bucketContentViewModel: BucketContentViewModel
@@ -77,7 +77,7 @@ class BucketContentFragment : Fragment() {
             requireParentFragment(),
             FalleryActivityComponentHolder.getOrNull()!!.provideBucketContentViewModelFactory()
         )[BucketContentViewModel::class.java].apply {
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 loadingViewStateFlow.collect {
                     when (it) {
                         is LoadingViewState.ShowLoading -> showLoading()
@@ -107,7 +107,7 @@ class BucketContentFragment : Fragment() {
             })
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             launch {
                 bucketContentViewModel.mediaList.collect {
                     bucketContentAdapter.submitList(it)
@@ -140,5 +140,10 @@ class BucketContentFragment : Fragment() {
         errorLayoutBucketContent.hide()
         recyclerViewBucketContent.visibility = View.VISIBLE
         contentLoadingProgressBarBucketContent.hide()
+    }
+
+    override fun onDestroyView() {
+        recyclerViewBucketContent.adapter = null
+        super.onDestroyView()
     }
 }

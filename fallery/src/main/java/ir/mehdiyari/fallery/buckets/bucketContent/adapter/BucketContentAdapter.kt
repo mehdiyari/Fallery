@@ -100,9 +100,9 @@ class BucketContentAdapter constructor(
 
         private fun initSelectingStateOfView(adapterPosition: Int) {
             if (selectedMediaTracker?.contains(getItemPath(adapterPosition)) == true)
-                itemView.imageViewSelectDeselectPhoto.background = selectedDrawable
+                itemView.imageViewSelectDeselectPhoto.setImageDrawable(selectedDrawable)
             else
-                itemView.imageViewSelectDeselectPhoto.background = deselectedDrawable
+                itemView.imageViewSelectDeselectPhoto.setImageDrawable(deselectedDrawable)
         }
 
     }
@@ -149,9 +149,9 @@ class BucketContentAdapter constructor(
 
         private fun initSelectingStateOfView(adapterPosition: Int) {
             if (selectedMediaTracker?.contains(getItemPath(adapterPosition)) == true)
-                itemView.imageViewSelectDeselectVideo.background = selectedDrawable
+                itemView.imageViewSelectDeselectVideo.setImageDrawable(selectedDrawable)
             else
-                itemView.imageViewSelectDeselectVideo.background = deselectedDrawable
+                itemView.imageViewSelectDeselectVideo.setImageDrawable(deselectedDrawable)
         }
     }
 }

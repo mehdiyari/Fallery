@@ -44,16 +44,15 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import java.io.File
+import java.lang.ref.WeakReference
 
+@OptIn(ExperimentalCoroutinesApi::class, InternalCoroutinesApi::class)
 internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, FalleryToolbarVisibilityController {
 
-    @ExperimentalCoroutinesApi
     private lateinit var falleryViewModel: FalleryViewModel
-    private val mediaStoreObserver by lazy { MediaStoreObserver(Handler(), this) }
+    private val mediaStoreObserver by lazy { MediaStoreObserver(Handler(), WeakReference(this)) }
     private val falleryOptions by lazy { FalleryActivityComponentHolder.createOrGetComponent(this).provideFalleryOptions() }
 
-    @ExperimentalCoroutinesApi
-    @InternalCoroutinesApi
     override fun onCreate(savedInstanceState: Bundle?) {
         FalleryActivityComponentHolder.createOrGetComponent(this)
         requestedOrientation = falleryOptions.orientationMode
@@ -65,7 +64,6 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
         initView()
     }
 
-    @ExperimentalCoroutinesApi
     private fun initialize() {
         if (!falleryOptions.grantExternalStoragePermission) {
             falleryViewModel.storagePermissionGranted()
@@ -79,8 +77,6 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
     }
 
 
-    @InternalCoroutinesApi
-    @ExperimentalCoroutinesApi
     private fun initViewModel() {
         falleryViewModel = ViewModelProvider(
             this,
@@ -156,7 +152,6 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
         })
     }
 
-    @ExperimentalCoroutinesApi
     private fun setupMediaCountView(value: MediaCountModel) {
         if (value.selectedCount <= 0) {
             toolbarFalleryActivity.title =
@@ -176,8 +171,6 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
         }
     }
 
-    @ExperimentalCoroutinesApi
-    @InternalCoroutinesApi
     private fun initView() {
         addCameraMenuItem()
         addRecyclerViewItemViewModeMenuItem()
@@ -226,7 +219,6 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
     }
 
 
-    @ExperimentalCoroutinesApi
     private fun takePhoto() {
         falleryOptions.cameraEnabledOptions.also {
             val filename = generatePhotoFilename()
@@ -263,7 +255,6 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
             drawable.setColorFilter(tintColor, PorterDuff.Mode.SRC_IN)
     }
 
-    @ExperimentalCoroutinesApi
     private fun addRecyclerViewItemViewModeMenuItem() {
         toolbarFalleryActivity.apply {
             falleryOptions.bucketItemModeToggleEnabled.also {
@@ -280,7 +271,6 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
         }
     }
 
-    @ExperimentalCoroutinesApi
     private fun showOrHideMenusBasedOnFragment() {
         try {
             toolbarFalleryActivity.menu?.findItem(R.id.bucketListMenuItemShowRecyclerViewItemModelChanger)?.isVisible =
@@ -290,7 +280,6 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
         }
     }
 
-    @ExperimentalCoroutinesApi
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
@@ -305,7 +294,6 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
         }
     }
 
-    @ExperimentalCoroutinesApi
     private fun writeExternalStoragePermissionDenied() {
         AlertDialog.Builder(this@FalleryActivity, R.style.Fallery_AlertDialogTheme)
             .setMessage(R.string.access_external_storage_denied)
@@ -320,7 +308,6 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
             .show()
     }
 
-    @ExperimentalCoroutinesApi
     private fun showPermanentlyPermissionDeniedDialog() {
         AlertDialog.Builder(this@FalleryActivity, R.style.Fallery_AlertDialogTheme)
             .setMessage(R.string.access_external_storage_permanently_denied)
@@ -340,7 +327,6 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
             .show()
     }
 
-    @ExperimentalCoroutinesApi
     @Suppress("SameParameterValue")
     private fun hideCaptionLayout(withAnim: Boolean) {
         prepareCaptionViewStub()
@@ -364,7 +350,6 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
         }
     }
 
-    @ExperimentalCoroutinesApi
     @Suppress("SameParameterValue")
     private fun showCaptionLayout(withAnim: Boolean) {
         prepareCaptionViewStub()
@@ -387,7 +372,6 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
         }
     }
 
-    @ExperimentalCoroutinesApi
     private fun prepareCaptionViewStub() {
         if (viewStubCaptionLayout != null && viewStubCaptionLayout.parent != null) {
             (try {
@@ -409,7 +393,6 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
 
     }
 
-    @ExperimentalCoroutinesApi
     private fun observeMediaStopChanges() {
         if (falleryOptions.mediaObserverEnabled) {
             getMediaObserverInstance()?.externalStorageChangeLiveData?.observe(this, Observer {
@@ -427,11 +410,10 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
     }
 
     override fun onDestroy() {
+        FalleryActivityComponentHolder.onDestroy()
         if (isFinishing) {
-            FalleryActivityComponentHolder.onDestroy()
             FalleryCoreComponentHolder.onDestroy()
         }
-
         super.onDestroy()
     }
 
@@ -547,7 +529,6 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
         })
     }
 
-    @ExperimentalCoroutinesApi
     override fun onBackPressed() {
         for (fragment in supportFragmentManager.fragments) {
             if (fragment.isVisible && fragment.childFragmentManager.backStackEntryCount > 1) {
@@ -566,11 +547,11 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
             falleryViewModel.currentFragmentLiveData.value = null
         } else {
             super.onBackPressed()
-            showOrHideMenusBasedOnFragment()
         }
+
+        showOrHideMenusBasedOnFragment()
     }
 
-    @ExperimentalCoroutinesApi
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == TAKE_PHOTO_REQUEST_CODE) {
@@ -582,7 +563,6 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
         }
     }
 
-    @ExperimentalCoroutinesApi
     private fun handleTakingPhotoResult() {
         falleryViewModel.prepareCameraResultWithSelectedResults()
     }

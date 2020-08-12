@@ -17,11 +17,11 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
+@OptIn(ExperimentalCoroutinesApi::class, InternalCoroutinesApi::class)
 internal class BucketListViewModelTest {
 
     private val abstractMediaBucketProvider by lazy { mockk<AbstractMediaBucketProvider>() }
 
-    @ExperimentalCoroutinesApi
     private val bucketViewModel by lazy {
         spyk(
             BucketListViewModel(
@@ -36,13 +36,10 @@ internal class BucketListViewModelTest {
     private val bucketsMutableStateFlowCollector by lazy { spyk<FlowCollector<List<MediaBucket>>>() }
     private val allMediaCountChangedStateFlowCollector by lazy { spyk<FlowCollector<Int>>() }
 
-    @ExperimentalCoroutinesApi
     private val testCoroutineDispatcher = TestCoroutineDispatcher()
 
-    @ExperimentalCoroutinesApi
     private val testCoroutineScope by lazy { TestCoroutineScope(testCoroutineDispatcher) }
 
-    @ExperimentalCoroutinesApi
     @BeforeEach
     fun before() {
         Dispatchers.setMain(testCoroutineDispatcher)
@@ -50,8 +47,6 @@ internal class BucketListViewModelTest {
         every { Log.e(any(), any()) } returns 0
     }
 
-    @InternalCoroutinesApi
-    @ExperimentalCoroutinesApi
     @Test
     fun `Given refresh=true - when app has not access to external storage - then notify showLoading-hideLoading-ErrorInFetchingBuckets`() = runBlockingTest {
         every { bucketViewModel.bucketsStateFlow.value } returns generateBucketsList()
@@ -63,8 +58,6 @@ internal class BucketListViewModelTest {
         coVerify(exactly = 1) { mockViewStateCollector.emit(LoadingViewState.Error) }
     }
 
-    @InternalCoroutinesApi
-    @ExperimentalCoroutinesApi
     @Test
     fun `Given refresh=false - when bucket lists is empty - then get bucket lists`() = runBlockingTest {
         val generatedList = generateBucketsList()
@@ -79,7 +72,6 @@ internal class BucketListViewModelTest {
         coVerify(exactly = 1) { allMediaCountChangedStateFlowCollector.emit(generatedList[0].mediaCount) }
     }
 
-    @ExperimentalCoroutinesApi
     @AfterEach
     fun after() {
         Dispatchers.resetMain()

@@ -91,7 +91,7 @@ internal class BucketListFragment : Fragment() {
             FalleryActivityComponentHolder.componentCreator(requireActivity()).provideBucketListViewModelFactory()
         )[BucketListViewModel::class.java]
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             launch {
                 falleryViewModel.storagePermissionGrantedStateFlow.collect {
                     if (it == true) {
@@ -117,7 +117,7 @@ internal class BucketListFragment : Fragment() {
         }
 
         bucketListViewModel.apply {
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 loadingViewStateFlow.collect {
                     when (it) {
                         is LoadingViewState.Error -> showErrorLayout()
@@ -127,7 +127,7 @@ internal class BucketListFragment : Fragment() {
                 }
             }
 
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 launch { allMediaCountChanged.collect { falleryViewModel.totalMediaCount = it } }
                 bucketsStateFlow.collect { bucketAdapter.submitList(it) }
             }

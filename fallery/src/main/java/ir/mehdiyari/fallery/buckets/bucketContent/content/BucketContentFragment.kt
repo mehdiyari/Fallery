@@ -77,7 +77,7 @@ class BucketContentFragment : Fragment() {
             requireParentFragment(),
             FalleryActivityComponentHolder.getOrNull()!!.provideBucketContentViewModelFactory()
         )[BucketContentViewModel::class.java].apply {
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 loadingViewStateFlow.collect {
                     when (it) {
                         is LoadingViewState.ShowLoading -> showLoading()
@@ -107,7 +107,7 @@ class BucketContentFragment : Fragment() {
             })
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             launch {
                 bucketContentViewModel.mediaList.collect {
                     bucketContentAdapter.submitList(it)

@@ -122,7 +122,7 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
             FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideFalleryViewModelFactory()
         )[FalleryViewModel::class.java].apply {
             hideSendOrCaptionLayout()
-            lifecycleScope.launch {
+            viewLifecycleOwner.lifecycleScope.launch {
                 mediaCountStateFlow.collect { setupMediaCountView(it) }
             }
         }
@@ -132,7 +132,7 @@ internal class PreviewFragment : Fragment(), View.OnClickListener {
             FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideBucketContentViewModelFactory()
         )[BucketContentViewModel::class.java]
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             bucketContentViewModel.mediaList.collect {
                 if (viewPagerMediaPreview == null)
                     viewPagerMediaPreview.adapter = mediaPreviewAdapter

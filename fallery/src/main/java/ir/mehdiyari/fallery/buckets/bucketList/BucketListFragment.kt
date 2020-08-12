@@ -187,4 +187,9 @@ internal class BucketListFragment : Fragment() {
             minCount = 2
         )
     } else 1
+
+    override fun onDestroyView() {
+        recyclerViewBuckets.adapter = null
+        super.onDestroyView()
+    }
 }

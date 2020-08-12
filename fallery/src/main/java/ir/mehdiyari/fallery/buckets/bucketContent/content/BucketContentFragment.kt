@@ -141,4 +141,9 @@ class BucketContentFragment : Fragment() {
         recyclerViewBucketContent.visibility = View.VISIBLE
         contentLoadingProgressBarBucketContent.hide()
     }
+
+    override fun onDestroyView() {
+        recyclerViewBucketContent.adapter = null
+        super.onDestroyView()
+    }
 }

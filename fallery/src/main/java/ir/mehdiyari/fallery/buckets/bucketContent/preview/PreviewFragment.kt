@@ -194,6 +194,7 @@ internal class PreviewFragment : Fragment(R.layout.fragment_preview), View.OnCli
         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
         falleryViewModel.showSendOrCaptionLayout()
         falleryToolbarVisibilityController.showToolbar(false)
+        viewPagerMediaPreview.adapter = null
         super.onDestroyView()
     }
 

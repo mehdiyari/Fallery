@@ -409,11 +409,10 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
     }
 
     override fun onDestroy() {
+        FalleryActivityComponentHolder.onDestroy()
         if (isFinishing) {
-            FalleryActivityComponentHolder.onDestroy()
             FalleryCoreComponentHolder.onDestroy()
         }
-
         super.onDestroy()
     }
 

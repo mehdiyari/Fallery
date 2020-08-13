@@ -33,7 +33,7 @@ internal const val getSingleBucketSelectionAndroidQ =
 
 fun Int.toReadableCount() : String = this.toLong().toReadableCount()
 
-fun Long.toReadableCount() : String = when {
+internal fun Long.toReadableCount(): String = when {
     this < 999L -> this.toString()
     this in 1000L..999999L -> "${this / 1000L}K"
     else -> "${this / 1000000L}M"

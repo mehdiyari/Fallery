@@ -1,6 +1,6 @@
 package ir.mehdiyari.fallery.utils
 
-enum class VideoMediaTypes constructor(override var value: Pair<String, List<String>>) :
+internal enum class VideoMediaTypes constructor(override var value: Pair<String, List<String>>) :
     EnumType<Pair<String, List<String>>> {
 
     MP4(

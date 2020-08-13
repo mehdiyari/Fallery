@@ -17,7 +17,7 @@ import ir.mehdiyari.fallery.utils.getHeightBasedOnScaledWidth
 import kotlinx.android.synthetic.main.media_photo_item.view.*
 import kotlinx.android.synthetic.main.media_video_item.view.*
 
-class BucketContentAdapter constructor(
+internal class BucketContentAdapter constructor(
     private val imageLoader: FalleryImageLoader,
     private val selectedDrawable: Drawable,
     private val deselectedDrawable: Drawable,

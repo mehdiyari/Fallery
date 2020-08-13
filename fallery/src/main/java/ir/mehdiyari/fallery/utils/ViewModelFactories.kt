@@ -10,7 +10,7 @@ import ir.mehdiyari.fallery.models.BucketType
 import ir.mehdiyari.fallery.repo.AbstractBucketContentProvider
 import ir.mehdiyari.fallery.repo.AbstractMediaBucketProvider
 
-class BucketListViewModelFactory(
+internal class BucketListViewModelFactory(
     private val abstractMediaBucketProvider: AbstractMediaBucketProvider,
     private val bucketType: BucketType
 ) : ViewModelProvider.Factory {
@@ -22,7 +22,7 @@ class BucketListViewModelFactory(
         } else throw IllegalArgumentException("this factory is just for BucketListViewModel")
 }
 
-class FalleryViewModelFactory(
+internal class FalleryViewModelFactory(
     private val falleryOptions: FalleryOptions
 ) : ViewModelProvider.Factory {
 

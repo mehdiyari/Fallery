@@ -4,7 +4,7 @@ import android.provider.MediaStore
 import ir.mehdiyari.fallery.models.BucketType
 
 
-val bucketProjection = arrayOf(
+internal val bucketProjection = arrayOf(
     MediaStore.Files.FileColumns._ID,
     "bucket_id",
     "bucket_display_name",
@@ -24,7 +24,7 @@ internal val photoWithVideoProjection = arrayOf(
 )
 
 
-val bucketProjectionAndroidQ = arrayOf(
+internal val bucketProjectionAndroidQ = arrayOf(
     MediaStore.Files.FileColumns._ID,
     "bucket_id",
     "bucket_display_name",

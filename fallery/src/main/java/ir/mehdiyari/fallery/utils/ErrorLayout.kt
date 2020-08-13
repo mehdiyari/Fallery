@@ -7,7 +7,7 @@ import android.widget.LinearLayout
 import ir.mehdiyari.fallery.R
 import kotlinx.android.synthetic.main.error_layout.view.*
 
-class ErrorLayout constructor(context: Context, attributeSet: AttributeSet) : LinearLayout(context, attributeSet) {
+internal class ErrorLayout constructor(context: Context, attributeSet: AttributeSet) : LinearLayout(context, attributeSet) {
 
     init {
         View.inflate(context, R.layout.error_layout, this)

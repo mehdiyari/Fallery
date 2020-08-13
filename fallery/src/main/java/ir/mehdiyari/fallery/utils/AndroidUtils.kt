@@ -34,7 +34,7 @@ internal fun divideScreenToEqualPart(
 
 internal fun dpToPx(dp: Int): Int = (dp * Resources.getSystem().displayMetrics.density).toInt()
 
-fun getSettingIntent(activity: Context): Intent = Intent().apply {
+internal fun getSettingIntent(activity: Context): Intent = Intent().apply {
     action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
     data = Uri.fromParts("package", activity.packageName, null)
 }

@@ -28,7 +28,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class BucketContentFragment : Fragment() {
+internal class BucketContentFragment : Fragment() {
 
     private lateinit var bucketContentViewModel: BucketContentViewModel
     private lateinit var falleryViewModel: FalleryViewModel

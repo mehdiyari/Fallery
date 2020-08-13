@@ -4,10 +4,10 @@ import android.util.Log
 import androidx.fragment.app.FragmentActivity
 import java.lang.ref.WeakReference
 
-abstract class AbstractFeatureComponentHolder<T> {
+internal abstract class AbstractFeatureComponentHolder<T> {
 
     private var component: T? = null
-    private var activity : WeakReference<FragmentActivity>? = null
+    private var activity: WeakReference<FragmentActivity>? = null
 
     fun createOrGetComponent(activity: FragmentActivity): T {
         if (this.component == null) component = componentCreator(activity).also {

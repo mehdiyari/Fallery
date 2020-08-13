@@ -15,7 +15,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
 
 @OptIn(ExperimentalCoroutinesApi::class, InternalCoroutinesApi::class)
-class BaseBucketContentFragment : Fragment() {
+internal class BaseBucketContentFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
         inflater.inflate(R.layout.fragment_base_bucket_content, container, false)

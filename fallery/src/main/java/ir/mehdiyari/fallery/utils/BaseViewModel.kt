@@ -7,7 +7,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlin.coroutines.CoroutineContext
 
-open class BaseViewModel : ViewModel() {
+internal open class BaseViewModel : ViewModel() {
 
     protected val viewModelScope by lazy {
         object : CoroutineScope {

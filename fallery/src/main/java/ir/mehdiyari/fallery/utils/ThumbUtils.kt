@@ -11,7 +11,7 @@ import java.io.File
 
 
 @WorkerThread
-fun createThumbForVideos(
+internal fun createThumbForVideos(
     videosPath: List<Pair<String, Long>>,
     cacheDir: String,
     highQuality: Pair<Boolean, PhotoDiminution?> = false to null
@@ -44,7 +44,7 @@ fun createThumbForVideos(
     }
 }.toList()
 
-fun createThumbForVideosOrEmpty(
+internal fun createThumbForVideosOrEmpty(
     videosPath: List<Pair<String, Long>>,
     cacheDir: String,
     highQuality: Pair<Boolean, PhotoDiminution?> = false to null

@@ -1,5 +1,6 @@
 package ir.mehdiyari.fallery.buckets.bucketContent.preview
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
@@ -58,8 +59,8 @@ internal class PreviewFragment : Fragment(R.layout.fragment_preview), View.OnCli
         requireActivity() as FalleryToolbarVisibilityController
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
         requireActivity().window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
         falleryToolbarVisibilityController.hideToolbar(false)
     }

@@ -4,10 +4,10 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import androidx.annotation.LayoutRes
 import androidx.appcompat.widget.AppCompatImageView
 import androidx.appcompat.widget.AppCompatTextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ir.mehdiyari.fallery.R
@@ -55,7 +55,7 @@ internal class BucketListAdapter constructor(
         private val appCompatTextViewBucketItemCount = itemView.findViewById<AppCompatTextView>(R.id.appCompatTextViewBucketItemCount)
 
         init {
-            itemView.findViewById<FrameLayout>(R.id.frameLayoutBucketItemView).setOnClickListener {
+            itemView.findViewById<ConstraintLayout>(R.id.constraintLayoutBucketItemView).setOnClickListener {
                 onBucketClick?.invoke(getItemId(adapterPosition))
             }
         }

@@ -3,7 +3,6 @@
     android:id="@+id/falleryEditTextCaption"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#00ffffff"
     android:hint="@string/fallery_caption_hint_text"
     android:textColorHint="?attr/fallery_hint_text_color"
     android:singleLine="true"

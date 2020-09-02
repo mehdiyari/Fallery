@@ -25,6 +25,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.AppCompatEditText
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -497,7 +498,13 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
 
     override fun showToolbar(withAnim: Boolean) {
         if (toolbarFalleryActivity.visibility == View.VISIBLE) return
+        fun setHeightOfFragmentContainer() {
+            layoutFragmentContainer.layoutParams = (layoutFragmentContainer.layoutParams as ConstraintLayout.LayoutParams).apply {
+                height = ConstraintLayout.LayoutParams.MATCH_CONSTRAINT
+            }
+        }
         if (!withAnim) {
+            setHeightOfFragmentContainer()
             toolbarFalleryActivity?.visibility = View.VISIBLE
             return
         }
@@ -506,6 +513,7 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
             duration = 200
             fillAfter = true
             setOnAnimationEndListener {
+                setHeightOfFragmentContainer()
                 toolbarFalleryActivity.visibility = View.VISIBLE
                 toolbarFalleryActivity.animation = null
             }
@@ -514,7 +522,13 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
 
     override fun hideToolbar(withAnim: Boolean) {
         if (toolbarFalleryActivity.visibility == View.GONE) return
+        fun setHeightOfFragmentContainer() {
+            layoutFragmentContainer.layoutParams = (layoutFragmentContainer.layoutParams as ConstraintLayout.LayoutParams).apply {
+                height = ConstraintLayout.LayoutParams.MATCH_PARENT
+            }
+        }
         if (!withAnim) {
+            setHeightOfFragmentContainer()
             toolbarFalleryActivity?.visibility = View.GONE
             return
         }
@@ -523,6 +537,7 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
             duration = 200
             fillAfter = true
             setOnAnimationEndListener {
+                setHeightOfFragmentContainer()
                 toolbarFalleryActivity.visibility = View.GONE
                 toolbarFalleryActivity.animation = null
             }

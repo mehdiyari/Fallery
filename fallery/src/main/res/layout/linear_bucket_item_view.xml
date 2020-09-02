@@ -1,76 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:padding="6dp"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/frameLayoutBucketItemView"
-    android:background="?attr/fallery_background_color">
+    android:id="@+id/constraintLayoutBucketItemView"
+    android:background="?selectableItemBackground">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        tools:ignore="UselessParent"
-        android:padding="6dp"
-        android:background="?selectableItemBackground">
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/imageViewBucketImage"
-            android:layout_width="68dp"
-            android:layout_height="68dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:scaleType="centerCrop"
-            android:layout_alignParentLeft="true" />
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageViewBucketImage"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:paddingBottom="2dp"
-            android:layout_toEndOf="@+id/imageViewBucketImage"
-            android:layout_toStartOf="@+id/appCompatImageButtonArrowNext"
-            android:layout_marginStart="8dp"
-            android:orientation="vertical"
-            android:layout_toRightOf="@+id/imageViewBucketImage"
-            android:layout_toLeftOf="@+id/appCompatImageButtonArrowNext"
-            android:layout_marginLeft="8dp">
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextViewBucketItemCount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:textColor="?attr/fallery_secondary_text_color"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageViewBucketImage"
+        app:layout_constraintEnd_toStartOf="@+id/appCompatImageButtonArrowNext"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imageViewBucketImage"
+        app:layout_constraintTop_toBottomOf="@+id/appCompatTextViewBucketName"
+        app:layout_constraintVertical_bias="0.0"
+        tools:text="715 medias" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/appCompatTextViewBucketName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ellipsize="marquee"
-                android:singleLine="true"
-                android:textColor="?attr/fallery_primary_text_color"
-                android:textSize="16sp"
-                tools:text="Cameras"
-                android:textStyle="bold"
-                tools:ignore="RtlSymmetry" />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/appCompatTextViewBucketName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="marquee"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:singleLine="true"
+        android:textColor="?attr/fallery_primary_text_color"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/appCompatTextViewBucketItemCount"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imageViewBucketImage"
+        app:layout_constraintTop_toTopOf="@+id/imageViewBucketImage"
+        app:layout_constraintVertical_bias="0.26999998"
+        tools:ignore="RtlSymmetry"
+        tools:text="Cameras" />
 
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/appCompatTextViewBucketItemCount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:textColor="?attr/fallery_secondary_text_color"
-                android:textSize="13sp"
-                tools:text="715 medias"
-                android:layout_marginRight="6dp" />
+    <androidx.appcompat.widget.AppCompatImageButton
+        android:id="@+id/appCompatImageButtonArrowNext"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="#00ffffff"
+        android:src="@drawable/ic_arrow_next"
+        android:tint="?attr/fallery_icon_tint_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        </LinearLayout>
 
-        <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/appCompatImageButtonArrowNext"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:background="#00ffffff"
-            android:src="@drawable/ic_arrow_next"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:tint="?attr/fallery_icon_tint_color"
-            android:layout_alignParentRight="true" />
-
-    </RelativeLayout>
-
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

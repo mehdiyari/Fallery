@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,67 +7,74 @@
     android:animateLayoutChanges="false"
     tools:context=".main.ui.FalleryActivity">
 
-    <LinearLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarFalleryActivity"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="?android:attr/actionBarSize"
+        android:background="?attr/fallery_color_primary"
+        android:theme="@style/ToolbarTheme"
+        app:contentInsetStart="0dp"
+        app:contentInsetStartWithNavigation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="@drawable/fallery_ic_back_arrow"
+        app:popupTheme="@style/AppTheme.Dark.PopupOverlay"
+        app:subtitleTextColor="?attr/fallery_secondary_text_color"
+        app:title="@string/fallery_toolbar_title"
+        app:titleTextAppearance="@style/toolbarTitleTextAppearance"
+        app:titleTextColor="?attr/fallery_toolbar_text_color" />
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbarFalleryActivity"
-            android:layout_width="match_parent"
-            android:layout_height="?android:attr/actionBarSize"
-            android:background="?attr/fallery_color_primary"
-            android:theme="@style/ToolbarTheme"
-            app:contentInsetStart="0dp"
-            app:titleTextColor="?attr/fallery_toolbar_text_color"
-            app:contentInsetStartWithNavigation="0dp"
-            app:navigationIcon="@drawable/fallery_ic_back_arrow"
-            app:popupTheme="@style/AppTheme.Dark.PopupOverlay"
-            app:subtitleTextColor="?attr/fallery_secondary_text_color"
-            app:title="@string/fallery_toolbar_title"
-            app:titleTextAppearance="@style/toolbarTitleTextAppearance" />
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/layoutFragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbarFalleryActivity" />
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/layoutFragmentContainer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-
-    </LinearLayout>
 
     <ViewStub
         android:id="@+id/viewStubCaptionLayout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/caption_layout_height"
-        android:layout_gravity="bottom"
-        android:layout="@layout/caption_layout" />
+        android:layout="@layout/caption_layout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <FrameLayout
         android:id="@+id/frameLayoutSendMedia"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_gravity="bottom"
-        android:background="?attr/fallery_background_color"
-        android:visibility="gone" />
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:background="?attr/fallery_background_color" />
 
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingButtonSendMedia"
         android:layout_width="65dp"
         android:layout_height="65dp"
-        app:fabCustomSize="65dp"
-        android:layout_gravity="bottom|right"
-        android:layoutDirection="ltr"
         android:layout_margin="16dp"
         android:clickable="true"
         android:focusable="true"
+        android:layoutDirection="ltr"
         android:src="@drawable/fallery_icon_send"
         android:tint="#ffffff"
         android:visibility="gone"
         app:elevation="4dp"
+        app:fabCustomSize="65dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:rippleColor="#ffffff"
-        tools:visibility="visible"
-        tools:ignore="RtlHardcoded,UnusedAttribute" />
+        tools:ignore="RtlHardcoded,UnusedAttribute"
+        tools:visibility="visible" />
 
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

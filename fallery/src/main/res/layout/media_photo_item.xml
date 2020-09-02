@@ -1,31 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/min_size_bucket_content_item"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="1.5dp"
-    android:id="@+id/frameLayoutPhotoContainer">
+    android:id="@+id/constraintLayoutPhotoContainer">
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageViewPhotoMedia"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
     <FrameLayout
         android:id="@+id/selectedPhotoToggleContainer"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:layout_gravity="end|bottom">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/imageViewSelectDeselectPhoto"
-            android:layout_width="23dp"
-            android:layout_height="23dp"
-            android:layout_margin="3dp"
-            android:layout_gravity="end|bottom"/>
-
-    </FrameLayout>
+        android:layout_gravity="end|bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
 
-</FrameLayout>
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageViewSelectDeselectPhoto"
+        android:layout_width="23dp"
+        android:layout_height="23dp"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="3dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

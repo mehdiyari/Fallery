@@ -1,5 +1,6 @@
 package ir.mehdiyari.fallery.buckets.bucketContent
 
+import androidx.lifecycle.LiveData
 import ir.mehdiyari.fallery.buckets.bucketList.LoadingViewState
 import ir.mehdiyari.fallery.models.BucketType
 import ir.mehdiyari.fallery.models.Media
@@ -24,13 +25,12 @@ internal class BucketContentViewModel constructor(
 ) : BaseViewModel() {
 
     private val medias = MutableStateFlow<List<Media>>(listOf())
-
     val mediaList: StateFlow<List<Media>> = medias
 
-    val showPreviewFragmentLiveData = SingleLiveEvent<String>()
+    private val _showPreviewFragmentLiveData = SingleLiveEvent<String>()
+    val showPreviewFragmentLiveData: LiveData<String> = _showPreviewFragmentLiveData
 
     private val loadingMutableStateFlow = MutableStateFlow<LoadingViewState?>(null)
-
     val loadingViewStateFlow: StateFlow<LoadingViewState?> = loadingMutableStateFlow
 
     fun getMedias(bucketId: Long, refresh: Boolean = false) {
@@ -58,7 +58,7 @@ internal class BucketContentViewModel constructor(
     }
 
     fun showPreviewFragment(path: String) {
-        showPreviewFragmentLiveData.value = path
+        _showPreviewFragmentLiveData.value = path
     }
 
     fun getIndexOfPath(path: String): Int = mediaList.value.indexOfFirst { it.getMediaPath() == path.trim() }

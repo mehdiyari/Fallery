@@ -85,13 +85,13 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
         )[FalleryViewModel::class.java]
 
         falleryViewModel.apply {
-            showErrorSingleLiveEvent.observeSingleEvent(this@FalleryActivity, Observer {
+            showErrorSingleLiveEvent.observe(this@FalleryActivity, Observer {
                 if (it != null && it == R.string.fallery_error_max_selectable) {
                     Toast.makeText(this@FalleryActivity, getString(it, falleryOptions.maxSelectableMedia), Toast.LENGTH_SHORT).show()
                 }
             })
 
-            resultSingleLiveEvent.observeSingleEvent(this@FalleryActivity, Observer {
+            resultSingleLiveEvent.observe(this@FalleryActivity, Observer {
                 if (it != null && it.isNotEmpty()) {
                     finishWithOKResult(it)
                 } else {
@@ -126,7 +126,7 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
 
         observeMediaStopChanges()
 
-        falleryViewModel.currentFragmentLiveData.observeSingleEvent(this@FalleryActivity, Observer { falleryView ->
+        falleryViewModel.currentFragmentLiveData.observe(this@FalleryActivity, Observer { falleryView ->
             when (falleryView) {
                 is FalleryView.BucketList -> {
                     toolbarFalleryActivity.title = getString(falleryOptions.toolbarTitle)
@@ -559,7 +559,7 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
             if (!falleryViewModel.userSelectedMedias) {
                 toolbarFalleryActivity.title = getString(falleryOptions.toolbarTitle)
             }
-            falleryViewModel.currentFragmentLiveData.value = null
+            falleryViewModel.clearLatestValueOfCurrentFragmentLiveData()
         } else {
             super.onBackPressed()
         }

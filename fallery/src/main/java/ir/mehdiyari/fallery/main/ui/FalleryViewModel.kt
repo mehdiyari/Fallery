@@ -19,7 +19,8 @@ internal class FalleryViewModel(
     private val falleryOptions: FalleryOptions
 ) : BaseViewModel() {
 
-    val currentFragmentLiveData = SingleLiveEvent<FalleryView?>()
+    private val _currentFragmentLiveData = SingleLiveEvent<FalleryView?>()
+    val currentFragmentLiveData: LiveData<FalleryView?> = _currentFragmentLiveData
 
     val userSelectedMedias: Boolean
         get() = mediaSelectionTracker.isNotEmpty()
@@ -32,7 +33,7 @@ internal class FalleryViewModel(
         get() = if (falleryOptions.maxSelectableMedia == UNLIMITED_SELECT) field else falleryOptions.maxSelectableMedia
 
     init {
-        currentFragmentLiveData.value = FalleryView.BucketList
+        _currentFragmentLiveData.value = FalleryView.BucketList
     }
 
     private val captionEnabledMutableStateFlow = MutableStateFlow<Boolean?>(null)
@@ -50,8 +51,11 @@ internal class FalleryViewModel(
     private var captionOrSendActionState = true
     private var cameraTemporaryFilePath: String? = null
 
-    val resultSingleLiveEvent = SingleLiveEvent<Array<String>>()
-    val showErrorSingleLiveEvent = SingleLiveEvent<Int>()
+    private val _resultSingleLiveEvent = SingleLiveEvent<Array<String>>()
+    val resultSingleLiveEvent: LiveData<Array<String>> = _resultSingleLiveEvent
+
+    private val _showErrorSingleLiveEvent = SingleLiveEvent<Int>()
+    val showErrorSingleLiveEvent: LiveData<Int> = _showErrorSingleLiveEvent
 
     init {
         if (mediaSelectionTracker.isNotEmpty() && captionOrSendActionState) {
@@ -67,7 +71,7 @@ internal class FalleryViewModel(
     }
 
     fun openBucketWithId(it: Long, bucketName: String) {
-        currentFragmentLiveData.value = FalleryView.BucketContent(it, bucketName)
+        _currentFragmentLiveData.value = FalleryView.BucketContent(it, bucketName)
 
     }
 
@@ -92,7 +96,7 @@ internal class FalleryViewModel(
 
     fun requestSelectingMedia(path: String): Boolean {
         if (falleryOptions.maxSelectableMedia != UNLIMITED_SELECT && falleryOptions.maxSelectableMedia == mediaSelectionTracker.size) {
-            showErrorSingleLiveEvent.value = R.string.fallery_error_max_selectable
+            _showErrorSingleLiveEvent.value = R.string.fallery_error_max_selectable
             return false
         }
 
@@ -150,7 +154,7 @@ internal class FalleryViewModel(
     }
 
     fun prepareSelectedResults() {
-        resultSingleLiveEvent.value = mediaSelectionTracker.toTypedArray()
+        _resultSingleLiveEvent.value = mediaSelectionTracker.toTypedArray()
     }
 
     fun setCameraPhotoFileAddress(path: String) {
@@ -172,7 +176,11 @@ internal class FalleryViewModel(
 
     fun prepareCameraResultWithSelectedResults() {
         if (cameraTemporaryFilePath != null) {
-            resultSingleLiveEvent.value = mediaSelectionTracker.apply { add(cameraTemporaryFilePath!!) }.toTypedArray()
+            _resultSingleLiveEvent.value = mediaSelectionTracker.apply { add(cameraTemporaryFilePath!!) }.toTypedArray()
         }
+    }
+
+    fun clearLatestValueOfCurrentFragmentLiveData() {
+        _currentFragmentLiveData.value = null
     }
 }

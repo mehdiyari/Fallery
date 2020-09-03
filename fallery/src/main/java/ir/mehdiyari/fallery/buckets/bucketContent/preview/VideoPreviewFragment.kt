@@ -7,9 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import ir.mehdiyari.fallery.R
@@ -21,10 +19,7 @@ import kotlinx.android.synthetic.main.fragment_video_preview.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-internal class VideoPreviewFragment : AbstractMediaPreviewFragment() {
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_video_preview, container, false)
+internal class VideoPreviewFragment : AbstractMediaPreviewFragment(R.layout.fragment_video_preview) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

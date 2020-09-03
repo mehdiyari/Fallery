@@ -5,9 +5,7 @@ import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionManager
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -27,17 +25,13 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class BucketListFragment : Fragment() {
+internal class BucketListFragment : Fragment(R.layout.fragment_bucket_list) {
 
     private lateinit var bucketListViewModel: BucketListViewModel
     private lateinit var falleryViewModel: FalleryViewModel
 
     private val bucketAdapter by lazy { FalleryActivityComponentHolder.getOrNull()!!.provideBucketListAdapter() }
-
     private lateinit var gridLayoutManager: GridLayoutManager
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_bucket_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

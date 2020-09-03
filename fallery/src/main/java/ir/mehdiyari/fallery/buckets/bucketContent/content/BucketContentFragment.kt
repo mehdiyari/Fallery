@@ -3,9 +3,7 @@ package ir.mehdiyari.fallery.buckets.bucketContent.content
 import android.Manifest
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -28,7 +26,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class BucketContentFragment : Fragment() {
+internal class BucketContentFragment : Fragment(R.layout.fragment_bucket_content) {
 
     private lateinit var bucketContentViewModel: BucketContentViewModel
     private lateinit var falleryViewModel: FalleryViewModel
@@ -36,9 +34,6 @@ internal class BucketContentFragment : Fragment() {
     private val bucketContentAdapter by lazy {
         FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideBucketContentAdapter()
     }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_bucket_content, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

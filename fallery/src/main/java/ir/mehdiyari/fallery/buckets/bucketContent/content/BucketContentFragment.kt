@@ -1,11 +1,8 @@
 package ir.mehdiyari.fallery.buckets.bucketContent.content
 
-import android.Manifest
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -15,11 +12,8 @@ import ir.mehdiyari.fallery.buckets.bucketContent.BucketContentViewModel
 import ir.mehdiyari.fallery.buckets.bucketList.LoadingViewState
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 import ir.mehdiyari.fallery.main.ui.FalleryViewModel
-import ir.mehdiyari.fallery.main.ui.MediaObserverInterface
-import ir.mehdiyari.fallery.utils.FALLERY_LOG_TAG
 import ir.mehdiyari.fallery.utils.divideScreenToEqualPart
 import ir.mehdiyari.fallery.utils.dpToPx
-import ir.mehdiyari.fallery.utils.permissionChecker
 import kotlinx.android.synthetic.main.fragment_bucket_content.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -86,21 +80,6 @@ internal class BucketContentFragment : Fragment(R.layout.fragment_bucket_content
         arguments?.getLong("bucket_id")?.also {
             bucketContentViewModel.getMedias(it)
         } ?: requireActivity().onBackPressed()
-
-        if (FalleryActivityComponentHolder.getOrNull()?.provideFalleryOptions()?.mediaObserverEnabled == true) {
-            (requireActivity() as MediaObserverInterface).getMediaObserverInstance()?.externalStorageChangeLiveData?.observe(viewLifecycleOwner, Observer {
-                if (!FalleryActivityComponentHolder.getOrNull()!!.provideFalleryOptions().grantExternalStoragePermission) {
-                    bucketContentViewModel.getMedias(arguments?.getLong("bucket_id")!!, true)
-                } else {
-                    requireActivity().permissionChecker(Manifest.permission.WRITE_EXTERNAL_STORAGE, granted = {
-                        Log.d(FALLERY_LOG_TAG, "mediaStoreOnChanged -> refresh medias in bucket")
-                        bucketContentViewModel.getMedias(arguments?.getLong("bucket_id")!!, true)
-                    }, denied = {
-                        Log.e(FALLERY_LOG_TAG, "mediaStoreObserver -> getMedias -> app has not access to external storage for get medias of bucket from mediaStore")
-                    })
-                }
-            })
-        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             launch {

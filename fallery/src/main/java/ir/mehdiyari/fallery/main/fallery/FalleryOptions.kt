@@ -48,7 +48,7 @@ data class FalleryOptions(
         orientationMode = ActivityInfo.SCREEN_ORIENTATION_USER,
         bucketRecyclerViewItemMode = BucketRecyclerViewItemMode.GridStyle,
         bucketItemModeToggleEnabled = true,
-        mediaObserverEnabled = true,
+        mediaObserverEnabled = false,
         toolbarTitle = R.string.fallery_toolbar_title,
         mediaPreviewPageTransformer = null,
         mediaPreviewScrollOrientation = ViewPager2.ORIENTATION_HORIZONTAL,

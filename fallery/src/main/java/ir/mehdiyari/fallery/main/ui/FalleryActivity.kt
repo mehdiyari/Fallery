@@ -12,7 +12,6 @@ import android.graphics.PorterDuff
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -45,13 +44,11 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import java.io.File
-import java.lang.ref.WeakReference
 
 @OptIn(ExperimentalCoroutinesApi::class, InternalCoroutinesApi::class)
-internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, FalleryToolbarVisibilityController {
+internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityController {
 
     private lateinit var falleryViewModel: FalleryViewModel
-    private val mediaStoreObserver by lazy { MediaStoreObserver(Handler(), WeakReference(this)) }
     private val falleryOptions by lazy { FalleryActivityComponentHolder.createOrGetComponent(this).provideFalleryOptions() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,19 +82,8 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
         )[FalleryViewModel::class.java]
 
         falleryViewModel.apply {
-            showErrorSingleLiveEvent.observe(this@FalleryActivity, Observer {
-                if (it != null && it == R.string.fallery_error_max_selectable) {
-                    Toast.makeText(this@FalleryActivity, getString(it, falleryOptions.maxSelectableMedia), Toast.LENGTH_SHORT).show()
-                }
-            })
-
-            resultSingleLiveEvent.observe(this@FalleryActivity, Observer {
-                if (it != null && it.isNotEmpty()) {
-                    finishWithOKResult(it)
-                } else {
-                    finishWithCancelResult()
-                }
-            })
+            showErrorSingleLiveEvent.observe(this@FalleryActivity, Observer(this@FalleryActivity::showError))
+            resultSingleLiveEvent.observe(this@FalleryActivity, Observer(this@FalleryActivity::handleFalleryResults))
 
             lifecycleScope.launch {
                 launch {
@@ -109,48 +95,65 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
                     }
                 }
 
-                captionEnabledStateFlow.mapNotNull { it }.collect {
-                    if (it)
-                        showCaptionLayout(withAnim = true)
-                    else
-                        hideCaptionLayout(withAnim = true)
+                launch {
+                    captionEnabledStateFlow.mapNotNull { it }.collect {
+                        if (it)
+                            showCaptionLayout(withAnim = true)
+                        else
+                            hideCaptionLayout(withAnim = true)
+                    }
                 }
-            }
 
-            lifecycleScope.launch {
-                mediaCountStateFlow.collect {
-                    setupMediaCountView(it)
+                launch {
+                    mediaCountStateFlow.collect {
+                        setupMediaCountView(it)
+                    }
                 }
             }
         }
 
-        observeMediaStopChanges()
-
         falleryViewModel.currentFragmentLiveData.observe(this@FalleryActivity, Observer { falleryView ->
-            when (falleryView) {
-                is FalleryView.BucketList -> {
-                    toolbarFalleryActivity.title = getString(falleryOptions.toolbarTitle)
-                    supportFragmentManager.beginTransaction()
-                        .add(R.id.layoutFragmentContainer, BucketListFragment())
-                        .commit()
-                    toolbarFalleryActivity.menu?.findItem(R.id.bucketListMenuItemShowRecyclerViewItemModelChanger)?.isVisible = true
-                }
-                is FalleryView.BucketContent -> {
-                    toolbarFalleryActivity.title = falleryView.bucketName
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.layoutFragmentContainer, BaseBucketContentFragment().apply {
-                            arguments = Bundle().apply {
-                                putLong("bucket_id", falleryView.bucketId)
-                            }
-                        })
-                        .addToBackStack(null)
-                        .commit()
-                    toolbarFalleryActivity.menu?.findItem(R.id.bucketListMenuItemShowRecyclerViewItemModelChanger)?.isVisible = false
-                }
-                else -> Unit
-            }
-
+            replaceFragment(falleryView)
         })
+    }
+
+    private fun handleFalleryResults(it: Array<String>?) {
+        if (it != null && it.isNotEmpty()) {
+            finishWithOKResult(it)
+        } else {
+            finishWithCancelResult()
+        }
+    }
+
+    private fun showError(it: Int) {
+        if (it == R.string.fallery_error_max_selectable) {
+            Toast.makeText(this@FalleryActivity, getString(it, falleryOptions.maxSelectableMedia), Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun replaceFragment(falleryView: FalleryView?) {
+        when (falleryView) {
+            is FalleryView.BucketList -> {
+                toolbarFalleryActivity.title = getString(falleryOptions.toolbarTitle)
+                supportFragmentManager.beginTransaction()
+                    .add(R.id.layoutFragmentContainer, BucketListFragment())
+                    .commit()
+                toolbarFalleryActivity.menu?.findItem(R.id.bucketListMenuItemShowRecyclerViewItemModelChanger)?.isVisible = true
+            }
+            is FalleryView.BucketContent -> {
+                toolbarFalleryActivity.title = falleryView.bucketName
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.layoutFragmentContainer, BaseBucketContentFragment().apply {
+                        arguments = Bundle().apply {
+                            putLong("bucket_id", falleryView.bucketId)
+                        }
+                    })
+                    .addToBackStack(null)
+                    .commit()
+                toolbarFalleryActivity.menu?.findItem(R.id.bucketListMenuItemShowRecyclerViewItemModelChanger)?.isVisible = false
+            }
+            else -> Unit
+        }
     }
 
     private fun setupMediaCountView(value: MediaCountModel) {
@@ -394,22 +397,6 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
 
     }
 
-    private fun observeMediaStopChanges() {
-        if (falleryOptions.mediaObserverEnabled) {
-            getMediaObserverInstance()?.externalStorageChangeLiveData?.observe(this, Observer {
-                if (!falleryOptions.grantExternalStoragePermission) {
-                    falleryViewModel.validateSelections()
-                } else {
-                    permissionChecker(Manifest.permission.WRITE_EXTERNAL_STORAGE, granted = {
-                        falleryViewModel.validateSelections()
-                    }, denied = {
-                        Log.e(FALLERY_LOG_TAG, "mediaStoreObserver -> getMedias -> app has not access to external storage for get medias of bucket from mediaStore")
-                    })
-                }
-            })
-        }
-    }
-
     override fun onDestroy() {
         FalleryActivityComponentHolder.onDestroy()
         if (isFinishing) {
@@ -417,12 +404,6 @@ internal class FalleryActivity : AppCompatActivity(), MediaObserverInterface, Fa
         }
         super.onDestroy()
     }
-
-    override fun getMediaObserverInstance(): MediaStoreObserver? = if (
-        FalleryCoreComponentHolder.getOrThrow().provideFalleryOptions().mediaObserverEnabled)
-        mediaStoreObserver
-    else
-        null
 
     private fun showSendButton(withAnim: Boolean = true) {
         if (frameLayoutSendMedia?.visibility == View.VISIBLE) return

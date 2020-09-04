@@ -1,12 +1,15 @@
 package ir.mehdiyari.fallery.main.ui
 
+import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import ir.mehdiyari.fallery.R
 import ir.mehdiyari.fallery.main.fallery.BucketRecyclerViewItemMode
 import ir.mehdiyari.fallery.main.fallery.FalleryOptions
 import ir.mehdiyari.fallery.main.fallery.UNLIMITED_SELECT
 import ir.mehdiyari.fallery.utils.BaseViewModel
+import ir.mehdiyari.fallery.utils.MediaStoreObserver
 import ir.mehdiyari.fallery.utils.SingleLiveEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +19,8 @@ import java.io.File
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class FalleryViewModel(
-    private val falleryOptions: FalleryOptions
+    private val falleryOptions: FalleryOptions,
+    private val mediaObserver: MediaStoreObserver
 ) : BaseViewModel() {
 
     private val _currentFragmentLiveData = SingleLiveEvent<FalleryView?>()
@@ -31,10 +35,6 @@ internal class FalleryViewModel(
             field = if (falleryOptions.maxSelectableMedia == UNLIMITED_SELECT) value else falleryOptions.maxSelectableMedia
         }
         get() = if (falleryOptions.maxSelectableMedia == UNLIMITED_SELECT) field else falleryOptions.maxSelectableMedia
-
-    init {
-        _currentFragmentLiveData.value = FalleryView.BucketList
-    }
 
     private val captionEnabledMutableStateFlow = MutableStateFlow<Boolean?>(null)
     val captionEnabledStateFlow: StateFlow<Boolean?> = captionEnabledMutableStateFlow
@@ -57,12 +57,23 @@ internal class FalleryViewModel(
     private val _showErrorSingleLiveEvent = SingleLiveEvent<Int>()
     val showErrorSingleLiveEvent: LiveData<Int> = _showErrorSingleLiveEvent
 
+    private val externalStorageMediaObserver by lazy {
+        Observer<Uri?> {
+            validateSelections()
+        }
+    }
+
     init {
+        _currentFragmentLiveData.value = FalleryView.BucketList
         if (mediaSelectionTracker.isNotEmpty() && captionOrSendActionState) {
             if (falleryOptions.captionEnabledOptions.enabled)
                 captionEnabledMutableStateFlow.value = true
             else
                 sendActionEnabledMutableStateFlow.value = true
+        }
+
+        if (falleryOptions.mediaObserverEnabled) {
+            mediaObserver.externalStorageChangeState.observeForever(externalStorageMediaObserver)
         }
     }
 
@@ -161,16 +172,21 @@ internal class FalleryViewModel(
         cameraTemporaryFilePath = path
     }
 
-    fun validateSelections() {
-        val validatedList = mediaSelectionTracker.filter { File(it).exists() }
-        mediaSelectionTracker.clear()
-        mediaSelectionTracker.addAll(validatedList)
-        mediaCountMutableStateFlow.value = MediaCountModel(mediaSelectionTracker.size, totalMediaCount)
-        if (mediaSelectionTracker.isEmpty()) {
-            if (falleryOptions.captionEnabledOptions.enabled)
-                captionEnabledMutableStateFlow.value = false
-            else
-                sendActionEnabledMutableStateFlow.value = false
+    private fun validateSelections() {
+        try {
+            val validatedList = mediaSelectionTracker.filter { File(it).exists() }
+            mediaSelectionTracker.clear()
+            mediaSelectionTracker.addAll(validatedList)
+            mediaCountMutableStateFlow.value = MediaCountModel(mediaSelectionTracker.size, totalMediaCount)
+            if (mediaSelectionTracker.isEmpty()) {
+                if (falleryOptions.captionEnabledOptions.enabled)
+                    captionEnabledMutableStateFlow.value = false
+                else
+                    sendActionEnabledMutableStateFlow.value = false
+            }
+        } catch (t: SecurityException) {
+            storagePermissionGrantedStateMutableStateFlow.value = false
+            t.printStackTrace()
         }
     }
 
@@ -182,5 +198,10 @@ internal class FalleryViewModel(
 
     fun clearLatestValueOfCurrentFragmentLiveData() {
         _currentFragmentLiveData.value = null
+    }
+
+    override fun onCleared() {
+        mediaObserver.externalStorageChangeState.removeObserver(externalStorageMediaObserver)
+        super.onCleared()
     }
 }

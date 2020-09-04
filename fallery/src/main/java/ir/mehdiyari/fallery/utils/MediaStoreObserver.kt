@@ -4,17 +4,22 @@ import android.database.ContentObserver
 import android.net.Uri
 import android.os.Handler
 import android.provider.MediaStore
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.*
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.OnLifecycleEvent
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.lang.ref.WeakReference
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class MediaStoreObserver constructor(
     handler: Handler,
-    val context: WeakReference<AppCompatActivity>
+    val context: WeakReference<FragmentActivity>
 ) : ContentObserver(handler), LifecycleObserver {
 
-    private val externalStorageChangeMutableLiveData = MutableLiveData<Uri>()
-    val externalStorageChangeLiveData: LiveData<Uri> = externalStorageChangeMutableLiveData
+    private val _externalStorageChangeState = SingleLiveEvent<Uri?>()
+    val externalStorageChangeState: LiveData<Uri?> = _externalStorageChangeState
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     fun registerObservers() {
@@ -37,7 +42,7 @@ internal class MediaStoreObserver constructor(
     }
 
     override fun onChange(selfChange: Boolean, uri: Uri?) {
-        externalStorageChangeMutableLiveData.value = uri
+        _externalStorageChangeState.value = uri
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)

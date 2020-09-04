@@ -1,10 +1,8 @@
 package ir.mehdiyari.fallery.buckets.bucketList
 
-import android.Manifest
 import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionManager
-import android.util.Log
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.fragment.app.Fragment
@@ -17,8 +15,9 @@ import ir.mehdiyari.fallery.R
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 import ir.mehdiyari.fallery.main.fallery.BucketRecyclerViewItemMode
 import ir.mehdiyari.fallery.main.ui.FalleryViewModel
-import ir.mehdiyari.fallery.main.ui.MediaObserverInterface
-import ir.mehdiyari.fallery.utils.*
+import ir.mehdiyari.fallery.utils.divideScreenToEqualPart
+import ir.mehdiyari.fallery.utils.dpToPx
+import ir.mehdiyari.fallery.utils.setOnAnimationEndListener
 import kotlinx.android.synthetic.main.fragment_bucket_list.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
@@ -91,21 +90,6 @@ internal class BucketListFragment : Fragment(R.layout.fragment_bucket_list) {
                     }
                 }
             }
-        }
-
-        if (FalleryActivityComponentHolder.getOrNull()?.provideFalleryOptions()?.mediaObserverEnabled == true) {
-            (requireActivity() as MediaObserverInterface).getMediaObserverInstance()?.externalStorageChangeLiveData?.observe(viewLifecycleOwner, Observer {
-                Log.d(FALLERY_LOG_TAG, "something changed in external Storage")
-                if (!FalleryActivityComponentHolder.getOrNull()!!.provideFalleryOptions().grantExternalStoragePermission) {
-                    bucketListViewModel.getBuckets(true)
-                } else {
-                    requireActivity().permissionChecker(Manifest.permission.WRITE_EXTERNAL_STORAGE, granted = {
-                        bucketListViewModel.getBuckets(true)
-                    }, denied = {
-                        Log.e(FALLERY_LOG_TAG, "mediaStoreObserver -> requestBuckets -> app has not access to external storage for get buckets from mediaStore")
-                    })
-                }
-            })
         }
 
         bucketListViewModel.apply {

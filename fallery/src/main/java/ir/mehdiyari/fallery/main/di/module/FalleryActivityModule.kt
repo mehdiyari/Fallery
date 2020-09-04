@@ -4,8 +4,9 @@ import android.content.ContentResolver
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.os.Handler
 import androidx.fragment.app.FragmentActivity
-import ir.mehdiyari.fallery.buckets.bucketContent.adapter.BucketContentAdapter
+import ir.mehdiyari.fallery.buckets.bucketContent.content.adapter.BucketContentAdapter
 import ir.mehdiyari.fallery.buckets.bucketList.adapter.BucketListAdapter
 import ir.mehdiyari.fallery.buckets.bucketList.adapter.MediaBucketDiffCallback
 import ir.mehdiyari.fallery.imageLoader.FalleryImageLoader
@@ -20,6 +21,7 @@ import ir.mehdiyari.fallery.repo.AbstractMediaBucketProvider
 import ir.mehdiyari.fallery.repo.BucketContentProvider
 import ir.mehdiyari.fallery.repo.MediaBucketProvider
 import ir.mehdiyari.fallery.utils.*
+import java.lang.ref.WeakReference
 
 internal class FalleryActivityModule(
     private val context: Context,
@@ -31,14 +33,23 @@ internal class FalleryActivityModule(
     private var abstractBucketContentProvider: AbstractBucketContentProvider? = null
     private var bucketListViewModelFactory: BucketListViewModelFactory? = null
     private var falleryStyleAttrs: FalleryStyleAttrs? = null
+    private var falleryMediaObserver: MediaStoreObserver? = null
 
     override fun provideBucketListViewModelFactory(): BucketListViewModelFactory =
         synchronized(bucketListViewModelFactory ?: this) {
             if (bucketListViewModelFactory == null) {
                 bucketListViewModelFactory =
-                    BucketListViewModelFactory(provideBucketProvider(), provideFalleryOptions().mediaTypeFilter)
+                    BucketListViewModelFactory(
+                        abstractMediaBucketProvider = provideBucketProvider(),
+                        bucketType = provideFalleryOptions().mediaTypeFilter,
+                        mediaObserverEnabled = provideFalleryOptions().mediaObserverEnabled,
+                        mediaStoreObserver = provideMediaStoreObserver()
+                    )
+
                 bucketListViewModelFactory!!
-            } else bucketListViewModelFactory!!
+            } else {
+                bucketListViewModelFactory!!
+            }
         }
 
     override fun provideActivity(): FragmentActivity = falleryActivity
@@ -55,13 +66,13 @@ internal class FalleryActivityModule(
     override fun provideImageLoader(): FalleryImageLoader = falleryCoreComponent.provideImageLoader()
     override fun provideBucketProvider(): AbstractMediaBucketProvider = try {
         falleryCoreComponent.provideBucketProvider()
-    } catch (ignored:Throwable) {
+    } catch (ignored: Throwable) {
         provideFalleryBucketProvider()
     }
 
     override fun provideBucketContentProvider(): AbstractBucketContentProvider = try {
         falleryCoreComponent.provideBucketContentProvider()
-    } catch (ignored:Throwable) {
+    } catch (ignored: Throwable) {
         provideFalleryBucketContentProvider()
     }
 
@@ -111,7 +122,7 @@ internal class FalleryActivityModule(
         )
 
     override fun provideFalleryViewModelFactory(): FalleryViewModelFactory = FalleryViewModelFactory(
-        provideFalleryOptions()
+        provideFalleryOptions(), provideMediaStoreObserver()
     )
 
     override fun provideSelectedDrawable(): Drawable = createCircleDrawableWithStroke(
@@ -127,4 +138,12 @@ internal class FalleryActivityModule(
         imageLoader = provideImageLoader(),
         placeHolderColor = provideFalleryStyleAttrs().falleryPlaceHolderColor
     )
+
+    override fun provideMediaStoreObserver(): MediaStoreObserver = synchronized(falleryMediaObserver ?: this) {
+        if (falleryMediaObserver == null) {
+            falleryMediaObserver = MediaStoreObserver(Handler(), WeakReference(provideActivity()))
+        }
+
+        falleryMediaObserver!!
+    }
 }

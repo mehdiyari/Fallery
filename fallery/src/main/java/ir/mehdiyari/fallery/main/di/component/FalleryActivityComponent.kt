@@ -3,7 +3,7 @@ package ir.mehdiyari.fallery.main.di.component
 import android.content.ContentResolver
 import android.graphics.drawable.Drawable
 import androidx.fragment.app.FragmentActivity
-import ir.mehdiyari.fallery.buckets.bucketContent.adapter.BucketContentAdapter
+import ir.mehdiyari.fallery.buckets.bucketContent.content.adapter.BucketContentAdapter
 import ir.mehdiyari.fallery.buckets.bucketList.adapter.BucketListAdapter
 import ir.mehdiyari.fallery.buckets.bucketList.adapter.MediaBucketDiffCallback
 import ir.mehdiyari.fallery.models.CacheDir
@@ -11,6 +11,7 @@ import ir.mehdiyari.fallery.models.FalleryStyleAttrs
 import ir.mehdiyari.fallery.utils.BucketContentViewModelFactory
 import ir.mehdiyari.fallery.utils.BucketListViewModelFactory
 import ir.mehdiyari.fallery.utils.FalleryViewModelFactory
+import ir.mehdiyari.fallery.utils.MediaStoreObserver
 
 internal interface FalleryActivityComponent : FalleryCoreComponent {
 
@@ -39,4 +40,6 @@ internal interface FalleryActivityComponent : FalleryCoreComponent {
     fun provideDeselectedDrawable(): Drawable
 
     fun provideBucketListAdapter(): BucketListAdapter
+
+    fun provideMediaStoreObserver(): MediaStoreObserver
 }

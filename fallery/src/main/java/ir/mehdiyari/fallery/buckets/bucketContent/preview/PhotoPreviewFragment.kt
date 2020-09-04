@@ -1,9 +1,7 @@
 package ir.mehdiyari.fallery.buckets.bucketContent.preview
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import ir.mehdiyari.fallery.R
 import ir.mehdiyari.fallery.imageLoader.PhotoDiminution
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
@@ -11,10 +9,7 @@ import ir.mehdiyari.fallery.models.Media
 import ir.mehdiyari.fallery.utils.getHeightBasedOnScaledWidth
 import kotlinx.android.synthetic.main.fragment_photo_preview.*
 
-internal class PhotoPreviewFragment : AbstractMediaPreviewFragment() {
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_photo_preview, container, false)
+internal class PhotoPreviewFragment : AbstractMediaPreviewFragment(R.layout.fragment_photo_preview) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

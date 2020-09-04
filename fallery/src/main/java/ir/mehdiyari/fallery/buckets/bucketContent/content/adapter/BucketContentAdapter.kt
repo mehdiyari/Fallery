@@ -1,4 +1,4 @@
-package ir.mehdiyari.fallery.buckets.bucketContent.adapter
+package ir.mehdiyari.fallery.buckets.bucketContent.content.adapter
 
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater

@@ -167,7 +167,7 @@ class FalleryBuilder constructor(private var falleryOptions: FalleryOptions = Fa
 
     /**
      * if new media add or remove in the device, fallery reload the buckets or bucket content. by defaults
-     * media observer is enable if you want to disable it just pass false to [setMediaObserverEnabled]
+     * media observer is disabled if you want to enable it just pass true to [setMediaObserverEnabled]
      */
     fun setMediaObserverEnabled(enable: Boolean): FalleryBuilder {
         falleryOptions = falleryOptions.copy(

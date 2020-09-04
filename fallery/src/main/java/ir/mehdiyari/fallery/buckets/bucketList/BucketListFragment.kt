@@ -1,13 +1,9 @@
 package ir.mehdiyari.fallery.buckets.bucketList
 
-import android.Manifest
 import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionManager
-import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -19,25 +15,22 @@ import ir.mehdiyari.fallery.R
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 import ir.mehdiyari.fallery.main.fallery.BucketRecyclerViewItemMode
 import ir.mehdiyari.fallery.main.ui.FalleryViewModel
-import ir.mehdiyari.fallery.main.ui.MediaObserverInterface
-import ir.mehdiyari.fallery.utils.*
+import ir.mehdiyari.fallery.utils.divideScreenToEqualPart
+import ir.mehdiyari.fallery.utils.dpToPx
+import ir.mehdiyari.fallery.utils.setOnAnimationEndListener
 import kotlinx.android.synthetic.main.fragment_bucket_list.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class BucketListFragment : Fragment() {
+internal class BucketListFragment : Fragment(R.layout.fragment_bucket_list) {
 
     private lateinit var bucketListViewModel: BucketListViewModel
     private lateinit var falleryViewModel: FalleryViewModel
 
     private val bucketAdapter by lazy { FalleryActivityComponentHolder.getOrNull()!!.provideBucketListAdapter() }
-
     private lateinit var gridLayoutManager: GridLayoutManager
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_bucket_list, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -97,21 +90,6 @@ internal class BucketListFragment : Fragment() {
                     }
                 }
             }
-        }
-
-        if (FalleryActivityComponentHolder.getOrNull()?.provideFalleryOptions()?.mediaObserverEnabled == true) {
-            (requireActivity() as MediaObserverInterface).getMediaObserverInstance()?.externalStorageChangeLiveData?.observe(viewLifecycleOwner, Observer {
-                Log.d(FALLERY_LOG_TAG, "something changed in external Storage")
-                if (!FalleryActivityComponentHolder.getOrNull()!!.provideFalleryOptions().grantExternalStoragePermission) {
-                    bucketListViewModel.getBuckets(true)
-                } else {
-                    requireActivity().permissionChecker(Manifest.permission.WRITE_EXTERNAL_STORAGE, granted = {
-                        bucketListViewModel.getBuckets(true)
-                    }, denied = {
-                        Log.e(FALLERY_LOG_TAG, "mediaStoreObserver -> requestBuckets -> app has not access to external storage for get buckets from mediaStore")
-                    })
-                }
-            })
         }
 
         bucketListViewModel.apply {

@@ -12,23 +12,31 @@ import ir.mehdiyari.fallery.repo.AbstractMediaBucketProvider
 
 internal class BucketListViewModelFactory(
     private val abstractMediaBucketProvider: AbstractMediaBucketProvider,
-    private val bucketType: BucketType
+    private val bucketType: BucketType,
+    private val mediaObserverEnabled: Boolean,
+    private val mediaStoreObserver: MediaStoreObserver
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T =
         if (modelClass.isAssignableFrom(BucketListViewModel::class.java)) {
-            BucketListViewModel(abstractMediaBucketProvider, bucketType) as T
+            BucketListViewModel(
+                mediaObserverEnabled = mediaObserverEnabled,
+                abstractMediaBucketProvider = abstractMediaBucketProvider,
+                bucketType = bucketType,
+                mediaStoreObserver = mediaStoreObserver
+            ) as T
         } else throw IllegalArgumentException("this factory is just for BucketListViewModel")
 }
 
 internal class FalleryViewModelFactory(
-    private val falleryOptions: FalleryOptions
+    private val falleryOptions: FalleryOptions,
+    private val mediaStoreObserver: MediaStoreObserver
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T = if (modelClass.isAssignableFrom(FalleryViewModel::class.java)) {
-        FalleryViewModel(falleryOptions) as T
+        FalleryViewModel(falleryOptions, mediaStoreObserver) as T
     } else throw IllegalArgumentException("this factory is just for FalleryViewModel")
 
 }

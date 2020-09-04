@@ -1,6 +1,5 @@
 package ir.mehdiyari.fallery.utils
 
-import encodeToBase85
 import org.junit.After
 import org.junit.Assert
 import org.junit.Before

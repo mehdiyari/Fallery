@@ -42,7 +42,7 @@ internal class BaseBucketContentFragment : Fragment() {
             this,
             FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideBucketContentViewModelFactory()
         )[BucketContentViewModel::class.java].apply {
-            showPreviewFragmentLiveData.observeSingleEvent(viewLifecycleOwner, Observer {
+            showPreviewFragmentLiveData.observe(viewLifecycleOwner, Observer {
                 if (it != null) {
                     navigateToPreviewFragment(fromMediaPath = it)
                 }

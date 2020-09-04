@@ -7,6 +7,7 @@ import ir.mehdiyari.fallery.buckets.bucketList.LoadingViewState
 import ir.mehdiyari.fallery.models.BucketType
 import ir.mehdiyari.fallery.models.MediaBucket
 import ir.mehdiyari.fallery.repo.AbstractMediaBucketProvider
+import ir.mehdiyari.fallery.utils.MediaStoreObserver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.InternalCoroutinesApi
@@ -25,9 +26,11 @@ internal class BucketListViewModelTest {
     private val bucketViewModel by lazy {
         spyk(
             BucketListViewModel(
+                false,
                 abstractMediaBucketProvider,
                 BucketType.VIDEO_PHOTO_BUCKETS,
-                testCoroutineDispatcher
+                testCoroutineDispatcher,
+                MediaStoreObserver(mockk(), mockk())
             )
         )
     }

@@ -1,11 +1,14 @@
 package ir.mehdiyari.fallery.buckets.bucketList
 
+import android.net.Uri
 import android.util.Log
+import androidx.lifecycle.Observer
 import ir.mehdiyari.fallery.models.BucketType
 import ir.mehdiyari.fallery.models.MediaBucket
 import ir.mehdiyari.fallery.repo.AbstractMediaBucketProvider
 import ir.mehdiyari.fallery.utils.BaseViewModel
 import ir.mehdiyari.fallery.utils.FALLERY_LOG_TAG
+import ir.mehdiyari.fallery.utils.MediaStoreObserver
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -15,23 +18,31 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class BucketListViewModel constructor(
+    mediaObserverEnabled: Boolean,
     private val abstractMediaBucketProvider: AbstractMediaBucketProvider,
     private val bucketType: BucketType = BucketType.VIDEO_PHOTO_BUCKETS,
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val mediaStoreObserver: MediaStoreObserver
 ) : BaseViewModel() {
 
     private val bucketsMutableStateFlow = MutableStateFlow<List<MediaBucket>>(listOf())
-
     private val allMediaCountChangedStateFlow = MutableStateFlow(0)
-
     val allMediaCountChanged: StateFlow<Int> = allMediaCountChangedStateFlow
-
     val bucketsStateFlow: StateFlow<List<MediaBucket>> = this.bucketsMutableStateFlow
-
     private val loadingMutableStateFlow = MutableStateFlow<LoadingViewState?>(null)
-
     val loadingViewStateFlow: StateFlow<LoadingViewState?> = loadingMutableStateFlow
 
+    private val externalStorageMediaObserver by lazy {
+        Observer<Uri?> {
+            getBuckets(true)
+        }
+    }
+
+    init {
+        if (mediaObserverEnabled) {
+            mediaStoreObserver.externalStorageChangeState.observeForever(externalStorageMediaObserver)
+        }
+    }
 
     fun getBucketNameById(id: Long): String = bucketsStateFlow.value.firstOrNull {
         id == it.id
@@ -62,6 +73,11 @@ internal class BucketListViewModel constructor(
 
     fun retry() {
         getBuckets(true)
+    }
+
+    override fun onCleared() {
+        mediaStoreObserver.externalStorageChangeState.removeObserver(externalStorageMediaObserver)
+        super.onCleared()
     }
 }
 

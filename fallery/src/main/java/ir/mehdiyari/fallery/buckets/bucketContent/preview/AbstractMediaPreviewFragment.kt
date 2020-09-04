@@ -5,7 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import ir.mehdiyari.fallery.models.Media
 
-internal abstract class AbstractMediaPreviewFragment : Fragment() {
+internal abstract class AbstractMediaPreviewFragment constructor(layoutId: Int) : Fragment(layoutId) {
 
     var onMediaPreviewClickListener: View.OnClickListener? = null
 

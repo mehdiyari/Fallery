@@ -8,16 +8,23 @@ A fully customazible gallery and media picker for android thats built on kotlin.
 # Features
 
 1. Select media(photo, video) from android media store, custom [offline gallery](http://mehdiyari.ir/2020/08/14/create-a-custom-offline-online-gallery-with-fallery/) or custom [online gallery](http://mehdiyari.ir/2020/08/14/create-a-custom-offline-online-gallery-with-fallery/)
-2. Filter medias based on types(Photos, videos, both)
-3. Modern user interface with the capability to add new theme and languages
-4. Select media with a caption 
-5. Taking photo from the camera with the intent
-6. Showing bucket list in two different UI(grid and linear) which user can switches between them in runtime
-7. You can choose max selectable media by user
-8. Support orientation
-9. Nice DSL for starting fallery from fragment, activity and extract the result from an output intent
-10. and many other features you can find in fallery example app
-
+2. Backward compatible with android API level 14
+3. Enable or disable content observer
+4. Filter medias based on types(Photos, videos, both)
+5. Modern user interface with the capability to add new theme and languages
+6. Select media with a caption
+7. Taking photo from the camera with the intent
+8. Showing bucket list in two different UI(grid and linear) which user can switches between them in runtime
+9. You can choose max selectable media by user
+10. Support orientation
+11. Set custom edit text layout (for emoji compatibility, etc)
+12. Enable or disable media count
+13. Set view pager scroll orientation (Vertical, Horizontal)
+14. Set view pager transformer
+15. Set custom onClick for video toggle in the video preview
+16. Automatic grant external storage permissions (You can disable it)
+17. Nice DSL for starting fallery from fragment, activity and extract the result from an output intent
+00. and many other features
 ## Usage
 ### Gradle
 Step 1. Add it in your root `build.gradle` at the end of repositories:

@@ -29,7 +29,7 @@ internal class BucketContentProvider constructor(
             "${MediaStore.Files.FileColumns.DATE_ADDED} DESC"
         )?.use { cursor ->
             if (cursor.count == 0) {
-                emit(listOf())
+                emit(listOf<Media>())
             } else {
                 while (cursor.moveToNext()) {
                     medias.add(getMediaFromCursor(cursor, mediaMetadataRetriever))
@@ -72,7 +72,7 @@ internal class BucketContentProvider constructor(
             }
 
             Media.Video(
-                id, path, (mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong() / 1000), Media.Photo(
+                id, path, ((mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLongOrNull() ?: 1000L) / 1000), Media.Photo(
                     Random.nextLong(), thumbnail ?: "", thumbnailDiminution.width, thumbnailDiminution.height
                 )
             )

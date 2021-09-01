@@ -107,13 +107,13 @@ internal class BucketContentFragment : Fragment(R.layout.fragment_bucket_content
     private fun showLoading() {
         errorLayoutBucketContent.hide()
         recyclerViewBucketContent.visibility = View.GONE
-        contentLoadingProgressBarBucketContent.show()
+        contentLoadingProgressBarBucketContent.visibility = View.VISIBLE
     }
 
     private fun hideLoading() {
         errorLayoutBucketContent.hide()
         recyclerViewBucketContent.visibility = View.VISIBLE
-        contentLoadingProgressBarBucketContent.hide()
+        contentLoadingProgressBarBucketContent.visibility = View.GONE
     }
 
     override fun onDestroyView() {

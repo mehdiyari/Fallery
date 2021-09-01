@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center" />
 
-    <androidx.core.widget.ContentLoadingProgressBar
+    <ProgressBar
         android:id="@+id/contentLoadingProgressBarBucketList"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="match_parent"

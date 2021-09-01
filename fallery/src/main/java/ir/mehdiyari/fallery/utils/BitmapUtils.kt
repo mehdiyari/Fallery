@@ -27,7 +27,8 @@ internal fun Bitmap.saveBitmapToFile(
 }
 
 internal fun MediaMetadataRetriever.getVideoSize(): PhotoDiminution = PhotoDiminution(
-    extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT).toInt(), extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH).toInt()
+    extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)?.toIntOrNull() ?: 150,
+    extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)?.toIntOrNull() ?: 150
 )
 
 internal fun getHeightBasedOnScaledWidth(

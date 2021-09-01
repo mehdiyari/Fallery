@@ -33,8 +33,8 @@ internal fun createThumbForVideos(
                     it.first,
                     if (highQuality.first) MediaStore.Images.Thumbnails.FULL_SCREEN_KIND else MediaStore.Images.Thumbnails.MINI_KIND
                 )
-            }).apply {
-                this.saveBitmapToFile(
+            })?.apply {
+                saveBitmapToFile(
                     cachePath, Bitmap.CompressFormat.JPEG, 75
                 )
             }

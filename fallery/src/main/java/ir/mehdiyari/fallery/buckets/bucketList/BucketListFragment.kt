@@ -79,7 +79,7 @@ internal class BucketListFragment : Fragment(R.layout.fragment_bucket_list) {
 
         bucketListViewModel = ViewModelProvider(
             this,
-            FalleryActivityComponentHolder.componentCreator(requireActivity()).provideBucketListViewModelFactory()
+            FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideBucketListViewModelFactory()
         )[BucketListViewModel::class.java]
 
         viewLifecycleOwner.lifecycleScope.launch {

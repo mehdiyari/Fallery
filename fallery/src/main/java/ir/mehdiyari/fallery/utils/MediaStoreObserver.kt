@@ -20,10 +20,14 @@ internal class MediaStoreObserver constructor(
 
     private val _externalStorageChangeState = SingleLiveEvent<Uri?>()
     val externalStorageChangeState: LiveData<Uri?> = _externalStorageChangeState
+    private var latestURI: Uri? = null
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    fun registerObservers() {
+    init {
         context.get()?.lifecycle?.addObserver(this)
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    fun registerObservers() {
         context.get()?.contentResolver?.registerContentObserver(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true, this
         )
@@ -42,11 +46,14 @@ internal class MediaStoreObserver constructor(
     }
 
     override fun onChange(selfChange: Boolean, uri: Uri?) {
+        if (latestURI == uri) return
         _externalStorageChangeState.value = uri
+        latestURI = uri
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     fun onDestroy() {
+        latestURI = null
         context.get()?.lifecycle?.removeObserver(this)
         context.get()?.contentResolver?.unregisterContentObserver(this)
     }

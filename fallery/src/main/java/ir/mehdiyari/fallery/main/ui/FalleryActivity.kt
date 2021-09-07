@@ -52,6 +52,11 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
     private val falleryOptions by lazy { FalleryActivityComponentHolder.createOrGetComponent(this).provideFalleryOptions() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        try {
+            FalleryCoreComponentHolder.getOrThrow()
+        } catch (t: Throwable) {
+            finish()
+        }
         FalleryActivityComponentHolder.createOrGetComponent(this)
         requestedOrientation = falleryOptions.orientationMode
         setTheme(falleryOptions.themeResId)

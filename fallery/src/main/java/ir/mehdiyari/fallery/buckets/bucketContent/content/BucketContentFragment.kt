@@ -117,7 +117,8 @@ internal class BucketContentFragment : Fragment(R.layout.fragment_bucket_content
     }
 
     override fun onDestroyView() {
-        recyclerViewBucketContent.adapter = null
+        recyclerViewBucketContent?.adapter = null
+        recyclerViewBucketContent?.layoutManager = null
         super.onDestroyView()
     }
 }

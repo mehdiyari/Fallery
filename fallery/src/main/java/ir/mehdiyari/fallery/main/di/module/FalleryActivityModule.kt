@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.FragmentActivity
 import ir.mehdiyari.fallery.buckets.bucketContent.content.adapter.BucketContentAdapter
 import ir.mehdiyari.fallery.buckets.bucketList.adapter.BucketListAdapter
@@ -141,7 +142,7 @@ internal class FalleryActivityModule(
 
     override fun provideMediaStoreObserver(): MediaStoreObserver = synchronized(falleryMediaObserver ?: this) {
         if (falleryMediaObserver == null) {
-            falleryMediaObserver = MediaStoreObserver(provideFalleryOptions().mediaObserverEnabled, Handler(), WeakReference(provideActivity()))
+            falleryMediaObserver = MediaStoreObserver(provideFalleryOptions().mediaObserverEnabled, Handler(Looper.getMainLooper()), WeakReference(provideActivity()))
         }
 
         falleryMediaObserver!!

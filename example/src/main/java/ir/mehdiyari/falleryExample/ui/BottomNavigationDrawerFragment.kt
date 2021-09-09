@@ -2,6 +2,7 @@ package ir.mehdiyari.falleryExample.ui
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -38,7 +39,7 @@ class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
         }
 
         menuItem.isChecked = true
-        Handler().postDelayed({
+        Handler(Looper.getMainLooper()).postDelayed({
             onMenuItemSelected?.invoke(menuItem.itemId)
             dismiss()
         }, 400)

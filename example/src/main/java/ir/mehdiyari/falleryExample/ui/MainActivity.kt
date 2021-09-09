@@ -6,10 +6,7 @@ import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.Environment
-import android.os.Handler
+import android.os.*
 import android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
 import android.view.View
 import android.view.animation.TranslateAnimation
@@ -261,8 +258,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun animateLayouts() {
-        Handler().postDelayed({
-            Handler().postDelayed({
+        Handler(Looper.getMainLooper()).postDelayed({
+            Handler(Looper.getMainLooper()).postDelayed({
                 bottomAppBarExample.fabCradleMargin = resources.getDimension(R.dimen.min_fabCradleMargin)
                 bottomAppBarExample.fabCradleRoundedCornerRadius = resources.getDimension(R.dimen.min_fabCradleRoundedCornerRadius)
             }, 60)
@@ -276,8 +273,8 @@ class MainActivity : AppCompatActivity() {
             )
         }, 200)
 
-        Handler().postDelayed({
-            Handler().postDelayed({
+        Handler(Looper.getMainLooper()).postDelayed({
+            Handler(Looper.getMainLooper()).postDelayed({
                 bottomAppBarExample.fabCradleMargin = resources.getDimension(R.dimen.fabCradleMargin)
                 bottomAppBarExample.fabCradleRoundedCornerRadius = resources.getDimension(R.dimen.fabCradleRoundedCornerRadius)
             }, 60)

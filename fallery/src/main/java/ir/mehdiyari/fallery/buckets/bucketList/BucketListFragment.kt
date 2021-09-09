@@ -167,7 +167,8 @@ internal class BucketListFragment : Fragment(R.layout.fragment_bucket_list) {
     } else 1
 
     override fun onDestroyView() {
-        recyclerViewBuckets.adapter = null
+        recyclerViewBuckets?.adapter = null
+        recyclerViewBuckets?.layoutManager = null
         super.onDestroyView()
     }
 }

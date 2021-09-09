@@ -20,6 +20,6 @@
     <string name="menu_title_bucketListMode_vertical" translatable="false">Bucket List Mode Linear</string>
     <string name="menu_title_filter_type_video" translatable="false">Media Filter Type | Only Videos</string>
     <string name="menu_title_customGalleryOnline" translatable="false">Custom Gallery Online</string>
-    <string name="menu_title_GrantExternalStoragePermission" translatable="false">Disable Automatically Grant External Storage Permission</string>
+    <string name="menu_title_GrantExternalStoragePermission" translatable="false">Disable Automatically Grant Shared Storage Permission for android +10</string>
     <string name="menu_title_custome_theme" translatable="false">Custom Theme</string>
 </resources>

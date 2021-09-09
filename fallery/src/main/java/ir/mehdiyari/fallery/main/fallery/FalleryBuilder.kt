@@ -269,8 +269,10 @@ class FalleryBuilder constructor(private var falleryOptions: FalleryOptions = Fa
         if (falleryOptions.cameraEnabledOptions.enabled)
             require(falleryOptions.cameraEnabledOptions.fileProviderAuthority != null) { "fileProviderAuthority must not be null" }
 
-        require(falleryOptions.grantSharedStorePermission && falleryOptions.grantExternalStoragePermission) {
-            "grantExternalStoragePermission must be true if you want to fallery grant shared storage permission on android +10"
+        if (falleryOptions.grantSharedStorePermission) {
+            if (!falleryOptions.grantExternalStoragePermission) {
+                throw IllegalArgumentException("grantExternalStoragePermission must be true if you want to fallery grant shared storage permission on android +10")
+            }
         }
 
         return falleryOptions

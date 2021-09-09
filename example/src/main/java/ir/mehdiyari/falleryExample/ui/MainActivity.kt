@@ -5,9 +5,12 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
+import android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
 import android.view.View
 import android.view.animation.TranslateAnimation
 import android.widget.Toast
@@ -209,6 +212,32 @@ class MainActivity : AppCompatActivity() {
                         null
                     } else {
                         builder
+                    }
+                } else {
+                    builder
+                }
+            }
+            R.id.menuGrantSharedStoragePermission -> {
+                val builder = FalleryBuilder()
+                    .setImageLoader(glideImageLoader)
+                    .setGrantSharedStoragePermission(false)
+                    .build()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        Toast.makeText(this@MainActivity, "Please grant external storage permission", Toast.LENGTH_SHORT).show()
+                        requestPermissions(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 10)
+                        null
+                    } else {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !Environment.isExternalStorageManager()) {
+                            Toast.makeText(this@MainActivity, "App: Please grant shared storage permission before starting fallery", Toast.LENGTH_SHORT).show()
+                            Intent(ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).also {
+                                it.data = Uri.fromParts("package", packageName, null)
+                                startActivity(it)
+                            }
+                            null
+                        } else {
+                            builder
+                        }
                     }
                 } else {
                     builder

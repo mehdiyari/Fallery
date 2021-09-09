@@ -249,11 +249,29 @@ class FalleryBuilder constructor(private var falleryOptions: FalleryOptions = Fa
         return this
     }
 
+    /**
+     * if true fallery request shared storage permission in android +10
+     * default value for android +10 is true
+     */
+    fun setGrantSharedStoragePermission(
+        grantSharedStorePermission: Boolean
+    ): FalleryBuilder {
+        falleryOptions = falleryOptions.copy(
+            grantSharedStorePermission = grantSharedStorePermission
+        )
+
+        return this
+    }
+
     fun build(): FalleryOptions {
         require(falleryOptions.imageLoader != null) { "You must set imageLoader" }
 
         if (falleryOptions.cameraEnabledOptions.enabled)
             require(falleryOptions.cameraEnabledOptions.fileProviderAuthority != null) { "fileProviderAuthority must not be null" }
+
+        require(falleryOptions.grantSharedStorePermission && falleryOptions.grantExternalStoragePermission) {
+            "grantExternalStoragePermission must be true if you want to fallery grant shared storage permission on android +10"
+        }
 
         return falleryOptions
     }

@@ -70,7 +70,9 @@ internal class MediaStoreObserverTest {
     fun testObserverChange() {
         observer.registerObservers()
         observer.externalStorageChangeState.observeForever(mockedLiveDataObserver)
-        observer.onChange(true, Uri.EMPTY)
-        verify(exactly = 1) { mockedLiveDataObserver.onChanged(Uri.EMPTY) }
+        val uri = mockk<Uri>(relaxed = true)
+        observer.onChange(true, uri)
+        Thread.sleep(2100L)
+        verify(exactly = 1) { mockedLiveDataObserver.onChanged(uri) }
     }
 }

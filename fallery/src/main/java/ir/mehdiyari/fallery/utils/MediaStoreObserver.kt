@@ -9,7 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.OnLifecycleEvent
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import java.lang.ref.WeakReference
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -22,6 +22,11 @@ internal class MediaStoreObserver constructor(
     private val _externalStorageChangeState = SingleLiveEvent<Uri?>()
     val externalStorageChangeState: LiveData<Uri?> = _externalStorageChangeState
     private var latestURI: Uri? = null
+    private var postValueJob: Job? = null
+
+    companion object {
+        const val DELAY_FOR_NOTIFY_OBSERVERS = 2000L
+    }
 
     init {
         if (isMediaObserverEnabled) {
@@ -50,12 +55,23 @@ internal class MediaStoreObserver constructor(
 
     override fun onChange(selfChange: Boolean, uri: Uri?) {
         if (latestURI == uri) return
-        _externalStorageChangeState.postValue(uri)
-        latestURI = uri
+
+        postValueJob?.cancel()
+        postValueJob = null
+
+        postValueJob = GlobalScope.launch(Dispatchers.Default) {
+            delay(DELAY_FOR_NOTIFY_OBSERVERS)
+            if (isActive) {
+                _externalStorageChangeState.postValue(uri)
+                latestURI = uri
+            }
+        }
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     fun unregisterObservers() {
+        postValueJob?.cancel()
+        postValueJob = null
         latestURI = null
         context.get()?.lifecycle?.removeObserver(this)
         context.get()?.contentResolver?.unregisterContentObserver(this)

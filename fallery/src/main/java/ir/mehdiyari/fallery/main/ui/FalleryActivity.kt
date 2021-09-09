@@ -50,6 +50,7 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
 
     private lateinit var falleryViewModel: FalleryViewModel
     private val falleryOptions by lazy { FalleryActivityComponentHolder.createOrGetComponent(this).provideFalleryOptions() }
+    private var frameLayoutSendMediaAnimationPostRunnable: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         try {
@@ -411,39 +412,44 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
     }
 
     private fun showSendButton(withAnim: Boolean = true) {
-        if (frameLayoutSendMedia?.visibility == View.VISIBLE) return
+        if (frameLayoutSendMedia == null || frameLayoutSendMedia?.visibility == View.VISIBLE) return
 
         if (!withAnim) {
             frameLayoutSendMedia?.visibility = View.GONE
             return
         }
 
-
-        floatingButtonSendMedia.visibility = View.VISIBLE
-        floatingButtonSendMedia.startAnimation(
-            TranslateAnimation(
-                ((floatingButtonSendMedia?.height)?.toFloat() ?: 0f), 0f, 0f, 0f
-            ).apply {
-                fillAfter = true
-                duration = 200
-                setOnAnimationEndListener {
-                    floatingButtonSendMedia.animation = null
+        floatingButtonSendMedia.visibility = View.INVISIBLE
+        frameLayoutSendMedia.visibility = View.INVISIBLE
+        frameLayoutSendMediaAnimationPostRunnable = Runnable {
+            floatingButtonSendMedia.visibility = View.VISIBLE
+            floatingButtonSendMedia.startAnimation(
+                TranslateAnimation(
+                    ((floatingButtonSendMedia?.height)?.toFloat() ?: 0f), 0f, 0f, 0f
+                ).apply {
+                    fillAfter = true
+                    duration = 200
+                    setOnAnimationEndListener {
+                        floatingButtonSendMedia.animation = null
+                    }
                 }
-            }
-        )
+            )
 
-        frameLayoutSendMedia.visibility = View.VISIBLE
-        frameLayoutSendMedia?.startAnimation(
-            TranslateAnimation(
-                0f, 0f, ((frameLayoutSendMedia?.height)?.toFloat() ?: 0f), 0f
-            ).apply {
-                fillAfter = true
-                duration = 200
-                setOnAnimationEndListener {
-                    frameLayoutSendMedia.animation = null
+            frameLayoutSendMedia.visibility = View.VISIBLE
+            frameLayoutSendMedia?.startAnimation(
+                TranslateAnimation(
+                    0f, 0f, ((frameLayoutSendMedia?.height)?.toFloat() ?: 0f), 0f
+                ).apply {
+                    fillAfter = true
+                    duration = 200
+                    setOnAnimationEndListener {
+                        frameLayoutSendMedia.animation = null
+                    }
                 }
-            }
-        )
+            )
+        }
+
+        frameLayoutSendMediaAnimationPostRunnable?.also(frameLayoutSendMedia::post)
     }
 
     private fun hideSendButton(withAnim: Boolean = true) {
@@ -571,6 +577,13 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
     private fun finishWithCancelResult() {
         setResult(Activity.RESULT_CANCELED)
         finish()
+    }
+
+    override fun onStop() {
+        frameLayoutSendMediaAnimationPostRunnable?.also {
+            frameLayoutSendMedia?.removeCallbacks(it)
+        }
+        super.onStop()
     }
 
     private fun finishWithOKResult(it: Array<String>) {

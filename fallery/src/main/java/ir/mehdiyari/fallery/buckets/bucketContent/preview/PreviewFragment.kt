@@ -187,7 +187,6 @@ internal class PreviewFragment : Fragment(R.layout.fragment_preview), View.OnCli
 
     override fun onStop() {
         viewPagerMediaPreview.unregisterOnPageChangeCallback(pageSelectedCallback)
-        viewPagerMediaPreview.adapter = null
         super.onStop()
     }
 

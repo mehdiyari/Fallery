@@ -32,10 +32,6 @@ class MainActivity : AppCompatActivity() {
     private var listCurrentMedias = listOf<Pair<String, String>>()
     private val glideImageLoader by lazy { GlideImageLoader() }
 
-    private val bottomNavigationDrawerFragment by lazy {
-        BottomNavigationDrawerFragment()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -53,11 +49,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        bottomNavigationDrawerFragment.onMenuItemSelected = { itemSelected ->
-            itemIdSelected = itemSelected
-            animateLayouts()
-        }
-
         bottomAppBarExample.setOnMenuItemClickListener {
             if (it.itemId == R.id.menuClear) {
                 listCurrentMedias = listOf()
@@ -69,9 +60,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         bottomAppBarExample.setNavigationOnClickListener {
-            if (!bottomNavigationDrawerFragment.isAdded) {
-                bottomNavigationDrawerFragment.selectedItemId = itemIdSelected
-                bottomNavigationDrawerFragment.show(supportFragmentManager, "bndf")
+            if (supportFragmentManager.getFragment(Bundle(), "bndf") == null) {
+                val bottomNavigationDrawerFragment = BottomNavigationDrawerFragment()
+                bottomNavigationDrawerFragment.onMenuItemSelected = { itemSelected ->
+                    itemIdSelected = itemSelected
+                    animateLayouts()
+                }
+                if (!bottomNavigationDrawerFragment.isAdded) {
+                    bottomNavigationDrawerFragment.selectedItemId = itemIdSelected
+                    bottomNavigationDrawerFragment.show(supportFragmentManager, "bndf")
+                }
             }
         }
 
@@ -311,6 +309,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         if (isFinishing) FalleryExample.customGalleryApiService = null
+        bottomAppBarExample?.setNavigationOnClickListener(null)
         super.onDestroy()
     }
 

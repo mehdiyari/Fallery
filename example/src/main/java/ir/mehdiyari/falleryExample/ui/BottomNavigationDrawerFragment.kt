@@ -44,4 +44,9 @@ class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
             dismiss()
         }, 400)
     }
+
+    override fun onDestroy() {
+        navigationViewExample?.setNavigationItemSelectedListener(null)
+        super.onDestroy()
+    }
 }

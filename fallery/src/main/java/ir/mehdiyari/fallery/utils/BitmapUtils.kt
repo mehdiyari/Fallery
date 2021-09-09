@@ -41,7 +41,7 @@ internal fun createCircleDrawableWithStroke(
     @ColorInt backgroundColor: Int,
     strokeWidth: Int,
     @ColorInt strokeColor: Int
-): Drawable? {
+): Drawable {
     val defaultDrawable = GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, intArrayOf(backgroundColor, backgroundColor))
     defaultDrawable.cornerRadius = 300f
     defaultDrawable.setStroke(strokeWidth, strokeColor)

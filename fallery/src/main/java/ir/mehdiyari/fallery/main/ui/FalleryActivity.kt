@@ -118,7 +118,7 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
             }
         }
 
-        falleryViewModel.currentFragmentLiveData.observe(this@FalleryActivity, Observer { falleryView ->
+        falleryViewModel.currentFragmentLiveData.observe(this@FalleryActivity, { falleryView ->
             replaceFragment(falleryView)
         })
     }
@@ -395,7 +395,7 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
             } catch (ignored: Throwable) {
                 Log.e(FALLERY_LOG_TAG, "error while inflating captionLayoutResId. switch to default implementation")
                 LayoutInflater.from(this).inflate(R.layout.caption_edit_text_layout, frameLayoutCaptionHolder, false)
-                    .findViewById<AppCompatEditText>(R.id.falleryEditTextCaption)
+                    .findViewById(R.id.falleryEditTextCaption)
             }).also {
                 frameLayoutCaptionHolder.addView(it)
             }

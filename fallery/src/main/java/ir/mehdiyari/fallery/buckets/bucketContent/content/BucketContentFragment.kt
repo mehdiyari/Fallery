@@ -100,7 +100,7 @@ internal class BucketContentFragment : Fragment(R.layout.fragment_bucket_content
         recyclerViewBucketContent.visibility = View.GONE
         errorLayoutBucketContent.show()
         errorLayoutBucketContent.setOnRetryClickListener {
-            bucketContentViewModel.retry(arguments!!.getLong("bucket_id"))
+            bucketContentViewModel.retry(requireArguments().getLong("bucket_id"))
         }
     }
 

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import ir.mehdiyari.fallery.R
 import ir.mehdiyari.fallery.buckets.bucketContent.content.BucketContentFragment
@@ -42,7 +41,7 @@ internal class BaseBucketContentFragment : Fragment() {
             this,
             FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideBucketContentViewModelFactory()
         )[BucketContentViewModel::class.java].apply {
-            showPreviewFragmentLiveData.observe(viewLifecycleOwner, Observer {
+            showPreviewFragmentLiveData.observe(viewLifecycleOwner, {
                 if (it != null) {
                     navigateToPreviewFragment(fromMediaPath = it)
                 }

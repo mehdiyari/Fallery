@@ -6,7 +6,6 @@ import android.transition.TransitionManager
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -72,7 +71,7 @@ internal class BucketListFragment : Fragment(R.layout.fragment_bucket_list) {
             requireActivity(),
             FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideFalleryViewModelFactory()
         )[FalleryViewModel::class.java].apply {
-            bucketRecycleViewModeLiveData.observe(viewLifecycleOwner, Observer {
+            bucketRecycleViewModeLiveData.observe(viewLifecycleOwner, {
                 changeRecyclerViewItemModeTo(it)
             })
         }

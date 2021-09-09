@@ -141,7 +141,7 @@ internal class FalleryActivityModule(
 
     override fun provideMediaStoreObserver(): MediaStoreObserver = synchronized(falleryMediaObserver ?: this) {
         if (falleryMediaObserver == null) {
-            falleryMediaObserver = MediaStoreObserver(Handler(), WeakReference(provideActivity()))
+            falleryMediaObserver = MediaStoreObserver(provideFalleryOptions().mediaObserverEnabled, Handler(), WeakReference(provideActivity()))
         }
 
         falleryMediaObserver!!

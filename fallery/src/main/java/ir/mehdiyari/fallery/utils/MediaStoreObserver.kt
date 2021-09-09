@@ -14,6 +14,7 @@ import java.lang.ref.WeakReference
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class MediaStoreObserver constructor(
+    isMediaObserverEnabled: Boolean = false,
     handler: Handler,
     val context: WeakReference<FragmentActivity>
 ) : ContentObserver(handler), LifecycleObserver {
@@ -23,10 +24,12 @@ internal class MediaStoreObserver constructor(
     private var latestURI: Uri? = null
 
     init {
-        context.get()?.lifecycle?.addObserver(this)
+        if (isMediaObserverEnabled) {
+            context.get()?.lifecycle?.addObserver(this)
+        }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun registerObservers() {
         context.get()?.contentResolver?.registerContentObserver(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true, this
@@ -47,12 +50,12 @@ internal class MediaStoreObserver constructor(
 
     override fun onChange(selfChange: Boolean, uri: Uri?) {
         if (latestURI == uri) return
-        _externalStorageChangeState.value = uri
+        _externalStorageChangeState.postValue(uri)
         latestURI = uri
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun onDestroy() {
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    fun unregisterObservers() {
         latestURI = null
         context.get()?.lifecycle?.removeObserver(this)
         context.get()?.contentResolver?.unregisterContentObserver(this)

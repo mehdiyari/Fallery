@@ -16,4 +16,5 @@
     <string name="no_video_player_found">No media player found on device</string>
     <string name="fallery_error_max_selectable">You can only choose %1$d Media</string>
     <string name="retry">Retry again</string>
+    <string name="shared_storage_denied_text">App has not access to shared storage</string>
 </resources>

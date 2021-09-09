@@ -8,6 +8,11 @@
         app:showAsAction="ifRoom" />
 
     <item
+        android:id="@+id/menuMediaObserverEnabled"
+        android:title="@string/menu_title_media_observer_enabled"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/menuFilterTypePhoto"
         android:title="@string/menu_title_filter_type_photo"
         app:showAsAction="ifRoom" />

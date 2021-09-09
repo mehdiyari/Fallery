@@ -104,6 +104,11 @@ class MainActivity : AppCompatActivity() {
     private fun openFalleryBasedOnSelectedMode() {
         (when (itemIdSelected) {
             R.id.menuDefaultOptions -> FalleryOptions(glideImageLoader)
+            R.id.menuMediaObserverEnabled -> {
+                FalleryBuilder()
+                    .setImageLoader(glideImageLoader).setMediaObserverEnabled(true)
+                    .build()
+            }
             R.id.menuCameraEnabled -> {
                 FalleryBuilder()
                     .setImageLoader(glideImageLoader)

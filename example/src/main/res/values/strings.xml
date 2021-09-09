@@ -2,6 +2,7 @@
     <string name="app_name" translatable="false">Fallery</string>
     <string name="description" translatable="false">Gallery and media picker for Android</string>
     <string name="menu_title_default_options" translatable="false">Default Options</string>
+    <string name="menu_title_media_observer_enabled" translatable="false">Media Observer Enabled</string>
     <string name="menu_title_with_caption" translatable="false">With Caption</string>
     <string name="menu_title_without_caption" translatable="false">Without Caption</string>
     <string name="menu_title_dracula_theme" translatable="false">Dracula Theme</string>

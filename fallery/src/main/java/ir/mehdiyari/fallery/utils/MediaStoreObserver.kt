@@ -9,21 +9,33 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.OnLifecycleEvent
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.*
 import java.lang.ref.WeakReference
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class MediaStoreObserver constructor(
+    isMediaObserverEnabled: Boolean = false,
     handler: Handler,
     val context: WeakReference<FragmentActivity>
 ) : ContentObserver(handler), LifecycleObserver {
 
     private val _externalStorageChangeState = SingleLiveEvent<Uri?>()
     val externalStorageChangeState: LiveData<Uri?> = _externalStorageChangeState
+    private var latestURI: Uri? = null
+    private var postValueJob: Job? = null
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    companion object {
+        const val DELAY_FOR_NOTIFY_OBSERVERS = 2000L
+    }
+
+    init {
+        if (isMediaObserverEnabled) {
+            context.get()?.lifecycle?.addObserver(this)
+        }
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun registerObservers() {
-        context.get()?.lifecycle?.addObserver(this)
         context.get()?.contentResolver?.registerContentObserver(
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI, true, this
         )
@@ -42,11 +54,25 @@ internal class MediaStoreObserver constructor(
     }
 
     override fun onChange(selfChange: Boolean, uri: Uri?) {
-        _externalStorageChangeState.value = uri
+        if (latestURI == uri) return
+
+        postValueJob?.cancel()
+        postValueJob = null
+
+        postValueJob = GlobalScope.launch(Dispatchers.Default) {
+            delay(DELAY_FOR_NOTIFY_OBSERVERS)
+            if (isActive) {
+                _externalStorageChangeState.postValue(uri)
+                latestURI = uri
+            }
+        }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    fun onDestroy() {
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    fun unregisterObservers() {
+        postValueJob?.cancel()
+        postValueJob = null
+        latestURI = null
         context.get()?.lifecycle?.removeObserver(this)
         context.get()?.contentResolver?.unregisterContentObserver(this)
     }

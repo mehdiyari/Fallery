@@ -23,9 +23,10 @@
         android:id="@+id/errorLayoutBucketContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
-    <androidx.core.widget.ContentLoadingProgressBar
+    <ProgressBar
         android:id="@+id/contentLoadingProgressBarBucketContent"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="match_parent"

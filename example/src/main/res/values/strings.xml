@@ -2,6 +2,7 @@
     <string name="app_name" translatable="false">Fallery</string>
     <string name="description" translatable="false">Gallery and media picker for Android</string>
     <string name="menu_title_default_options" translatable="false">Default Options</string>
+    <string name="menu_title_media_observer_enabled" translatable="false">Media Observer Enabled</string>
     <string name="menu_title_with_caption" translatable="false">With Caption</string>
     <string name="menu_title_without_caption" translatable="false">Without Caption</string>
     <string name="menu_title_dracula_theme" translatable="false">Dracula Theme</string>
@@ -20,6 +21,6 @@
     <string name="menu_title_bucketListMode_vertical" translatable="false">Bucket List Mode Linear</string>
     <string name="menu_title_filter_type_video" translatable="false">Media Filter Type | Only Videos</string>
     <string name="menu_title_customGalleryOnline" translatable="false">Custom Gallery Online</string>
-    <string name="menu_title_GrantExternalStoragePermission" translatable="false">Disable Automatically Grant External Storage Permission</string>
+    <string name="menu_title_GrantExternalStoragePermission" translatable="false">Disable Automatically Grant Shared Storage Permission for android +10</string>
     <string name="menu_title_custome_theme" translatable="false">Custom Theme</string>
 </resources>

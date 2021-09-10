@@ -73,7 +73,7 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:rippleColor="#ffffff"
-        tools:ignore="RtlHardcoded,UnusedAttribute"
+        tools:ignore="ContentDescription,RtlHardcoded,UnusedAttribute"
         tools:visibility="visible" />
 
 

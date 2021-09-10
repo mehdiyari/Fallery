@@ -50,8 +50,15 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
 
     private lateinit var falleryViewModel: FalleryViewModel
     private val falleryOptions by lazy { FalleryActivityComponentHolder.createOrGetComponent(this).provideFalleryOptions() }
+    private var frameLayoutSendMediaAnimationPostRunnable: Runnable? = null
+    private var checkSharedStoragePermissionInOnStart = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        try {
+            FalleryCoreComponentHolder.getOrThrow()
+        } catch (t: Throwable) {
+            finish()
+        }
         FalleryActivityComponentHolder.createOrGetComponent(this)
         requestedOrientation = falleryOptions.orientationMode
         setTheme(falleryOptions.themeResId)
@@ -62,18 +69,38 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
         initView()
     }
 
+    override fun onStart() {
+        super.onStart()
+        if (checkSharedStoragePermissionInOnStart) {
+            checkSharedStoragePermission()
+        }
+    }
+
     private fun initialize() {
         if (!falleryOptions.grantExternalStoragePermission) {
             falleryViewModel.storagePermissionGranted()
         } else {
             permissionChecker(Manifest.permission.WRITE_EXTERNAL_STORAGE, granted = {
-                falleryViewModel.storagePermissionGranted()
+                checkSharedStoragePermission()
             }, denied = {
                 requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), WRITE_EXTERNAL_REQUEST_CODE)
             })
         }
     }
 
+    private fun checkSharedStoragePermission() {
+        if (falleryOptions.grantSharedStorePermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            requestSharedStoragePermission(granted = {
+                falleryViewModel.storagePermissionGranted()
+                checkSharedStoragePermissionInOnStart = false
+            }, denied = {
+                Toast.makeText(this, R.string.shared_storage_denied_text, Toast.LENGTH_SHORT).show()
+                checkSharedStoragePermissionInOnStart = true
+            })
+        } else {
+            falleryViewModel.storagePermissionGranted()
+        }
+    }
 
     private fun initViewModel() {
         falleryViewModel = ViewModelProvider(
@@ -112,7 +139,7 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
             }
         }
 
-        falleryViewModel.currentFragmentLiveData.observe(this@FalleryActivity, Observer { falleryView ->
+        falleryViewModel.currentFragmentLiveData.observe(this@FalleryActivity, { falleryView ->
             replaceFragment(falleryView)
         })
     }
@@ -389,7 +416,7 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
             } catch (ignored: Throwable) {
                 Log.e(FALLERY_LOG_TAG, "error while inflating captionLayoutResId. switch to default implementation")
                 LayoutInflater.from(this).inflate(R.layout.caption_edit_text_layout, frameLayoutCaptionHolder, false)
-                    .findViewById<AppCompatEditText>(R.id.falleryEditTextCaption)
+                    .findViewById(R.id.falleryEditTextCaption)
             }).also {
                 frameLayoutCaptionHolder.addView(it)
             }
@@ -406,39 +433,44 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
     }
 
     private fun showSendButton(withAnim: Boolean = true) {
-        if (frameLayoutSendMedia?.visibility == View.VISIBLE) return
+        if (frameLayoutSendMedia == null || frameLayoutSendMedia?.visibility == View.VISIBLE) return
 
         if (!withAnim) {
             frameLayoutSendMedia?.visibility = View.GONE
             return
         }
 
-
-        floatingButtonSendMedia.visibility = View.VISIBLE
-        floatingButtonSendMedia.startAnimation(
-            TranslateAnimation(
-                ((floatingButtonSendMedia?.height)?.toFloat() ?: 0f), 0f, 0f, 0f
-            ).apply {
-                fillAfter = true
-                duration = 200
-                setOnAnimationEndListener {
-                    floatingButtonSendMedia.animation = null
+        floatingButtonSendMedia.visibility = View.INVISIBLE
+        frameLayoutSendMedia.visibility = View.INVISIBLE
+        frameLayoutSendMediaAnimationPostRunnable = Runnable {
+            floatingButtonSendMedia.visibility = View.VISIBLE
+            floatingButtonSendMedia.startAnimation(
+                TranslateAnimation(
+                    ((floatingButtonSendMedia?.height)?.toFloat() ?: 0f), 0f, 0f, 0f
+                ).apply {
+                    fillAfter = true
+                    duration = 200
+                    setOnAnimationEndListener {
+                        floatingButtonSendMedia.animation = null
+                    }
                 }
-            }
-        )
+            )
 
-        frameLayoutSendMedia.visibility = View.VISIBLE
-        frameLayoutSendMedia?.startAnimation(
-            TranslateAnimation(
-                0f, 0f, ((frameLayoutSendMedia?.height)?.toFloat() ?: 0f), 0f
-            ).apply {
-                fillAfter = true
-                duration = 200
-                setOnAnimationEndListener {
-                    frameLayoutSendMedia.animation = null
+            frameLayoutSendMedia.visibility = View.VISIBLE
+            frameLayoutSendMedia?.startAnimation(
+                TranslateAnimation(
+                    0f, 0f, ((frameLayoutSendMedia?.height)?.toFloat() ?: 0f), 0f
+                ).apply {
+                    fillAfter = true
+                    duration = 200
+                    setOnAnimationEndListener {
+                        frameLayoutSendMedia.animation = null
+                    }
                 }
-            }
-        )
+            )
+        }
+
+        frameLayoutSendMediaAnimationPostRunnable?.also(frameLayoutSendMedia::post)
     }
 
     private fun hideSendButton(withAnim: Boolean = true) {
@@ -566,6 +598,13 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
     private fun finishWithCancelResult() {
         setResult(Activity.RESULT_CANCELED)
         finish()
+    }
+
+    override fun onStop() {
+        frameLayoutSendMediaAnimationPostRunnable?.also {
+            frameLayoutSendMedia?.removeCallbacks(it)
+        }
+        super.onStop()
     }
 
     private fun finishWithOKResult(it: Array<String>) {

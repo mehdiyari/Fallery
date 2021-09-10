@@ -21,7 +21,7 @@ internal class MediaStoreObserverTest {
 
     private val handler by lazy { mockk<Handler>() }
     private val fragmentActivity by lazy { mockk<AppCompatActivity>() }
-    private val observer by lazy { spyk(MediaStoreObserver(handler, WeakReference(fragmentActivity))) }
+    private val observer by lazy { spyk(MediaStoreObserver(true, handler, WeakReference(fragmentActivity))) }
     private val mockedLiveDataObserver by lazy { mockk<Observer<Uri?>>() }
     private val lifecycleRegistry by lazy { mockk<LifecycleRegistry>() }
     private val contentResolver by lazy { mockk<ContentResolver>() }
@@ -61,7 +61,7 @@ internal class MediaStoreObserverTest {
     fun testUnRegisterListener() {
         observer.registerObservers()
         observer.apply {
-            observer.onDestroy()
+            observer.unregisterObservers()
             verify(exactly = 1) { contentResolver.unregisterContentObserver(any()) }
         }
     }
@@ -70,7 +70,9 @@ internal class MediaStoreObserverTest {
     fun testObserverChange() {
         observer.registerObservers()
         observer.externalStorageChangeState.observeForever(mockedLiveDataObserver)
-        observer.onChange(true, Uri.EMPTY)
-        verify(exactly = 1) { mockedLiveDataObserver.onChanged(Uri.EMPTY) }
+        val uri = mockk<Uri>(relaxed = true)
+        observer.onChange(true, uri)
+        Thread.sleep(2100L)
+        verify(exactly = 1) { mockedLiveDataObserver.onChanged(uri) }
     }
 }

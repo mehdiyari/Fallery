@@ -6,7 +6,6 @@ import android.transition.TransitionManager
 import android.view.View
 import android.view.animation.AlphaAnimation
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -72,14 +71,14 @@ internal class BucketListFragment : Fragment(R.layout.fragment_bucket_list) {
             requireActivity(),
             FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideFalleryViewModelFactory()
         )[FalleryViewModel::class.java].apply {
-            bucketRecycleViewModeLiveData.observe(viewLifecycleOwner, Observer {
+            bucketRecycleViewModeLiveData.observe(viewLifecycleOwner, {
                 changeRecyclerViewItemModeTo(it)
             })
         }
 
         bucketListViewModel = ViewModelProvider(
             this,
-            FalleryActivityComponentHolder.componentCreator(requireActivity()).provideBucketListViewModelFactory()
+            FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideBucketListViewModelFactory()
         )[BucketListViewModel::class.java]
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -129,7 +128,7 @@ internal class BucketListFragment : Fragment(R.layout.fragment_bucket_list) {
 
     private fun showLoading() {
         errorLayoutBucketList.hide()
-        contentLoadingProgressBarBucketList.show()
+        contentLoadingProgressBarBucketList.visibility = View.VISIBLE
         if (recyclerViewBuckets.visibility == View.VISIBLE) {
             recyclerViewBuckets.startAnimation(
                 AlphaAnimation(1f, 0.5f).apply {
@@ -144,7 +143,7 @@ internal class BucketListFragment : Fragment(R.layout.fragment_bucket_list) {
 
     private fun hideLoading() {
         errorLayoutBucketList.hide()
-        contentLoadingProgressBarBucketList.hide()
+        contentLoadingProgressBarBucketList.visibility = View.GONE
         recyclerViewBuckets.visibility = View.INVISIBLE
         recyclerViewBuckets.startAnimation(
             AlphaAnimation(0.5f, 1f).apply {
@@ -167,7 +166,8 @@ internal class BucketListFragment : Fragment(R.layout.fragment_bucket_list) {
     } else 1
 
     override fun onDestroyView() {
-        recyclerViewBuckets.adapter = null
+        recyclerViewBuckets?.adapter = null
+        recyclerViewBuckets?.layoutManager = null
         super.onDestroyView()
     }
 }

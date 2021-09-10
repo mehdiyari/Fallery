@@ -5,9 +5,9 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.os.Build
-import android.os.Bundle
-import android.os.Handler
+import android.net.Uri
+import android.os.*
+import android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
 import android.view.View
 import android.view.animation.TranslateAnimation
 import android.widget.Toast
@@ -32,10 +32,6 @@ class MainActivity : AppCompatActivity() {
     private var listCurrentMedias = listOf<Pair<String, String>>()
     private val glideImageLoader by lazy { GlideImageLoader() }
 
-    private val bottomNavigationDrawerFragment by lazy {
-        BottomNavigationDrawerFragment()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -53,11 +49,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        bottomNavigationDrawerFragment.onMenuItemSelected = { itemSelected ->
-            itemIdSelected = itemSelected
-            animateLayouts()
-        }
-
         bottomAppBarExample.setOnMenuItemClickListener {
             if (it.itemId == R.id.menuClear) {
                 listCurrentMedias = listOf()
@@ -69,9 +60,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         bottomAppBarExample.setNavigationOnClickListener {
-            if (!bottomNavigationDrawerFragment.isAdded) {
-                bottomNavigationDrawerFragment.selectedItemId = itemIdSelected
-                bottomNavigationDrawerFragment.show(supportFragmentManager, "bndf")
+            if (supportFragmentManager.getFragment(Bundle(), "bndf") == null) {
+                val bottomNavigationDrawerFragment = BottomNavigationDrawerFragment()
+                bottomNavigationDrawerFragment.onMenuItemSelected = { itemSelected ->
+                    itemIdSelected = itemSelected
+                    animateLayouts()
+                }
+                if (!bottomNavigationDrawerFragment.isAdded) {
+                    bottomNavigationDrawerFragment.selectedItemId = itemIdSelected
+                    bottomNavigationDrawerFragment.show(supportFragmentManager, "bndf")
+                }
             }
         }
 
@@ -101,6 +99,11 @@ class MainActivity : AppCompatActivity() {
     private fun openFalleryBasedOnSelectedMode() {
         (when (itemIdSelected) {
             R.id.menuDefaultOptions -> FalleryOptions(glideImageLoader)
+            R.id.menuMediaObserverEnabled -> {
+                FalleryBuilder()
+                    .setImageLoader(glideImageLoader).setMediaObserverEnabled(true)
+                    .build()
+            }
             R.id.menuCameraEnabled -> {
                 FalleryBuilder()
                     .setImageLoader(glideImageLoader)
@@ -214,6 +217,32 @@ class MainActivity : AppCompatActivity() {
                     builder
                 }
             }
+            R.id.menuGrantSharedStoragePermission -> {
+                val builder = FalleryBuilder()
+                    .setImageLoader(glideImageLoader)
+                    .setGrantSharedStoragePermission(false)
+                    .build()
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                        Toast.makeText(this@MainActivity, "Please grant external storage permission", Toast.LENGTH_SHORT).show()
+                        requestPermissions(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 10)
+                        null
+                    } else {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !Environment.isExternalStorageManager()) {
+                            Toast.makeText(this@MainActivity, "App: Please grant shared storage permission before starting fallery", Toast.LENGTH_SHORT).show()
+                            Intent(ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).also {
+                                it.data = Uri.fromParts("package", packageName, null)
+                                startActivity(it)
+                            }
+                            null
+                        } else {
+                            builder
+                        }
+                    }
+                } else {
+                    builder
+                }
+            }
             R.id.menuCustomTheme -> {
                 FalleryBuilder()
                     .setImageLoader(glideImageLoader)
@@ -227,8 +256,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun animateLayouts() {
-        Handler().postDelayed({
-            Handler().postDelayed({
+        Handler(Looper.getMainLooper()).postDelayed({
+            Handler(Looper.getMainLooper()).postDelayed({
                 bottomAppBarExample.fabCradleMargin = resources.getDimension(R.dimen.min_fabCradleMargin)
                 bottomAppBarExample.fabCradleRoundedCornerRadius = resources.getDimension(R.dimen.min_fabCradleRoundedCornerRadius)
             }, 60)
@@ -242,8 +271,8 @@ class MainActivity : AppCompatActivity() {
             )
         }, 200)
 
-        Handler().postDelayed({
-            Handler().postDelayed({
+        Handler(Looper.getMainLooper()).postDelayed({
+            Handler(Looper.getMainLooper()).postDelayed({
                 bottomAppBarExample.fabCradleMargin = resources.getDimension(R.dimen.fabCradleMargin)
                 bottomAppBarExample.fabCradleRoundedCornerRadius = resources.getDimension(R.dimen.fabCradleRoundedCornerRadius)
             }, 60)
@@ -280,6 +309,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         if (isFinishing) FalleryExample.customGalleryApiService = null
+        bottomAppBarExample?.setNavigationOnClickListener(null)
         super.onDestroy()
     }
 

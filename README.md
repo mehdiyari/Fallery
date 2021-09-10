@@ -1,30 +1,32 @@
 # Fallery [![](https://jitpack.io/v/mehdiyari/Fallery.svg)](https://jitpack.io/#mehdiyari/Fallery)
 
-A fully customazible gallery and media picker for android thats built on kotlin.
+A fully customizable gallery and media picker for android
+
 # Demo
 
 ![](assets/demo.jpg)
 
 # Features
 
-1. Select media(photo, video) from android media store, custom [offline gallery](http://mehdiyari.ir/2020/08/14/create-a-custom-offline-online-gallery-with-fallery/) or custom [online gallery](http://mehdiyari.ir/2020/08/14/create-a-custom-offline-online-gallery-with-fallery/)
-2. Backward compatible with android API level 14
-3. Enable or disable content observer
-4. Filter medias based on types(Photos, videos, both)
-5. Modern user interface with the capability to add new theme and languages
+1. Select media(photo, video) from android media store with custom [offline gallery](http://mehdiyari.ir/2020/08/14/create-a-custom-offline-online-gallery-with-fallery/) or custom [online gallery](http://mehdiyari.ir/2020/08/14/create-a-custom-offline-online-gallery-with-fallery/)
+2. Compatible with android API Level 14 to 30
+3. Content Observer
+4. Filter media based on types(Photos, videos, both)
+5. Modern user interface with the capability to add new themes and languages
 6. Select media with a caption
-7. Taking photo from the camera with the intent
+7. Taking photos from the camera with the intent
 8. Showing bucket list in two different UI(grid and linear) which user can switches between them in runtime
-9. You can choose max selectable media by user
+9. Support setting max selectable media by user
 10. Support orientation
-11. Set custom edit text layout (for emoji compatibility, etc)
-12. Enable or disable media count
-13. Set view pager scroll orientation (Vertical, Horizontal)
-14. Set view pager transformer
-15. Set custom onClick for video toggle in the video preview
-16. Automatic grant external storage permissions (You can disable it)
-17. Nice DSL for starting fallery from fragment, activity and extract the result from an output intent
-00. and many other features
+11. Support custom edit text layout for caption(for emoji compatibility, etc)
+12. Enable or disable media counts in fallery toolbar
+13. Support Vertical, Horizontal scrolling in showing media view-pager
+14. Support any view-pager transformer in media view-pager
+15. Support custom onClick for video toggle in the video preview screen
+16. Automatic grant external storage permissions
+17. Automatic grant shared storage permissions(only for android +10)
+18. Easy to use
+
 ## Usage
 ### Gradle
 Step 1. Add it in your root `build.gradle` at the end of repositories:
@@ -67,6 +69,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
           
           val falleryOptions = FalleryBuilder()
                 .setImageLoader(YourImageLoader())
+                .setMediaObserverEnabled(true)
                 .build()
 
           falleryButton.setOnClickListener {
@@ -130,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 ```
-For more details about how to using Fallery please checkout example module or checkout [Fallery blog post](http://mehdiyari.ir/2020/08/14/fallery-a-fully-customizable-media-picker-for-android/).
+For more details about how to using Fallery please check example module or [Fallery blog post](http://mehdiyari.ir/2020/08/14/fallery-a-fully-customizable-media-picker-for-android/).
 
 ## Contribute
 

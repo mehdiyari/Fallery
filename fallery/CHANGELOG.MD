@@ -1,3 +1,11 @@
+## Fallery version 1.0.1
+
+1. CleanUp codes
+2. Update dependencies
+3. Fix some bugs
+4. Add a new option to fallery for changing bucket content span-count based on user touch(zoom in, zoom out)
+5. Update README.MD
+
 ## Fallery version 1.0.0 
 
 #### Compatible with android +10

@@ -12,7 +12,6 @@ import androidx.lifecycle.OnLifecycleEvent
 import kotlinx.coroutines.*
 import java.lang.ref.WeakReference
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class MediaStoreObserver constructor(
     isMediaObserverEnabled: Boolean = false,
     handler: Handler,

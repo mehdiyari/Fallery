@@ -249,6 +249,12 @@ class MainActivity : AppCompatActivity() {
                     .setTheme(R.style.Fallery_Blue_Theme)
                     .build()
             }
+            R.id.menuSpanCount -> {
+                FalleryBuilder()
+                    .setImageLoader(glideImageLoader)
+                    .setFallerySpanCountMode(FalleryBucketsSpanCountMode.UserZoomInOrZoomOut)
+                    .build()
+            }
             else -> FalleryOptions(glideImageLoader)
         })?.also {
             startFalleryWithOptions(falleryRequestCode, it)
@@ -293,10 +299,8 @@ class MainActivity : AppCompatActivity() {
                 listCurrentMedias = mutableListOf<Pair<String, String>>().apply {
                     addAll(listCurrentMedias)
                     val caption = data.getFalleryCaptionFromIntent()
-                    data.getFalleryResultMediasFromIntent()?.also { results ->
-                        results.forEach {
-                            add(it to (caption ?: ""))
-                        }
+                    data.getFalleryResultMediasFromIntent()?.onEach {
+                        add(it to (caption ?: ""))
                     }
                 }
 

@@ -26,13 +26,17 @@ internal inline fun AppCompatActivity.permissionChecker(
 }
 
 internal inline fun AppCompatActivity.requestSharedStoragePermission(granted: () -> Unit, denied: () -> Unit) {
-    if (Environment.isExternalStorageManager()) {
-        granted.invoke()
-    } else {
-        Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).also {
-            it.data = Uri.fromParts("package", packageName, null)
-            startActivity(it)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if (Environment.isExternalStorageManager()) {
+            granted.invoke()
+        } else {
+            Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).also {
+                it.data = Uri.fromParts("package", packageName, null)
+                startActivity(it)
+            }
+            denied.invoke()
         }
-        denied.invoke()
+    } else {
+        granted.invoke()
     }
 }

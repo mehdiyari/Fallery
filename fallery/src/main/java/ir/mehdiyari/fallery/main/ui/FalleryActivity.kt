@@ -38,14 +38,10 @@ import ir.mehdiyari.fallery.main.fallery.BucketRecyclerViewItemMode
 import ir.mehdiyari.fallery.utils.*
 import kotlinx.android.synthetic.main.activity_fallery.*
 import kotlinx.android.synthetic.main.caption_layout.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import java.io.File
 
-@OptIn(ExperimentalCoroutinesApi::class, InternalCoroutinesApi::class)
 internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityController {
 
     private lateinit var falleryViewModel: FalleryViewModel
@@ -139,9 +135,9 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
             }
         }
 
-        falleryViewModel.currentFragmentLiveData.observe(this@FalleryActivity, { falleryView ->
+        falleryViewModel.currentFragmentLiveData.observe(this@FalleryActivity) { falleryView ->
             replaceFragment(falleryView)
-        })
+        }
     }
 
     private fun handleFalleryResults(it: Array<String>?) {
@@ -161,14 +157,18 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
     private fun replaceFragment(falleryView: FalleryView?) {
         when (falleryView) {
             is FalleryView.BucketList -> {
-                toolbarFalleryActivity.title = getString(falleryOptions.toolbarTitle)
+                if (!falleryViewModel.userSelectedMedias)
+                    toolbarFalleryActivity.title = getString(falleryOptions.toolbarTitle)
+
                 supportFragmentManager.beginTransaction()
                     .add(R.id.layoutFragmentContainer, BucketListFragment())
                     .commit()
                 toolbarFalleryActivity.menu?.findItem(R.id.bucketListMenuItemShowRecyclerViewItemModelChanger)?.isVisible = true
             }
             is FalleryView.BucketContent -> {
-                toolbarFalleryActivity.title = falleryView.bucketName
+                if (!falleryViewModel.userSelectedMedias)
+                    toolbarFalleryActivity.title = falleryView.bucketName
+
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.layoutFragmentContainer, BaseBucketContentFragment().apply {
                         arguments = Bundle().apply {

@@ -3,8 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layoutDirection="ltr"
-    android:background="#ffffff"
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity">
 
@@ -56,6 +54,7 @@
         app:tint="#ffffff"
         app:fabCustomSize="50dp"
         app:layout_anchor="@id/bottomAppBarExample"
-        app:backgroundTint="@color/colorAccent" />
+        app:backgroundTint="@color/colorAccent"
+        tools:ignore="ContentDescription" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

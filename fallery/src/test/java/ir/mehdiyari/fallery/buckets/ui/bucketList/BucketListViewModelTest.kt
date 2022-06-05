@@ -9,7 +9,6 @@ import ir.mehdiyari.fallery.models.MediaBucket
 import ir.mehdiyari.fallery.repo.AbstractMediaBucketProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.*
@@ -17,7 +16,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
-@OptIn(ExperimentalCoroutinesApi::class, InternalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class BucketListViewModelTest {
 
     private val abstractMediaBucketProvider by lazy { mockk<AbstractMediaBucketProvider>() }
@@ -38,9 +37,8 @@ internal class BucketListViewModelTest {
     private val bucketsMutableStateFlowCollector by lazy { spyk<FlowCollector<List<MediaBucket>>>() }
     private val allMediaCountChangedStateFlowCollector by lazy { spyk<FlowCollector<Int>>() }
 
-    private val testCoroutineDispatcher = TestCoroutineDispatcher()
-
-    private val testCoroutineScope by lazy { TestCoroutineScope(testCoroutineDispatcher) }
+    private val testCoroutineDispatcher = Dispatchers.Unconfined
+    private val testCoroutineScope by lazy { TestScope() }
 
     @BeforeEach
     fun before() {
@@ -86,6 +84,6 @@ internal class BucketListViewModelTest {
             )
         }
 
-        add(0, this[0].copy(displayName = "All Medias", mediaCount = this.sumBy { it.mediaCount }))
+        add(0, this[0].copy(displayName = "All Medias", mediaCount = this.sumOf { it.mediaCount }))
     }
 }

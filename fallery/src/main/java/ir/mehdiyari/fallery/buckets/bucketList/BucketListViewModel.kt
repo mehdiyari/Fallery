@@ -11,12 +11,10 @@ import ir.mehdiyari.fallery.utils.FALLERY_LOG_TAG
 import ir.mehdiyari.fallery.utils.MediaStoreObserver
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class BucketListViewModel constructor(
     mediaObserverEnabled: Boolean,
     private val abstractMediaBucketProvider: AbstractMediaBucketProvider,

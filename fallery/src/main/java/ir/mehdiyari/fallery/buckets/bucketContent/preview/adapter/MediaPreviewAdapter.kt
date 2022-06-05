@@ -1,5 +1,6 @@
 package ir.mehdiyari.fallery.buckets.bucketContent.preview.adapter
 
+import android.annotation.SuppressLint
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -13,6 +14,7 @@ internal class MediaPreviewAdapter constructor(
 ) : FragmentStateAdapter(previewFragment) {
 
     var medias: List<Media>? = null
+        @SuppressLint("NotifyDataSetChanged")
         set(value) {
             field = value
             notifyDataSetChanged()

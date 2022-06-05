@@ -35,7 +35,8 @@ data class FalleryOptions(
     val selectedMediaToggleBackgroundColor: Int = Color.parseColor("#A11183"),
     val onVideoPlayClick: ((path: String) -> Unit)? = null,
     val grantExternalStoragePermission: Boolean = true,
-    val grantSharedStorePermission: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q, // required for android +10
+    val grantSharedStorePermission: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q, // required for android +10,
+    val falleryBucketsSpanCountMode: FalleryBucketsSpanCountMode = FalleryBucketsSpanCountMode.Automatic
 ) {
     constructor(falleryImageLoader: FalleryImageLoader?) : this(
         mediaTypeFilter = BucketType.VIDEO_PHOTO_BUCKETS,
@@ -57,7 +58,8 @@ data class FalleryOptions(
         selectedMediaToggleBackgroundColor = Color.parseColor("#A11183"),
         onVideoPlayClick = null,
         grantExternalStoragePermission = true,
-        grantSharedStorePermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+        grantSharedStorePermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q,
+        falleryBucketsSpanCountMode = FalleryBucketsSpanCountMode.Automatic
     )
 }
 
@@ -68,7 +70,11 @@ data class CameraEnabledOptions(
     val fileProviderAuthority: String? = null,
     val directory: String? = null
 ) {
-    constructor(enabled: Boolean, fileProviderAuthority: String) : this(enabled, fileProviderAuthority, null)
+    constructor(enabled: Boolean, fileProviderAuthority: String) : this(
+        enabled,
+        fileProviderAuthority,
+        null
+    )
 }
 
 data class CaptionEnabledOptions(
@@ -76,11 +82,20 @@ data class CaptionEnabledOptions(
     @DrawableRes val sendIcon: Int = R.drawable.fallery_icon_send,
     @LayoutRes val editTextLayoutResId: Int = R.layout.caption_edit_text_layout
 ) {
-    constructor(enabled: Boolean) : this(enabled, R.drawable.fallery_icon_send, R.layout.caption_edit_text_layout)
+    constructor(enabled: Boolean) : this(
+        enabled,
+        R.drawable.fallery_icon_send,
+        R.layout.caption_edit_text_layout
+    )
 }
 
 
 enum class BucketRecyclerViewItemMode constructor(override var value: Int) : EnumType<Int> {
     GridStyle(R.layout.grid_bucket_item_view),
     LinearStyle(R.layout.linear_bucket_item_view)
+}
+
+enum class FalleryBucketsSpanCountMode {
+    Automatic, // based on device width
+    UserZoomInOrZoomOut // based on device width but users can changed span count by zoomIn or ZoomOut
 }

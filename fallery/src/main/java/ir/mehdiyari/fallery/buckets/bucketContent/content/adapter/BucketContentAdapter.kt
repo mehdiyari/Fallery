@@ -11,6 +11,7 @@ import ir.mehdiyari.fallery.R
 import ir.mehdiyari.fallery.imageLoader.FalleryImageLoader
 import ir.mehdiyari.fallery.imageLoader.PhotoDiminution
 import ir.mehdiyari.fallery.models.Media
+import ir.mehdiyari.fallery.utils.BUCKET_CONTENT_DEFAULT_SPAN_COUNT
 import ir.mehdiyari.fallery.utils.convertSecondToTime
 import ir.mehdiyari.fallery.utils.dpToPx
 import ir.mehdiyari.fallery.utils.getHeightBasedOnScaledWidth
@@ -26,22 +27,26 @@ internal class BucketContentAdapter constructor(
     override fun areItemsTheSame(oldItem: Media, newItem: Media): Boolean = oldItem.getMediaId() == newItem.getMediaId()
     override fun areContentsTheSame(oldItem: Media, newItem: Media): Boolean = oldItem == newItem
 }) {
-
-    private var itemViewWidth: Int = 0
     var getItemViewWidth: (() -> (Int))? = null
     var selectedMediaTracker: MutableList<String>? = null
     var onMediaSelected: ((String) -> (Boolean))? = null
     var onMediaDeselected: ((String) -> (Boolean))? = null
     var onMediaClick: ((String) -> Unit)? = null
+    var spanCount = BUCKET_CONTENT_DEFAULT_SPAN_COUNT
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder = LayoutInflater.from(parent.context)
-        .inflate(viewType, parent, false).let {
-            when (viewType) {
-                R.layout.media_photo_item -> PhotoViewHolder(it)
-                R.layout.media_video_item -> VideoViewHolder(it)
-                else -> throw IllegalArgumentException("bad viewType")
+    init {
+        setHasStableIds(true)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder =
+        LayoutInflater.from(parent.context)
+            .inflate(viewType, parent, false).let {
+                when (viewType) {
+                    R.layout.media_photo_item -> PhotoViewHolder(it)
+                    R.layout.media_video_item -> VideoViewHolder(it)
+                    else -> throw IllegalArgumentException("bad viewType")
+                }
             }
-        }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
@@ -80,13 +85,35 @@ internal class BucketContentAdapter constructor(
             itemView.imageViewPhotoMedia.setOnClickListener {
                 onMediaClick?.invoke(getItemPath(adapterPosition))
             }
+
+            setViewHeight()
+        }
+
+        private fun setViewHeight() {
+            itemView.constraintLayoutPhotoContainer.also {
+                it.layoutParams = it.layoutParams.apply {
+                    this.height = if (spanCount > BUCKET_CONTENT_DEFAULT_SPAN_COUNT) {
+                        internalGetItemViewWidth()
+                    } else {
+                        itemView.context.resources.getDimensionPixelSize(R.dimen.min_size_bucket_content_item)
+                    }
+                }
+            }
         }
 
         fun bind() {
             getItem(adapterPosition).also { currentPhoto ->
+                setViewHeight()
                 if (currentPhoto is Media.Photo) {
                     initSelectingStateOfView(adapterPosition)
-                    val dimension = PhotoDiminution(getItemViewWidth(), getHeightBasedOnScaledWidth(currentPhoto.width, currentPhoto.height, getItemViewWidth()))
+                    val dimension = PhotoDiminution(
+                        internalGetItemViewWidth(),
+                        getHeightBasedOnScaledWidth(
+                            currentPhoto.width,
+                            currentPhoto.height,
+                            internalGetItemViewWidth()
+                        )
+                    )
                     imageLoader.loadPhoto(
                         context = itemView.context,
                         imageView = itemView.imageViewPhotoMedia,
@@ -107,13 +134,6 @@ internal class BucketContentAdapter constructor(
 
     }
 
-    private fun getItemViewWidth(): Int {
-        if (itemViewWidth == 0)
-            itemViewWidth = getItemViewWidth?.invoke() ?: dpToPx(200)
-
-        return itemViewWidth
-    }
-
     inner class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         init {
@@ -126,13 +146,35 @@ internal class BucketContentAdapter constructor(
             itemView.imageViewVideoMedia.setOnClickListener {
                 onMediaClick?.invoke(getItemPath(adapterPosition))
             }
+
+            setViewHeight()
+        }
+
+        private fun setViewHeight() {
+            itemView.constraintLayoutVideoContainer.also {
+                it.layoutParams = it.layoutParams.apply {
+                    this.height = if (spanCount > BUCKET_CONTENT_DEFAULT_SPAN_COUNT) {
+                        internalGetItemViewWidth()
+                    } else {
+                        itemView.context.resources.getDimensionPixelSize(R.dimen.min_size_bucket_content_item)
+                    }
+                }
+            }
         }
 
         fun bind() {
             getItem(adapterPosition).also { currentVideo ->
+                setViewHeight()
                 if (currentVideo is Media.Video) {
                     val dimension =
-                        PhotoDiminution(getItemViewWidth(), getHeightBasedOnScaledWidth(currentVideo.thumbnail.width, currentVideo.thumbnail.height, getItemViewWidth()))
+                        PhotoDiminution(
+                            internalGetItemViewWidth(),
+                            getHeightBasedOnScaledWidth(
+                                currentVideo.thumbnail.width,
+                                currentVideo.thumbnail.height,
+                                internalGetItemViewWidth()
+                            )
+                        )
                     imageLoader.loadPhoto(
                         context = itemView.context,
                         imageView = itemView.imageViewVideoMedia,
@@ -141,7 +183,8 @@ internal class BucketContentAdapter constructor(
                         path = currentVideo.thumbnail.path
                     )
 
-                    itemView.textViewVideoTime.text = convertSecondToTime(currentVideo.duration.toInt())
+                    itemView.textViewVideoTime.text =
+                        convertSecondToTime(currentVideo.duration.toInt())
                     initSelectingStateOfView(adapterPosition)
                 }
             }
@@ -153,5 +196,9 @@ internal class BucketContentAdapter constructor(
             else
                 itemView.imageViewSelectDeselectVideo.setImageDrawable(deselectedDrawable)
         }
+    }
+
+    private fun internalGetItemViewWidth(): Int {
+        return getItemViewWidth?.invoke() ?: dpToPx(200)
     }
 }

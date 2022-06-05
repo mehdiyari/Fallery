@@ -11,6 +11,7 @@ import android.text.style.StyleSpan
 import ir.mehdiyari.fallery.R
 import ir.mehdiyari.fallery.main.ui.MediaCountModel
 
+internal const val BUCKET_CONTENT_DEFAULT_SPAN_COUNT = 3
 internal const val FALLERY_LOG_TAG = "Fallery"
 internal const val WRITE_EXTERNAL_REQUEST_CODE = 100_000
 const val ALL_MEDIA_MODEL_ID = -1L

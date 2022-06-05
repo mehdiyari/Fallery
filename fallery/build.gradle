@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'com.github.dcendents.android-maven'
-version = "1.0.0"
+version = "1.0.1"
 group = 'com.github.mehdiyari'
 
 android {
@@ -21,7 +21,7 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
-        versionCode 2
+        versionCode 3
     }
 
     buildTypes {

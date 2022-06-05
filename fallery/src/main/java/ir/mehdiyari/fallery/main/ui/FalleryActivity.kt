@@ -161,14 +161,18 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
     private fun replaceFragment(falleryView: FalleryView?) {
         when (falleryView) {
             is FalleryView.BucketList -> {
-                toolbarFalleryActivity.title = getString(falleryOptions.toolbarTitle)
+                if (!falleryViewModel.userSelectedMedias)
+                    toolbarFalleryActivity.title = getString(falleryOptions.toolbarTitle)
+
                 supportFragmentManager.beginTransaction()
                     .add(R.id.layoutFragmentContainer, BucketListFragment())
                     .commit()
                 toolbarFalleryActivity.menu?.findItem(R.id.bucketListMenuItemShowRecyclerViewItemModelChanger)?.isVisible = true
             }
             is FalleryView.BucketContent -> {
-                toolbarFalleryActivity.title = falleryView.bucketName
+                if (!falleryViewModel.userSelectedMedias)
+                    toolbarFalleryActivity.title = falleryView.bucketName
+
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.layoutFragmentContainer, BaseBucketContentFragment().apply {
                         arguments = Bundle().apply {

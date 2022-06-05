@@ -249,6 +249,12 @@ class MainActivity : AppCompatActivity() {
                     .setTheme(R.style.Fallery_Blue_Theme)
                     .build()
             }
+            R.id.menuSpanCount -> {
+                FalleryBuilder()
+                    .setImageLoader(glideImageLoader)
+                    .setFallerySpanCountMode(FalleryBucketsSpanCountMode.UserZoomInOrZoomOut)
+                    .build()
+            }
             else -> FalleryOptions(glideImageLoader)
         })?.also {
             startFalleryWithOptions(falleryRequestCode, it)

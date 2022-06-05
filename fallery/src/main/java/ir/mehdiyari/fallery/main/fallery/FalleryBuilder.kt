@@ -263,6 +263,21 @@ class FalleryBuilder constructor(private var falleryOptions: FalleryOptions = Fa
         return this
     }
 
+    /**
+     * Set [FalleryBucketsSpanCountMode] for bucket content recyclerView.
+     *
+     * If @param newMode == [FalleryBucketsSpanCountMode.Automatic] the span count
+     * will be calculate automatically based on device width.
+     *
+     * If @param newMode == [FalleryBucketsSpanCountMode.UserZoomInOrZoomOut] ths span count
+     * will be calculate automatically based on device with but user can change it
+     * by zoom-in and zoom-out on bucket-content recycler-view.
+     */
+    fun setFallerySpanCountMode(newMode: FalleryBucketsSpanCountMode) : FalleryBuilder {
+        falleryOptions = falleryOptions.copy(falleryBucketsSpanCountMode = newMode)
+        return this
+    }
+
     fun build(): FalleryOptions {
         require(falleryOptions.imageLoader != null) { "You must set imageLoader" }
 

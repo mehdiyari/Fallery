@@ -22,6 +22,9 @@
         android:title="@string/menu_title_filter_type_video"
         app:showAsAction="ifRoom" />
 
+    <item android:id="@+id/menuSpanCount"
+        android:title="@string/fallery_span_count"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/menuCustomOnlineGallery"

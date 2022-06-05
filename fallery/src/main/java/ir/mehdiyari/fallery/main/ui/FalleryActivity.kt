@@ -38,14 +38,10 @@ import ir.mehdiyari.fallery.main.fallery.BucketRecyclerViewItemMode
 import ir.mehdiyari.fallery.utils.*
 import kotlinx.android.synthetic.main.activity_fallery.*
 import kotlinx.android.synthetic.main.caption_layout.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import java.io.File
 
-@OptIn(ExperimentalCoroutinesApi::class, InternalCoroutinesApi::class)
 internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityController {
 
     private lateinit var falleryViewModel: FalleryViewModel
@@ -139,9 +135,9 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
             }
         }
 
-        falleryViewModel.currentFragmentLiveData.observe(this@FalleryActivity, { falleryView ->
+        falleryViewModel.currentFragmentLiveData.observe(this@FalleryActivity) { falleryView ->
             replaceFragment(falleryView)
-        })
+        }
     }
 
     private fun handleFalleryResults(it: Array<String>?) {

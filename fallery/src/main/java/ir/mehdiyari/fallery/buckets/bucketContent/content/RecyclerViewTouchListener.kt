@@ -16,8 +16,8 @@ internal class RecyclerViewTouchListener(
     private val onScaleCallback: (zoomIn: Boolean) -> Unit
 ) : View.OnTouchListener {
 
-    val MIN_SPAN_COUNTS = 2F
-    val MAX_SPAN_COUNT: Float =
+    val minSpanCount = 2F
+    val maxSpanCount: Float =
         (context.resources.displayMetrics.widthPixels / (context.resources.getDimension(R.dimen.min_size_bucket_content_item) / 1.5)).toFloat()
 
     private var currentState: TouchMode = TouchMode.None

@@ -15,7 +15,7 @@ class MediaJsonAdapter : JsonAdapter<List<Media>>() {
     private val photoOptions = JsonReader.Options.of("id", "path", "width", "height")
     private val videoOptions = JsonReader.Options.of("id", "path", "duration", "thumbnail")
 
-    override fun fromJson(reader: JsonReader): List<Media>? {
+    override fun fromJson(reader: JsonReader): List<Media> {
         val mediasList = mutableListOf<Media>()
         reader.beginArray()
 

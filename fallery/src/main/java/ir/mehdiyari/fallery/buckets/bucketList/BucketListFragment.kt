@@ -18,11 +18,8 @@ import ir.mehdiyari.fallery.utils.divideScreenToEqualPart
 import ir.mehdiyari.fallery.utils.dpToPx
 import ir.mehdiyari.fallery.utils.setOnAnimationEndListener
 import kotlinx.android.synthetic.main.fragment_bucket_list.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class BucketListFragment : Fragment(R.layout.fragment_bucket_list) {
 
     private lateinit var bucketListViewModel: BucketListViewModel
@@ -71,9 +68,9 @@ internal class BucketListFragment : Fragment(R.layout.fragment_bucket_list) {
             requireActivity(),
             FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideFalleryViewModelFactory()
         )[FalleryViewModel::class.java].apply {
-            bucketRecycleViewModeLiveData.observe(viewLifecycleOwner, {
+            bucketRecycleViewModeLiveData.observe(viewLifecycleOwner) {
                 changeRecyclerViewItemModeTo(it)
-            })
+            }
         }
 
         bucketListViewModel = ViewModelProvider(

@@ -299,10 +299,8 @@ class MainActivity : AppCompatActivity() {
                 listCurrentMedias = mutableListOf<Pair<String, String>>().apply {
                     addAll(listCurrentMedias)
                     val caption = data.getFalleryCaptionFromIntent()
-                    data.getFalleryResultMediasFromIntent()?.also { results ->
-                        results.forEach {
-                            add(it to (caption ?: ""))
-                        }
+                    data.getFalleryResultMediasFromIntent()?.onEach {
+                        add(it to (caption ?: ""))
                     }
                 }
 

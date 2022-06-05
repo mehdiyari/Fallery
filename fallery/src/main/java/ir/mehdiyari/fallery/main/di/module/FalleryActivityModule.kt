@@ -128,11 +128,11 @@ internal class FalleryActivityModule(
 
     override fun provideSelectedDrawable(): Drawable = createCircleDrawableWithStroke(
         provideFalleryOptions().selectedMediaToggleBackgroundColor, dpToPx(2), Color.WHITE
-    )!!
+    )
 
     override fun provideDeselectedDrawable(): Drawable = createCircleDrawableWithStroke(
         Color.parseColor("#54000000"), dpToPx(2), Color.WHITE
-    )!!
+    )
 
     override fun provideBucketListAdapter(): BucketListAdapter = BucketListAdapter(
         mediaBucketDiffCallback = provideMediaBucketDiffCallback(),

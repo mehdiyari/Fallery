@@ -11,13 +11,11 @@ import ir.mehdiyari.fallery.main.fallery.UNLIMITED_SELECT
 import ir.mehdiyari.fallery.utils.BaseViewModel
 import ir.mehdiyari.fallery.utils.MediaStoreObserver
 import ir.mehdiyari.fallery.utils.SingleLiveEvent
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.io.File
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class FalleryViewModel(
     private val falleryOptions: FalleryOptions,
     private val mediaObserver: MediaStoreObserver

@@ -20,11 +20,8 @@ import ir.mehdiyari.fallery.main.ui.MediaCountModel
 import ir.mehdiyari.fallery.utils.createMediaCountSpannable
 import ir.mehdiyari.fallery.utils.setOnAnimationEndListener
 import kotlinx.android.synthetic.main.fragment_preview.*
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalCoroutinesApi::class)
 internal class PreviewFragment : Fragment(R.layout.fragment_preview), View.OnClickListener {
 
     private lateinit var bucketContentViewModel: BucketContentViewModel
@@ -197,7 +194,6 @@ internal class PreviewFragment : Fragment(R.layout.fragment_preview), View.OnCli
         viewPagerMediaPreview.adapter = null
         super.onDestroyView()
     }
-
 
     // onViewPager Click
     override fun onClick(v: View?) {

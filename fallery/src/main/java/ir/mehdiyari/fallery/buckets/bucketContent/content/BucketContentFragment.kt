@@ -34,8 +34,8 @@ internal class BucketContentFragment : Fragment(R.layout.fragment_bucket_content
     private val onChangeSpanCountCallback by lazy<(Boolean) -> Unit> { {
             bucketContentViewModel.changeSpanCountBasedOnUserTouch(
                 it,
-                recyclerViewTouchListener!!.MAX_SPAN_COUNT.toInt(),
-                recyclerViewTouchListener!!.MIN_SPAN_COUNTS.toInt(),
+                recyclerViewTouchListener!!.maxSpanCount.toInt(),
+                recyclerViewTouchListener!!.minSpanCount.toInt(),
                 bucketContentLayoutManager?.spanCount,
                 resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT
             )

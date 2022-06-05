@@ -10,10 +10,7 @@ import ir.mehdiyari.fallery.R
 import ir.mehdiyari.fallery.buckets.bucketContent.content.BucketContentFragment
 import ir.mehdiyari.fallery.buckets.bucketContent.preview.PreviewFragment
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.InternalCoroutinesApi
 
-@OptIn(ExperimentalCoroutinesApi::class, InternalCoroutinesApi::class)
 internal class BaseBucketContentFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
@@ -41,11 +38,11 @@ internal class BaseBucketContentFragment : Fragment() {
             this,
             FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideBucketContentViewModelFactory()
         )[BucketContentViewModel::class.java].apply {
-            showPreviewFragmentLiveData.observe(viewLifecycleOwner, {
+            showPreviewFragmentLiveData.observe(viewLifecycleOwner) {
                 if (it != null) {
                     navigateToPreviewFragment(fromMediaPath = it)
                 }
-            })
+            }
         }
     }
 

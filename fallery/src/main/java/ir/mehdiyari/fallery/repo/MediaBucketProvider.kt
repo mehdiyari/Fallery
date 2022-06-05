@@ -18,6 +18,7 @@ internal class MediaBucketProvider constructor(
     /**
      * get all buckets(folders) that contain video or photo or both based on [bucketType]
      */
+    @SuppressLint("Range")
     override suspend fun getMediaBuckets(bucketType: BucketType): List<MediaBucket> =
         mutableListOf<MediaBucket>().let { bucketList ->
             // store media dates if [bucketType] == [BucketType.VIDEO_PHOTO_BUCKETS]
@@ -100,7 +101,7 @@ internal class MediaBucketProvider constructor(
      */
     private fun List<MediaBucket>.addAllMediaModel(): List<MediaBucket> = this.toMutableList().apply {
         if (this.isNotEmpty()) {
-            add(0, MediaBucket(ALL_MEDIA_MODEL_ID, "", "All Media", this.first().firstMediaThumbPath, this.sumBy { it.mediaCount }))
+            add(0, MediaBucket(ALL_MEDIA_MODEL_ID, "", "All Media", this.first().firstMediaThumbPath, this.sumOf { it.mediaCount }))
         }
     }
 
@@ -139,7 +140,7 @@ internal class MediaBucketProvider constructor(
                 val file = File(pair.first)
                 if (VideoMediaTypes.values().map { type ->
                         type.value.second
-                    }.firstOrNull { it.contains(file.extension.toLowerCase()) } != null
+                    }.firstOrNull { it.contains(file.extension.lowercase()) } != null
                 ) File(createThumbForVideosOrEmpty(listOf(file.path to id), cacheDir.cacheDir).first()) to pair.second
                 else file to pair.second
             }
@@ -149,6 +150,7 @@ internal class MediaBucketProvider constructor(
     /**
      * search from (photo-video, both) in bucket and take latest media added to this bucket with date of added as Long
      */
+    @SuppressLint("Range")
     private fun getFirstMediaFromBucketByMediaType(
         bucketId: Long, bucketType: BucketType
     ): Pair<String, Long> {

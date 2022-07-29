@@ -474,6 +474,11 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
     }
 
     private fun hideSendButton(withAnim: Boolean = true) {
+        if (frameLayoutSendMediaAnimationPostRunnable != null) {
+            frameLayoutSendMedia?.removeCallbacks(frameLayoutSendMediaAnimationPostRunnable)
+            frameLayoutSendMediaAnimationPostRunnable = null
+        }
+
         if (frameLayoutSendMedia?.visibility == View.GONE) return
 
         if (!withAnim) {

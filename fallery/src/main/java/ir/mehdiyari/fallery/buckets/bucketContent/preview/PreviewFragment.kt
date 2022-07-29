@@ -59,7 +59,6 @@ internal class PreviewFragment : Fragment(R.layout.fragment_preview), View.OnCli
     override fun onAttach(context: Context) {
         super.onAttach(context)
         requireActivity().window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
-        falleryToolbarVisibilityController.hideToolbar(false)
     }
 
     private fun saveCurrentPosition(position: Int) {
@@ -71,6 +70,7 @@ internal class PreviewFragment : Fragment(R.layout.fragment_preview), View.OnCli
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        falleryToolbarVisibilityController.hideToolbar(false)
         initViewModel()
         initView()
     }

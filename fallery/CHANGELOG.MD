@@ -1,3 +1,8 @@
+## Fallery version 1.0.2
+
+1. Update library versions
+2. Fix issues of preview fragment after device rotate
+
 ## Fallery version 1.0.1
 
 1. CleanUp codes

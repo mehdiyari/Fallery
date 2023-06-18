@@ -48,7 +48,6 @@ import ir.mehdiyari.fallery.utils.getIntentForTakingPhoto
 import ir.mehdiyari.fallery.utils.getSettingIntent
 import ir.mehdiyari.fallery.utils.hideKeyboard
 import ir.mehdiyari.fallery.utils.permissionChecker
-import ir.mehdiyari.fallery.utils.requestSharedStoragePermission
 import ir.mehdiyari.fallery.utils.setOnAnimationEndListener
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
@@ -67,7 +66,6 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
         FalleryActivityComponentHolder.createOrGetComponent(this).provideFalleryOptions()
     }
     private var frameLayoutSendMediaAnimationPostRunnable: Runnable? = null
-    private var checkSharedStoragePermissionInOnStart = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         try {
@@ -91,39 +89,18 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
         initView()
     }
 
-    override fun onStart() {
-        super.onStart()
-        if (checkSharedStoragePermissionInOnStart) {
-            checkSharedStoragePermission()
-        }
-    }
-
     private fun initialize() {
         if (!falleryOptions.grantExternalStoragePermission) {
             falleryViewModel.storagePermissionGranted()
         } else {
             permissionChecker(Manifest.permission.WRITE_EXTERNAL_STORAGE, granted = {
-                checkSharedStoragePermission()
+                falleryViewModel.storagePermissionGranted()
             }, denied = {
                 requestPermissions(
                     arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
                     WRITE_EXTERNAL_REQUEST_CODE
                 )
             })
-        }
-    }
-
-    private fun checkSharedStoragePermission() {
-        if (falleryOptions.grantSharedStorePermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            requestSharedStoragePermission(granted = {
-                falleryViewModel.storagePermissionGranted()
-                checkSharedStoragePermissionInOnStart = false
-            }, denied = {
-                Toast.makeText(this, R.string.shared_storage_denied_text, Toast.LENGTH_SHORT).show()
-                checkSharedStoragePermissionInOnStart = true
-            })
-        } else {
-            falleryViewModel.storagePermissionGranted()
         }
     }
 

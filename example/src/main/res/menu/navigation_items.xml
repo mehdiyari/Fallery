@@ -94,14 +94,5 @@
         android:title="@string/menu_title_customVideoOnClick"
         app:showAsAction="ifRoom" />
 
-    <item
-        android:id="@+id/menuGrantExternalStoragePermission"
-        android:title="@string/menu_title_GrantExternalStoragePermission"
-        app:showAsAction="ifRoom" />
-
-    <item
-        android:id="@+id/menuGrantSharedStoragePermission"
-        android:title="@string/menu_title_GrantExternalStoragePermission"
-        app:showAsAction="ifRoom" />
 
 </menu>

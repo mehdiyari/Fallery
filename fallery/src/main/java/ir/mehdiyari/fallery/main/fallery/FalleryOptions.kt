@@ -2,7 +2,6 @@ package ir.mehdiyari.fallery.main.fallery
 
 import android.content.pm.ActivityInfo
 import android.graphics.Color
-import android.os.Build
 import androidx.annotation.DrawableRes
 import androidx.annotation.LayoutRes
 import androidx.annotation.StringRes
@@ -35,7 +34,7 @@ data class FalleryOptions(
     val selectedMediaToggleBackgroundColor: Int = Color.parseColor("#A11183"),
     val onVideoPlayClick: ((path: String) -> Unit)? = null,
     val grantExternalStoragePermission: Boolean = true,
-    val grantSharedStorePermission: Boolean = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q, // required for android +10,
+    @Deprecated("Deprecated, This flag is removed in next release.") val grantSharedStorePermission: Boolean = false,
     val falleryBucketsSpanCountMode: FalleryBucketsSpanCountMode = FalleryBucketsSpanCountMode.Automatic
 ) {
     constructor(falleryImageLoader: FalleryImageLoader?) : this(
@@ -58,7 +57,7 @@ data class FalleryOptions(
         selectedMediaToggleBackgroundColor = Color.parseColor("#A11183"),
         onVideoPlayClick = null,
         grantExternalStoragePermission = true,
-        grantSharedStorePermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q,
+        grantSharedStorePermission = false,
         falleryBucketsSpanCountMode = FalleryBucketsSpanCountMode.Automatic
     )
 }

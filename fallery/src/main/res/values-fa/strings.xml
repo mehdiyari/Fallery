@@ -16,5 +16,4 @@
     <string name="no_video_player_found">هیچ پخش کننده ویدیویی برروی دستگاه پیدا نشد.</string>
     <string name="fallery_error_max_selectable">شما فقط میتوانید %1$d مدیا را انتخاب کنید.</string>
     <string name="retry">تلاش مجدد</string>
-    <string name="shared_storage_denied_text">برنامه به حافظه اشتراکی دسترسی ندارد.</string>
 </resources>

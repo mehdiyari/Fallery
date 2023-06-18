@@ -89,6 +89,14 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
         initView()
     }
 
+    override fun onStart() {
+        super.onStart()
+        if (falleryViewModel.shouldInitializeAfterStart) {
+            falleryViewModel.shouldInitializeAfterStart = false
+            initialize()
+        }
+    }
+
     private fun initialize() {
         if (!falleryOptions.grantExternalStoragePermission) {
             falleryViewModel.storagePermissionGranted()
@@ -364,17 +372,23 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (grantResults.isNotEmpty() && requestCode == WRITE_EXTERNAL_REQUEST_CODE && grantResults.first() == PackageManager.PERMISSION_GRANTED)
+        if (grantResults.isNotEmpty() && requestCode == WRITE_EXTERNAL_REQUEST_CODE && grantResults.firstOrNull { it != PackageManager.PERMISSION_GRANTED } == null) {
             initialize()
-        else if (grantResults.isNotEmpty() && requestCode == WRITE_EXTERNAL_REQUEST_CODE && grantResults.first() == PackageManager.PERMISSION_DENIED) {
+        } else if (grantResults.isNotEmpty() && requestCode == WRITE_EXTERNAL_REQUEST_CODE) {
+            val permission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                Manifest.permission.READ_MEDIA_IMAGES
+            else
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+
             if (!ActivityCompat.shouldShowRequestPermissionRationale(
                     this@FalleryActivity,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    permission,
                 )
-            )
+            ) {
                 showPermanentlyPermissionDeniedDialog()
-            else
+            } else {
                 writeExternalStoragePermissionDenied()
+            }
         }
     }
 
@@ -399,6 +413,7 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
             .setPositiveButton(R.string.continue_button) { dialog, _ ->
                 dialog.dismiss()
                 try {
+                    falleryViewModel.shouldInitializeAfterStart = true
                     startActivity(getSettingIntent(this@FalleryActivity.applicationContext))
                 } catch (activityNotFoundException: ActivityNotFoundException) {
                     activityNotFoundException.printStackTrace()
@@ -410,6 +425,7 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
             }
             .show()
     }
+
 
     @Suppress("SameParameterValue")
     private fun hideCaptionLayout(withAnim: Boolean) {

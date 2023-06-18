@@ -28,7 +28,7 @@ internal class BucketContentProvider constructor(
             "${getSimpleQueryByMediaType(bucketType)} ${if (bucketId == ALL_MEDIA_MODEL_ID) "" else "AND bucket_id=?"}",
             getQueryArgsForGetContentBuckets(bucketType, bucketId),
             "${MediaStore.Files.FileColumns.DATE_ADDED} DESC"
-        )?.use { cursor ->
+        )?.also { cursor ->
             if (cursor.count == 0) {
                 emit(listOf())
             } else {
@@ -44,6 +44,7 @@ internal class BucketContentProvider constructor(
 
             emit(medias.toList())
             medias.clear()
+            cursor.close()
         }
     }
 

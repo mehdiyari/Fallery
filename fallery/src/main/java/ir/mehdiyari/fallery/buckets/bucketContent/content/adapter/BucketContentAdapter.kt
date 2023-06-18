@@ -2,12 +2,13 @@ package ir.mehdiyari.fallery.buckets.bucketContent.content.adapter
 
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import ir.mehdiyari.fallery.R
+import ir.mehdiyari.fallery.databinding.MediaPhotoItemBinding
+import ir.mehdiyari.fallery.databinding.MediaVideoItemBinding
 import ir.mehdiyari.fallery.imageLoader.FalleryImageLoader
 import ir.mehdiyari.fallery.imageLoader.PhotoDiminution
 import ir.mehdiyari.fallery.models.Media
@@ -15,17 +16,20 @@ import ir.mehdiyari.fallery.utils.BUCKET_CONTENT_DEFAULT_SPAN_COUNT
 import ir.mehdiyari.fallery.utils.convertSecondToTime
 import ir.mehdiyari.fallery.utils.dpToPx
 import ir.mehdiyari.fallery.utils.getHeightBasedOnScaledWidth
-import kotlinx.android.synthetic.main.media_photo_item.view.*
-import kotlinx.android.synthetic.main.media_video_item.view.*
 
-internal class BucketContentAdapter constructor(
+internal class BucketContentAdapter(
     private val imageLoader: FalleryImageLoader,
     private val selectedDrawable: Drawable,
     private val deselectedDrawable: Drawable,
     private val placeHolderColor: Int
 ) : ListAdapter<Media, RecyclerView.ViewHolder>(object : DiffUtil.ItemCallback<Media>() {
-    override fun areItemsTheSame(oldItem: Media, newItem: Media): Boolean = oldItem.getMediaId() == newItem.getMediaId()
-    override fun areContentsTheSame(oldItem: Media, newItem: Media): Boolean = oldItem == newItem
+    override fun areItemsTheSame(oldItem: Media, newItem: Media): Boolean {
+        return oldItem.getMediaId() == newItem.getMediaId()
+    }
+
+    override fun areContentsTheSame(oldItem: Media, newItem: Media): Boolean {
+        return oldItem == newItem
+    }
 }) {
     var getItemViewWidth: (() -> (Int))? = null
     var selectedMediaTracker: MutableList<String>? = null
@@ -42,8 +46,14 @@ internal class BucketContentAdapter constructor(
         LayoutInflater.from(parent.context)
             .inflate(viewType, parent, false).let {
                 when (viewType) {
-                    R.layout.media_photo_item -> PhotoViewHolder(it)
-                    R.layout.media_video_item -> VideoViewHolder(it)
+                    R.layout.media_photo_item -> PhotoViewHolder(
+                        MediaPhotoItemBinding.bind(it)
+                    )
+
+                    R.layout.media_video_item -> VideoViewHolder(
+                        MediaVideoItemBinding.bind(it)
+                    )
+
                     else -> throw IllegalArgumentException("bad viewType")
                 }
             }
@@ -73,16 +83,17 @@ internal class BucketContentAdapter constructor(
         ) onSuccess()
     }
 
-    inner class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class PhotoViewHolder(private val binding: MediaPhotoItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
         init {
-            itemView.selectedPhotoToggleContainer.setOnClickListener {
+            binding.selectedPhotoToggleContainer.setOnClickListener {
                 onClickSelectingToggle(adapterPosition) {
                     initSelectingStateOfView(adapterPosition)
                 }
             }
 
-            itemView.imageViewPhotoMedia.setOnClickListener {
+            binding.imageViewPhotoMedia.setOnClickListener {
                 onMediaClick?.invoke(getItemPath(adapterPosition))
             }
 
@@ -90,7 +101,7 @@ internal class BucketContentAdapter constructor(
         }
 
         private fun setViewHeight() {
-            itemView.constraintLayoutPhotoContainer.also {
+            binding.constraintLayoutPhotoContainer.also {
                 it.layoutParams = it.layoutParams.apply {
                     this.height = if (spanCount > BUCKET_CONTENT_DEFAULT_SPAN_COUNT) {
                         internalGetItemViewWidth()
@@ -115,8 +126,8 @@ internal class BucketContentAdapter constructor(
                         )
                     )
                     imageLoader.loadPhoto(
-                        context = itemView.context,
-                        imageView = itemView.imageViewPhotoMedia,
+                        context = binding.root.context,
+                        imageView = binding.imageViewPhotoMedia,
                         resizeDiminution = dimension,
                         placeHolderColor = placeHolderColor,
                         path = currentPhoto.path
@@ -127,23 +138,24 @@ internal class BucketContentAdapter constructor(
 
         private fun initSelectingStateOfView(adapterPosition: Int) {
             if (selectedMediaTracker?.contains(getItemPath(adapterPosition)) == true)
-                itemView.imageViewSelectDeselectPhoto.setImageDrawable(selectedDrawable)
+                binding.imageViewSelectDeselectPhoto.setImageDrawable(selectedDrawable)
             else
-                itemView.imageViewSelectDeselectPhoto.setImageDrawable(deselectedDrawable)
+                binding.imageViewSelectDeselectPhoto.setImageDrawable(deselectedDrawable)
         }
 
     }
 
-    inner class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class VideoViewHolder(private val binding: MediaVideoItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
 
         init {
-            itemView.selectedVideoToggleContainer.setOnClickListener {
+            binding.selectedVideoToggleContainer.setOnClickListener {
                 onClickSelectingToggle(adapterPosition) {
                     initSelectingStateOfView(adapterPosition)
                 }
             }
 
-            itemView.imageViewVideoMedia.setOnClickListener {
+            binding.imageViewVideoMedia.setOnClickListener {
                 onMediaClick?.invoke(getItemPath(adapterPosition))
             }
 
@@ -151,12 +163,12 @@ internal class BucketContentAdapter constructor(
         }
 
         private fun setViewHeight() {
-            itemView.constraintLayoutVideoContainer.also {
+            binding.constraintLayoutVideoContainer.also {
                 it.layoutParams = it.layoutParams.apply {
                     this.height = if (spanCount > BUCKET_CONTENT_DEFAULT_SPAN_COUNT) {
                         internalGetItemViewWidth()
                     } else {
-                        itemView.context.resources.getDimensionPixelSize(R.dimen.min_size_bucket_content_item)
+                        binding.root.context.resources.getDimensionPixelSize(R.dimen.min_size_bucket_content_item)
                     }
                 }
             }
@@ -176,14 +188,14 @@ internal class BucketContentAdapter constructor(
                             )
                         )
                     imageLoader.loadPhoto(
-                        context = itemView.context,
-                        imageView = itemView.imageViewVideoMedia,
+                        context = binding.root.context,
+                        imageView = binding.imageViewVideoMedia,
                         resizeDiminution = dimension,
                         placeHolderColor = placeHolderColor,
                         path = currentVideo.thumbnail.path
                     )
 
-                    itemView.textViewVideoTime.text =
+                    binding.textViewVideoTime.text =
                         convertSecondToTime(currentVideo.duration.toInt())
                     initSelectingStateOfView(adapterPosition)
                 }
@@ -192,9 +204,9 @@ internal class BucketContentAdapter constructor(
 
         private fun initSelectingStateOfView(adapterPosition: Int) {
             if (selectedMediaTracker?.contains(getItemPath(adapterPosition)) == true)
-                itemView.imageViewSelectDeselectVideo.setImageDrawable(selectedDrawable)
+                binding.imageViewSelectDeselectVideo.setImageDrawable(selectedDrawable)
             else
-                itemView.imageViewSelectDeselectVideo.setImageDrawable(deselectedDrawable)
+                binding.imageViewSelectDeselectVideo.setImageDrawable(deselectedDrawable)
         }
     }
 

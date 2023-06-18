@@ -32,20 +32,40 @@ import androidx.lifecycle.lifecycleScope
 import ir.mehdiyari.fallery.R
 import ir.mehdiyari.fallery.buckets.bucketContent.BaseBucketContentFragment
 import ir.mehdiyari.fallery.buckets.bucketList.BucketListFragment
+import ir.mehdiyari.fallery.databinding.ActivityFalleryBinding
+import ir.mehdiyari.fallery.databinding.CaptionLayoutBinding
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 import ir.mehdiyari.fallery.main.di.FalleryCoreComponentHolder
 import ir.mehdiyari.fallery.main.fallery.BucketRecyclerViewItemMode
-import ir.mehdiyari.fallery.utils.*
-import kotlinx.android.synthetic.main.activity_fallery.*
-import kotlinx.android.synthetic.main.caption_layout.*
+import ir.mehdiyari.fallery.utils.FALLERY_CAPTION_KEY
+import ir.mehdiyari.fallery.utils.FALLERY_LOG_TAG
+import ir.mehdiyari.fallery.utils.FALLERY_MEDIAS_LIST_KEY
+import ir.mehdiyari.fallery.utils.TAKE_PHOTO_REQUEST_CODE
+import ir.mehdiyari.fallery.utils.WRITE_EXTERNAL_REQUEST_CODE
+import ir.mehdiyari.fallery.utils.createMediaCountSpannable
+import ir.mehdiyari.fallery.utils.generatePhotoFilename
+import ir.mehdiyari.fallery.utils.getIntentForTakingPhoto
+import ir.mehdiyari.fallery.utils.getSettingIntent
+import ir.mehdiyari.fallery.utils.hideKeyboard
+import ir.mehdiyari.fallery.utils.permissionChecker
+import ir.mehdiyari.fallery.utils.requestSharedStoragePermission
+import ir.mehdiyari.fallery.utils.setOnAnimationEndListener
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.launch
 import java.io.File
 
 internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityController {
 
+    private var _binding: ActivityFalleryBinding? = null
+    private val binding get() = _binding!!
+
+    private var _captionBinding: CaptionLayoutBinding? = null
+    private val captionBinding get() = _captionBinding!!
+
     private lateinit var falleryViewModel: FalleryViewModel
-    private val falleryOptions by lazy { FalleryActivityComponentHolder.createOrGetComponent(this).provideFalleryOptions() }
+    private val falleryOptions by lazy {
+        FalleryActivityComponentHolder.createOrGetComponent(this).provideFalleryOptions()
+    }
     private var frameLayoutSendMediaAnimationPostRunnable: Runnable? = null
     private var checkSharedStoragePermissionInOnStart = false
 
@@ -59,7 +79,13 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
         requestedOrientation = falleryOptions.orientationMode
         setTheme(falleryOptions.themeResId)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_fallery)
+        ActivityFalleryBinding.inflate(layoutInflater).also {
+            setContentView(it.root)
+            _binding = it
+            binding.viewStubCaptionLayout.setOnInflateListener { _, view ->
+                _captionBinding = CaptionLayoutBinding.bind(view)
+            }
+        }
         initViewModel()
         initialize()
         initView()
@@ -79,7 +105,10 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
             permissionChecker(Manifest.permission.WRITE_EXTERNAL_STORAGE, granted = {
                 checkSharedStoragePermission()
             }, denied = {
-                requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), WRITE_EXTERNAL_REQUEST_CODE)
+                requestPermissions(
+                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    WRITE_EXTERNAL_REQUEST_CODE
+                )
             })
         }
     }
@@ -101,12 +130,19 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
     private fun initViewModel() {
         falleryViewModel = ViewModelProvider(
             this,
-            FalleryActivityComponentHolder.createOrGetComponent(this).provideFalleryViewModelFactory()
+            FalleryActivityComponentHolder.createOrGetComponent(this)
+                .provideFalleryViewModelFactory()
         )[FalleryViewModel::class.java]
 
         falleryViewModel.apply {
-            showErrorSingleLiveEvent.observe(this@FalleryActivity, Observer(this@FalleryActivity::showError))
-            resultSingleLiveEvent.observe(this@FalleryActivity, Observer(this@FalleryActivity::handleFalleryResults))
+            showErrorSingleLiveEvent.observe(
+                this@FalleryActivity,
+                Observer(this@FalleryActivity::showError)
+            )
+            resultSingleLiveEvent.observe(
+                this@FalleryActivity,
+                Observer(this@FalleryActivity::handleFalleryResults)
+            )
 
             lifecycleScope.launch {
                 launch {
@@ -141,7 +177,7 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
     }
 
     private fun handleFalleryResults(it: Array<String>?) {
-        if (it != null && it.isNotEmpty()) {
+        if (!it.isNullOrEmpty()) {
             finishWithOKResult(it)
         } else {
             finishWithCancelResult()
@@ -150,7 +186,11 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
 
     private fun showError(it: Int) {
         if (it == R.string.fallery_error_max_selectable) {
-            Toast.makeText(this@FalleryActivity, getString(it, falleryOptions.maxSelectableMedia), Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this@FalleryActivity,
+                getString(it, falleryOptions.maxSelectableMedia),
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
 
@@ -158,16 +198,18 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
         when (falleryView) {
             is FalleryView.BucketList -> {
                 if (!falleryViewModel.userSelectedMedias)
-                    toolbarFalleryActivity.title = getString(falleryOptions.toolbarTitle)
+                    binding.toolbarFalleryActivity.title = getString(falleryOptions.toolbarTitle)
 
                 supportFragmentManager.beginTransaction()
                     .add(R.id.layoutFragmentContainer, BucketListFragment())
                     .commit()
-                toolbarFalleryActivity.menu?.findItem(R.id.bucketListMenuItemShowRecyclerViewItemModelChanger)?.isVisible = true
+                binding.toolbarFalleryActivity.menu?.findItem(R.id.bucketListMenuItemShowRecyclerViewItemModelChanger)?.isVisible =
+                    true
             }
+
             is FalleryView.BucketContent -> {
                 if (!falleryViewModel.userSelectedMedias)
-                    toolbarFalleryActivity.title = falleryView.bucketName
+                    binding.toolbarFalleryActivity.title = falleryView.bucketName
 
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.layoutFragmentContainer, BaseBucketContentFragment().apply {
@@ -177,27 +219,30 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
                     })
                     .addToBackStack(null)
                     .commit()
-                toolbarFalleryActivity.menu?.findItem(R.id.bucketListMenuItemShowRecyclerViewItemModelChanger)?.isVisible = false
+                binding.toolbarFalleryActivity.menu?.findItem(R.id.bucketListMenuItemShowRecyclerViewItemModelChanger)?.isVisible =
+                    false
             }
+
             else -> Unit
         }
     }
 
     private fun setupMediaCountView(value: MediaCountModel) {
         if (value.selectedCount <= 0) {
-            toolbarFalleryActivity.title =
+            binding.toolbarFalleryActivity.title =
                 if (falleryViewModel.currentFragmentLiveData.value is FalleryView.BucketContent) falleryViewModel.currentFragmentLiveData.value!!.let { it as FalleryView.BucketContent }.bucketName else getString(
                     falleryOptions.toolbarTitle
                 )
-            toolbarFalleryActivity.setNavigationIcon(R.drawable.fallery_ic_back_arrow)
-            toolbarFalleryActivity.setNavigationOnClickListener { onBackPressed() }
+            binding.toolbarFalleryActivity.setNavigationIcon(R.drawable.fallery_ic_back_arrow)
+            binding.toolbarFalleryActivity.setNavigationOnClickListener { onBackPressed() }
         } else {
-            toolbarFalleryActivity.setNavigationIcon(R.drawable.fallery_ic_cancel)
-            toolbarFalleryActivity.setNavigationOnClickListener { falleryViewModel.deselectAllSelections() }
-            toolbarFalleryActivity.title = createMediaCountSpannable(
+            binding.toolbarFalleryActivity.setNavigationIcon(R.drawable.fallery_ic_cancel)
+            binding.toolbarFalleryActivity.setNavigationOnClickListener { falleryViewModel.deselectAllSelections() }
+            binding.toolbarFalleryActivity.title = createMediaCountSpannable(
                 context = this,
                 value = value,
-                colorAccent = FalleryActivityComponentHolder.getOrNull()?.provideFalleryStyleAttrs()?.falleryColorAccent ?: Color.BLUE
+                colorAccent = FalleryActivityComponentHolder.getOrNull()
+                    ?.provideFalleryStyleAttrs()?.falleryColorAccent ?: Color.BLUE
             )
         }
     }
@@ -205,32 +250,36 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
     private fun initView() {
         addCameraMenuItem()
         addRecyclerViewItemViewModeMenuItem()
-        toolbarFalleryActivity.setOnMenuItemClickListener {
+        binding.toolbarFalleryActivity.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.bucketListMenuItemShowRecyclerViewItemModelChanger -> {
 
                     if (falleryOptions.bucketRecyclerViewItemMode == BucketRecyclerViewItemMode.LinearStyle) {
-                        falleryOptions.bucketRecyclerViewItemMode = BucketRecyclerViewItemMode.GridStyle
+                        falleryOptions.bucketRecyclerViewItemMode =
+                            BucketRecyclerViewItemMode.GridStyle
                     } else
-                        falleryOptions.bucketRecyclerViewItemMode = BucketRecyclerViewItemMode.LinearStyle
+                        falleryOptions.bucketRecyclerViewItemMode =
+                            BucketRecyclerViewItemMode.LinearStyle
 
-                    it.icon = getRecyclerViewItemViewModeIcon(falleryOptions.bucketRecyclerViewItemMode)
+                    it.icon =
+                        getRecyclerViewItemViewModeIcon(falleryOptions.bucketRecyclerViewItemMode)
                     falleryViewModel.changeRecyclerViewItemMode(falleryOptions.bucketRecyclerViewItemMode)
 
                 }
+
                 R.id.bucketListMenuItemCamera -> takePhoto()
             }
 
             true
         }
 
-        floatingButtonSendMedia.setOnClickListener {
+        binding.floatingButtonSendMedia.setOnClickListener {
             falleryViewModel.prepareSelectedResults()
         }
     }
 
     private fun addCameraMenuItem() {
-        toolbarFalleryActivity.apply {
+        binding.toolbarFalleryActivity.apply {
             falleryOptions.cameraEnabledOptions.also {
                 if (it.enabled) {
                     if (it.fileProviderAuthority != null) {
@@ -256,9 +305,15 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
             (if (it.directory != null) {
                 File(it.directory, filename)
             } else {
-                File(FalleryActivityComponentHolder.getOrNull()!!.provideCacheDir().cacheDir, filename)
+                File(
+                    FalleryActivityComponentHolder.getOrNull()!!.provideCacheDir().cacheDir,
+                    filename
+                )
             }).also { temporaryFile ->
-                getIntentForTakingPhoto(it.fileProviderAuthority!!, temporaryFile)?.also { takePhotoIntent ->
+                getIntentForTakingPhoto(
+                    it.fileProviderAuthority!!,
+                    temporaryFile
+                )?.also { takePhotoIntent ->
                     startActivityForResult(takePhotoIntent, TAKE_PHOTO_REQUEST_CODE)
                     falleryViewModel.setCameraPhotoFileAddress(temporaryFile.path)
                 }
@@ -276,7 +331,8 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
     // using BlendModeColorFilter for android Q and above. and setColorFilter for below of android Q
     @Suppress("DEPRECATION")
     private fun setToolbarColorToMenuItemDrawable(drawable: Drawable) {
-        val tintColor = FalleryActivityComponentHolder.getOrNull()?.provideFalleryStyleAttrs()?.falleryToolbarIconTintColor ?: Color.BLACK
+        val tintColor = FalleryActivityComponentHolder.getOrNull()
+            ?.provideFalleryStyleAttrs()?.falleryToolbarIconTintColor ?: Color.BLACK
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             drawable.colorFilter = BlendModeColorFilter(
                 tintColor,
@@ -287,11 +343,16 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
     }
 
     private fun addRecyclerViewItemViewModeMenuItem() {
-        toolbarFalleryActivity.apply {
+        binding.toolbarFalleryActivity.apply {
             falleryOptions.bucketItemModeToggleEnabled.also {
                 val mode = falleryOptions.bucketRecyclerViewItemMode
                 if (it) {
-                    menu.add(0, R.id.bucketListMenuItemShowRecyclerViewItemModelChanger, 0, R.string.list_mode).apply {
+                    menu.add(
+                        0,
+                        R.id.bucketListMenuItemShowRecyclerViewItemModelChanger,
+                        0,
+                        R.string.list_mode
+                    ).apply {
                         setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM)
                         icon = getRecyclerViewItemViewModeIcon(mode)
                     }
@@ -304,7 +365,7 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
 
     private fun showOrHideMenusBasedOnFragment() {
         try {
-            toolbarFalleryActivity.menu?.findItem(R.id.bucketListMenuItemShowRecyclerViewItemModelChanger)?.isVisible =
+            binding.toolbarFalleryActivity.menu?.findItem(R.id.bucketListMenuItemShowRecyclerViewItemModelChanger)?.isVisible =
                 supportFragmentManager.findFragmentById(R.id.layoutFragmentContainer) is BucketListFragment
         } catch (ignored: Throwable) {
             ignored.printStackTrace()
@@ -318,7 +379,11 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
         if (grantResults.isNotEmpty() && requestCode == WRITE_EXTERNAL_REQUEST_CODE && grantResults.first() == PackageManager.PERMISSION_GRANTED)
             initialize()
         else if (grantResults.isNotEmpty() && requestCode == WRITE_EXTERNAL_REQUEST_CODE && grantResults.first() == PackageManager.PERMISSION_DENIED) {
-            if (!ActivityCompat.shouldShowRequestPermissionRationale(this@FalleryActivity, Manifest.permission.WRITE_EXTERNAL_STORAGE))
+            if (!ActivityCompat.shouldShowRequestPermissionRationale(
+                    this@FalleryActivity,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+            )
                 showPermanentlyPermissionDeniedDialog()
             else
                 writeExternalStoragePermissionDenied()
@@ -361,20 +426,21 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
     @Suppress("SameParameterValue")
     private fun hideCaptionLayout(withAnim: Boolean) {
         prepareCaptionViewStub()
-        if (relativeLayoutCaptionLayout?.visibility == View.GONE) return
-        frameLayoutCaptionHolder.findViewById<EditText>(R.id.falleryEditTextCaption)?.hideKeyboard()
+        if (captionBinding.relativeLayoutCaptionLayout.visibility == View.GONE) return
+        binding.viewStubCaptionLayout.findViewById<EditText>(R.id.falleryEditTextCaption)
+            ?.hideKeyboard()
         if (!withAnim)
-            relativeLayoutCaptionLayout?.visibility = View.GONE
+            captionBinding.relativeLayoutCaptionLayout.visibility = View.GONE
         else {
-            relativeLayoutCaptionLayout?.startAnimation(
+            captionBinding.relativeLayoutCaptionLayout.startAnimation(
                 TranslateAnimation(
-                    0f, 0f, 0f, (relativeLayoutCaptionLayout?.height)?.toFloat() ?: 0f
+                    0f, 0f, 0f, (captionBinding.relativeLayoutCaptionLayout.height).toFloat()
                 ).apply {
                     fillAfter = true
                     duration = 250
                     setOnAnimationEndListener {
-                        relativeLayoutCaptionLayout.visibility = View.GONE
-                        relativeLayoutCaptionLayout.animation = null
+                        captionBinding.relativeLayoutCaptionLayout.visibility = View.GONE
+                        captionBinding.relativeLayoutCaptionLayout.animation = null
                     }
                 }
             )
@@ -384,19 +450,19 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
     @Suppress("SameParameterValue")
     private fun showCaptionLayout(withAnim: Boolean) {
         prepareCaptionViewStub()
-        if (relativeLayoutCaptionLayout?.visibility == View.VISIBLE) return
+        if (captionBinding.relativeLayoutCaptionLayout.visibility == View.VISIBLE) return
         if (!withAnim)
-            relativeLayoutCaptionLayout?.visibility = View.VISIBLE
+            captionBinding.relativeLayoutCaptionLayout.visibility = View.VISIBLE
         else {
-            relativeLayoutCaptionLayout.visibility = View.VISIBLE
-            relativeLayoutCaptionLayout?.startAnimation(
+            captionBinding.relativeLayoutCaptionLayout.visibility = View.VISIBLE
+            captionBinding.relativeLayoutCaptionLayout.startAnimation(
                 TranslateAnimation(
-                    0f, 0f, ((relativeLayoutCaptionLayout?.height)?.toFloat() ?: 0f), 0f
+                    0f, 0f, (captionBinding.relativeLayoutCaptionLayout.height).toFloat(), 0f
                 ).apply {
                     fillAfter = true
                     duration = 250
                     setOnAnimationEndListener {
-                        relativeLayoutCaptionLayout.animation = null
+                        captionBinding.relativeLayoutCaptionLayout.animation = null
                     }
                 }
             )
@@ -404,21 +470,32 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
     }
 
     private fun prepareCaptionViewStub() {
-        if (viewStubCaptionLayout != null && viewStubCaptionLayout.parent != null) {
+        if (binding.viewStubCaptionLayout.parent != null) {
             (try {
-                viewStubCaptionLayout.inflate()
-                imageViewSendMessage.setOnClickListener { falleryViewModel.prepareSelectedResults() }
+                binding.viewStubCaptionLayout.inflate()
+                captionBinding.imageViewSendMessage.setOnClickListener { falleryViewModel.prepareSelectedResults() }
                 falleryOptions.captionEnabledOptions.editTextLayoutResId.let {
-                    LayoutInflater.from(this).inflate(it, frameLayoutCaptionHolder, false).findViewById<AppCompatEditText>(R.id.falleryEditTextCaption).apply {
-                        layoutParams = FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT)
+                    LayoutInflater.from(this).inflate(it, captionBinding.frameLayoutCaptionHolder, false)
+                        .findViewById<AppCompatEditText>(R.id.falleryEditTextCaption).apply {
+                        layoutParams = FrameLayout.LayoutParams(
+                            FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.MATCH_PARENT
+                        )
                     }
                 }
             } catch (ignored: Throwable) {
-                Log.e(FALLERY_LOG_TAG, "error while inflating captionLayoutResId. switch to default implementation")
-                LayoutInflater.from(this).inflate(R.layout.caption_edit_text_layout, frameLayoutCaptionHolder, false)
+                Log.e(
+                    FALLERY_LOG_TAG,
+                    "error while inflating captionLayoutResId. switch to default implementation"
+                )
+                LayoutInflater.from(this).inflate(
+                    R.layout.caption_edit_text_layout,
+                    captionBinding.frameLayoutCaptionHolder,
+                    false
+                )
                     .findViewById(R.id.falleryEditTextCaption)
             }).also {
-                frameLayoutCaptionHolder.addView(it)
+                captionBinding.frameLayoutCaptionHolder.addView(it)
             }
         }
 
@@ -433,81 +510,81 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
     }
 
     private fun showSendButton(withAnim: Boolean = true) {
-        if (frameLayoutSendMedia == null || frameLayoutSendMedia?.visibility == View.VISIBLE) return
+        if (binding.frameLayoutSendMedia.visibility == View.VISIBLE) return
 
         if (!withAnim) {
-            frameLayoutSendMedia?.visibility = View.GONE
+            binding.frameLayoutSendMedia.visibility = View.GONE
             return
         }
 
-        floatingButtonSendMedia.visibility = View.INVISIBLE
-        frameLayoutSendMedia.visibility = View.INVISIBLE
+        binding.floatingButtonSendMedia.visibility = View.INVISIBLE
+        binding.frameLayoutSendMedia.visibility = View.INVISIBLE
         frameLayoutSendMediaAnimationPostRunnable = Runnable {
-            floatingButtonSendMedia.visibility = View.VISIBLE
-            floatingButtonSendMedia.startAnimation(
+            binding.floatingButtonSendMedia.visibility = View.VISIBLE
+            binding.floatingButtonSendMedia.startAnimation(
                 TranslateAnimation(
-                    ((floatingButtonSendMedia?.height)?.toFloat() ?: 0f), 0f, 0f, 0f
+                    (binding.floatingButtonSendMedia.height).toFloat(), 0f, 0f, 0f
                 ).apply {
                     fillAfter = true
                     duration = 200
                     setOnAnimationEndListener {
-                        floatingButtonSendMedia.animation = null
+                        binding.floatingButtonSendMedia.animation = null
                     }
                 }
             )
 
-            frameLayoutSendMedia.visibility = View.VISIBLE
-            frameLayoutSendMedia?.startAnimation(
+            binding.frameLayoutSendMedia.visibility = View.VISIBLE
+            binding.frameLayoutSendMedia.startAnimation(
                 TranslateAnimation(
-                    0f, 0f, ((frameLayoutSendMedia?.height)?.toFloat() ?: 0f), 0f
+                    0f, 0f, (binding.frameLayoutSendMedia.height).toFloat(), 0f
                 ).apply {
                     fillAfter = true
                     duration = 200
                     setOnAnimationEndListener {
-                        frameLayoutSendMedia.animation = null
+                        binding.frameLayoutSendMedia.animation = null
                     }
                 }
             )
         }
 
-        frameLayoutSendMediaAnimationPostRunnable?.also(frameLayoutSendMedia::post)
+        frameLayoutSendMediaAnimationPostRunnable?.also(binding.frameLayoutSendMedia::post)
     }
 
     private fun hideSendButton(withAnim: Boolean = true) {
         if (frameLayoutSendMediaAnimationPostRunnable != null) {
-            frameLayoutSendMedia?.removeCallbacks(frameLayoutSendMediaAnimationPostRunnable)
+            binding.frameLayoutSendMedia.removeCallbacks(frameLayoutSendMediaAnimationPostRunnable)
             frameLayoutSendMediaAnimationPostRunnable = null
         }
 
-        if (frameLayoutSendMedia?.visibility == View.GONE) return
+        if (binding.frameLayoutSendMedia.visibility == View.GONE) return
 
         if (!withAnim) {
-            frameLayoutSendMedia?.visibility = View.VISIBLE
+            binding.frameLayoutSendMedia.visibility = View.VISIBLE
             return
         }
 
-        floatingButtonSendMedia.startAnimation(
+        binding.floatingButtonSendMedia.startAnimation(
             TranslateAnimation(
-                0f, ((floatingButtonSendMedia?.height)?.toFloat() ?: 0f), 0f, 0f
+                0f, (binding.floatingButtonSendMedia.height).toFloat(), 0f, 0f
             ).apply {
                 fillAfter = true
                 duration = 200
                 setOnAnimationEndListener {
-                    floatingButtonSendMedia.visibility = View.GONE
-                    floatingButtonSendMedia.animation = null
+                    binding.floatingButtonSendMedia.visibility = View.GONE
+                    binding.floatingButtonSendMedia.animation = null
                 }
             }
         )
 
-        frameLayoutSendMedia?.startAnimation(
+        binding.frameLayoutSendMedia.startAnimation(
             TranslateAnimation(
-                0f, 0f, 0f, ((frameLayoutSendMedia?.height)?.toFloat() ?: 0f)
+                0f, 0f, 0f, (binding.frameLayoutSendMedia.height).toFloat()
             ).apply {
                 fillAfter = true
                 duration = 200
                 setOnAnimationEndListener {
-                    frameLayoutSendMedia.visibility = View.GONE
-                    frameLayoutSendMedia.animation = null
+                    binding.frameLayoutSendMedia.visibility = View.GONE
+                    binding.frameLayoutSendMedia.animation = null
                 }
             }
         )
@@ -515,51 +592,65 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
 
 
     override fun showToolbar(withAnim: Boolean) {
-        if (toolbarFalleryActivity.visibility == View.VISIBLE) return
+        if (binding.toolbarFalleryActivity.visibility == View.VISIBLE) return
         fun setHeightOfFragmentContainer() {
-            layoutFragmentContainer.layoutParams = (layoutFragmentContainer.layoutParams as ConstraintLayout.LayoutParams).apply {
-                height = ConstraintLayout.LayoutParams.MATCH_CONSTRAINT
-            }
+            binding.layoutFragmentContainer.layoutParams =
+                (binding.layoutFragmentContainer.layoutParams as ConstraintLayout.LayoutParams).apply {
+                    height = ConstraintLayout.LayoutParams.MATCH_CONSTRAINT
+                }
         }
         if (!withAnim) {
             setHeightOfFragmentContainer()
-            toolbarFalleryActivity?.visibility = View.VISIBLE
+            binding.toolbarFalleryActivity.visibility = View.VISIBLE
             return
         }
 
-        toolbarFalleryActivity.startAnimation(TranslateAnimation(0f, 0f, -toolbarFalleryActivity.height.toFloat(), 0f).apply {
-            duration = 200
-            fillAfter = true
-            setOnAnimationEndListener {
-                setHeightOfFragmentContainer()
-                toolbarFalleryActivity.visibility = View.VISIBLE
-                toolbarFalleryActivity.animation = null
-            }
-        })
+        binding.toolbarFalleryActivity.startAnimation(
+            TranslateAnimation(
+                0f,
+                0f,
+                -binding.toolbarFalleryActivity.height.toFloat(),
+                0f
+            ).apply {
+                duration = 200
+                fillAfter = true
+                setOnAnimationEndListener {
+                    setHeightOfFragmentContainer()
+                    binding.toolbarFalleryActivity.visibility = View.VISIBLE
+                    binding.toolbarFalleryActivity.animation = null
+                }
+            })
     }
 
     override fun hideToolbar(withAnim: Boolean) {
-        if (toolbarFalleryActivity.visibility == View.GONE) return
+        if (binding.toolbarFalleryActivity.visibility == View.GONE) return
         fun setHeightOfFragmentContainer() {
-            layoutFragmentContainer.layoutParams = (layoutFragmentContainer.layoutParams as ConstraintLayout.LayoutParams).apply {
-                height = ConstraintLayout.LayoutParams.MATCH_PARENT
-            }
+            binding.layoutFragmentContainer.layoutParams =
+                (binding.layoutFragmentContainer.layoutParams as ConstraintLayout.LayoutParams).apply {
+                    height = ConstraintLayout.LayoutParams.MATCH_PARENT
+                }
         }
         if (!withAnim) {
             setHeightOfFragmentContainer()
-            toolbarFalleryActivity?.visibility = View.GONE
+            binding.toolbarFalleryActivity.visibility = View.GONE
             return
         }
 
-        toolbarFalleryActivity.startAnimation(TranslateAnimation(0f, 0f, 0f, -toolbarFalleryActivity.height.toFloat()).apply {
-            duration = 200
-            fillAfter = true
-            setOnAnimationEndListener {
-                setHeightOfFragmentContainer()
-                toolbarFalleryActivity.visibility = View.GONE
-                toolbarFalleryActivity.animation = null
-            }
-        })
+        binding.toolbarFalleryActivity.startAnimation(
+            TranslateAnimation(
+                0f,
+                0f,
+                0f,
+                -binding.toolbarFalleryActivity.height.toFloat()
+            ).apply {
+                duration = 200
+                fillAfter = true
+                setOnAnimationEndListener {
+                    setHeightOfFragmentContainer()
+                    binding.toolbarFalleryActivity.visibility = View.GONE
+                    binding.toolbarFalleryActivity.animation = null
+                }
+            })
     }
 
     override fun onBackPressed() {
@@ -575,7 +666,7 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
         else if (supportFragmentManager.findFragmentById(R.id.layoutFragmentContainer) is BaseBucketContentFragment) {
             super.onBackPressed()
             if (!falleryViewModel.userSelectedMedias) {
-                toolbarFalleryActivity.title = getString(falleryOptions.toolbarTitle)
+                binding.toolbarFalleryActivity.title = getString(falleryOptions.toolbarTitle)
             }
             falleryViewModel.clearLatestValueOfCurrentFragmentLiveData()
         } else {
@@ -607,7 +698,7 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
 
     override fun onStop() {
         frameLayoutSendMediaAnimationPostRunnable?.also {
-            frameLayoutSendMedia?.removeCallbacks(it)
+            binding.frameLayoutSendMedia.removeCallbacks(it)
         }
         super.onStop()
     }
@@ -616,7 +707,11 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
         setResult(Activity.RESULT_OK, Intent().apply {
             putExtra(FALLERY_MEDIAS_LIST_KEY, it)
             if (falleryOptions.captionEnabledOptions.enabled) {
-                putExtra(FALLERY_CAPTION_KEY, frameLayoutCaptionHolder.findViewById<EditText>(R.id.falleryEditTextCaption)?.text?.toString()?.trim())
+                putExtra(
+                    FALLERY_CAPTION_KEY,
+                    captionBinding.frameLayoutCaptionHolder.findViewById<EditText>(R.id.falleryEditTextCaption)?.text?.toString()
+                        ?.trim()
+                )
             }
         })
         finish()

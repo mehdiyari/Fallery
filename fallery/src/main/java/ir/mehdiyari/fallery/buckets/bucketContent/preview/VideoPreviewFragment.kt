@@ -7,24 +7,41 @@ import android.net.Uri
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import ir.mehdiyari.fallery.R
+import ir.mehdiyari.fallery.databinding.FragmentVideoPreviewBinding
 import ir.mehdiyari.fallery.imageLoader.PhotoDiminution
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 import ir.mehdiyari.fallery.models.Media
-import ir.mehdiyari.fallery.utils.*
-import kotlinx.android.synthetic.main.fragment_video_preview.*
+import ir.mehdiyari.fallery.utils.FALLERY_LOG_TAG
+import ir.mehdiyari.fallery.utils.autoClose
+import ir.mehdiyari.fallery.utils.createThumbForVideosOrEmpty
+import ir.mehdiyari.fallery.utils.getHeightBasedOnScaledWidth
+import ir.mehdiyari.fallery.utils.getVideoSize
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-internal class VideoPreviewFragment : AbstractMediaPreviewFragment(R.layout.fragment_video_preview) {
+internal class VideoPreviewFragment : AbstractMediaPreviewFragment() {
+
+    private var _binding: FragmentVideoPreviewBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = FragmentVideoPreviewBinding.inflate(inflater).also {
+        _binding = it
+    }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (arguments?.getParcelable<Media.Video>("video"))?.also { video ->
-            frameLayoutVideoPreviewRootLayout.setOnClickListener(onMediaPreviewClickListener)
+            binding.frameLayoutVideoPreviewRootLayout.setOnClickListener(onMediaPreviewClickListener)
             loadVideoThumbnail(video)
         }
     }
@@ -66,7 +83,7 @@ internal class VideoPreviewFragment : AbstractMediaPreviewFragment(R.layout.frag
     }
 
     private fun setupVideoToggleOnClickListener(video: Media.Video) {
-        appCompatImageViewPlayVideo.setOnClickListener {
+        binding.appCompatImageViewPlayVideo.setOnClickListener {
             FalleryActivityComponentHolder.getOrNull()?.provideFalleryOptions()?.onVideoPlayClick.also {
                 if (it == null) {
                     Intent(Intent.ACTION_VIEW, Uri.parse(video.path)).apply {
@@ -90,7 +107,7 @@ internal class VideoPreviewFragment : AbstractMediaPreviewFragment(R.layout.frag
         FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideImageLoader()
             .loadPhoto(
                 requireContext(),
-                appCompatImageViewVideoThumbnail,
+                binding.appCompatImageViewVideoThumbnail,
                 PhotoDiminution(displayMetrics.widthPixels, displayMetrics.widthPixels / 2),
                 R.color.fallery_black,
                 thumbnailPath
@@ -105,7 +122,7 @@ internal class VideoPreviewFragment : AbstractMediaPreviewFragment(R.layout.frag
         FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideImageLoader()
             .loadPhoto(
                 context = requireContext(),
-                imageView = appCompatImageViewVideoThumbnail,
+                imageView = binding.appCompatImageViewVideoThumbnail,
                 resizeDiminution = PhotoDiminution(
                     width = displayMetrics.widthPixels,
                     height = if (videoOriginalSize.heightIsNotSet()) displayMetrics.heightPixels / 2 else getHeightBasedOnScaledWidth(
@@ -121,9 +138,10 @@ internal class VideoPreviewFragment : AbstractMediaPreviewFragment(R.layout.frag
 
     override fun onDestroyView() {
         try {
-            frameLayoutVideoPreviewRootLayout.setOnClickListener(null)
-            appCompatImageViewPlayVideo.setOnClickListener(null)
+            binding.frameLayoutVideoPreviewRootLayout.setOnClickListener(null)
+            binding.appCompatImageViewPlayVideo.setOnClickListener(null)
             onMediaPreviewClickListener = null
+            _binding = null
         } catch (ignored: Throwable) {
             ignored.printStackTrace()
         }

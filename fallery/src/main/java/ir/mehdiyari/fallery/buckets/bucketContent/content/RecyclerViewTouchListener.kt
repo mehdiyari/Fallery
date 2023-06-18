@@ -28,13 +28,13 @@ internal class RecyclerViewTouchListener(
     private val recyclerViewTouchEventAtomicFlag = AtomicBoolean(true)
 
     @SuppressLint("ClickableViewAccessibility")
-    override fun onTouch(view: View?, event: MotionEvent?): Boolean {
+    override fun onTouch(view: View?, event: MotionEvent): Boolean {
         scaleGestureDetector.onTouchEvent(event)
         if (recyclerViewTouchEventAtomicFlag.get()) {
             recyclerView.onTouchEvent(event)
         }
 
-        when (event?.action) {
+        when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 currentState = TouchMode.DRAG
             }
@@ -67,9 +67,9 @@ internal class RecyclerViewTouchListener(
             return true
         }
 
-        override fun onScaleEnd(detector: ScaleGestureDetector?) {
+        override fun onScaleEnd(detector: ScaleGestureDetector) {
             recyclerViewTouchEventAtomicFlag.set(true)
-            val end = PointF(detector!!.currentSpanX, detector.currentSpanY)
+            val end = PointF(detector.currentSpanX, detector.currentSpanY)
             if (end.x >= startPoint.x && end.y >= startPoint.y) {
                 onScaleCallback(true)
             } else if (startPoint.x > end.x && startPoint.y > end.y) {

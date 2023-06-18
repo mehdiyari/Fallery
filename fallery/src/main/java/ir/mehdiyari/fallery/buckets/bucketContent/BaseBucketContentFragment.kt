@@ -9,12 +9,21 @@ import androidx.lifecycle.ViewModelProvider
 import ir.mehdiyari.fallery.R
 import ir.mehdiyari.fallery.buckets.bucketContent.content.BucketContentFragment
 import ir.mehdiyari.fallery.buckets.bucketContent.preview.PreviewFragment
+import ir.mehdiyari.fallery.databinding.FragmentBaseBucketContentBinding
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 
 internal class BaseBucketContentFragment : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.fragment_base_bucket_content, container, false)
+    private var _binding: FragmentBaseBucketContentBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = FragmentBaseBucketContentBinding.inflate(inflater).also {
+        _binding = it
+    }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -22,11 +31,13 @@ internal class BaseBucketContentFragment : Fragment() {
         if (savedInstanceState == null) {
             arguments?.getLong("bucket_id")?.also { bucketId ->
                 childFragmentManager.beginTransaction()
-                    .replace(R.id.layoutBucketContentFragmentContainer, BucketContentFragment().apply {
-                        arguments = Bundle().apply {
-                            putLong("bucket_id", bucketId)
-                        }
-                    })
+                    .replace(
+                        R.id.layoutBucketContentFragmentContainer,
+                        BucketContentFragment().apply {
+                            arguments = Bundle().apply {
+                                putLong("bucket_id", bucketId)
+                            }
+                        })
                     .addToBackStack(null)
                     .commit()
             } ?: requireActivity().onBackPressed()
@@ -36,7 +47,8 @@ internal class BaseBucketContentFragment : Fragment() {
     private fun initViewModel() {
         ViewModelProvider(
             this,
-            FalleryActivityComponentHolder.createOrGetComponent(requireActivity()).provideBucketContentViewModelFactory()
+            FalleryActivityComponentHolder.createOrGetComponent(requireActivity())
+                .provideBucketContentViewModelFactory()
         )[BucketContentViewModel::class.java].apply {
             showPreviewFragmentLiveData.observe(viewLifecycleOwner) {
                 if (it != null) {
@@ -55,6 +67,11 @@ internal class BaseBucketContentFragment : Fragment() {
             })
             .addToBackStack(null)
             .commit()
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 
 }

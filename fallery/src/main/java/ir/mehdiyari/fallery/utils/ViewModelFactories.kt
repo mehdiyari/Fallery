@@ -18,7 +18,7 @@ internal class BucketListViewModelFactory(
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T =
+    override fun <T : ViewModel> create(modelClass: Class<T>): T =
         if (modelClass.isAssignableFrom(BucketListViewModel::class.java)) {
             BucketListViewModel(
                 mediaObserverEnabled = mediaObserverEnabled,
@@ -35,20 +35,20 @@ internal class FalleryViewModelFactory(
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T = if (modelClass.isAssignableFrom(FalleryViewModel::class.java)) {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = if (modelClass.isAssignableFrom(FalleryViewModel::class.java)) {
         FalleryViewModel(falleryOptions, mediaStoreObserver) as T
     } else throw IllegalArgumentException("this factory is just for FalleryViewModel")
 
 }
 
 
-class BucketContentViewModelFactory constructor(
+class BucketContentViewModelFactory(
     private val abstractBucketContentProvider: AbstractBucketContentProvider,
     private val bucketType: BucketType
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T = if (modelClass.isAssignableFrom(BucketContentViewModel::class.java)) {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = if (modelClass.isAssignableFrom(BucketContentViewModel::class.java)) {
         BucketContentViewModel(
             abstractBucketContentProvider, bucketType
         ) as T

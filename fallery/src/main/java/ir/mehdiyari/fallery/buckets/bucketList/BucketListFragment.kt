@@ -3,7 +3,9 @@ package ir.mehdiyari.fallery.buckets.bucketList
 import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionManager
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.AlphaAnimation
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -11,22 +13,34 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import ir.mehdiyari.fallery.R
+import ir.mehdiyari.fallery.databinding.FragmentBucketListBinding
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 import ir.mehdiyari.fallery.main.fallery.BucketRecyclerViewItemMode
 import ir.mehdiyari.fallery.main.ui.FalleryViewModel
 import ir.mehdiyari.fallery.utils.divideScreenToEqualPart
 import ir.mehdiyari.fallery.utils.dpToPx
 import ir.mehdiyari.fallery.utils.setOnAnimationEndListener
-import kotlinx.android.synthetic.main.fragment_bucket_list.*
 import kotlinx.coroutines.launch
 
-internal class BucketListFragment : Fragment(R.layout.fragment_bucket_list) {
+internal class BucketListFragment : Fragment() {
+
+    private var _binding: FragmentBucketListBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var bucketListViewModel: BucketListViewModel
     private lateinit var falleryViewModel: FalleryViewModel
 
     private val bucketAdapter by lazy { FalleryActivityComponentHolder.getOrNull()!!.provideBucketListAdapter() }
     private lateinit var gridLayoutManager: GridLayoutManager
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = FragmentBucketListBinding.inflate(inflater).also {
+        _binding = it
+    }.root
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -39,7 +53,7 @@ internal class BucketListFragment : Fragment(R.layout.fragment_bucket_list) {
         bucketAdapter.viewHolderId = FalleryActivityComponentHolder
             .getOrNull()?.provideFalleryOptions()?.bucketRecyclerViewItemMode?.value ?: R.layout.grid_bucket_item_view
 
-        recyclerViewBuckets.apply {
+        binding.recyclerViewBuckets.apply {
             adapter = bucketAdapter
             layoutManager = gridLayoutManager
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
@@ -51,8 +65,8 @@ internal class BucketListFragment : Fragment(R.layout.fragment_bucket_list) {
             }
 
             getImageViewWidth = {
-                if (recyclerViewBuckets.layoutManager is GridLayoutManager) {
-                    (recyclerViewBuckets.layoutManager as GridLayoutManager).let { gridLayoutManager ->
+                if (binding.recyclerViewBuckets.layoutManager is GridLayoutManager) {
+                    (binding.recyclerViewBuckets.layoutManager as GridLayoutManager).let { gridLayoutManager ->
                         val displayMetric = requireActivity().resources.displayMetrics
                         (((displayMetric.widthPixels - dpToPx(3) * (gridLayoutManager.spanCount - 1)) / gridLayoutManager.spanCount) * 0.5).toInt()
                     }
@@ -95,6 +109,7 @@ internal class BucketListFragment : Fragment(R.layout.fragment_bucket_list) {
                         is LoadingViewState.Error -> showErrorLayout()
                         is LoadingViewState.ShowLoading -> showLoading()
                         is LoadingViewState.HideLoading -> hideLoading()
+                        else -> {}
                     }
                 }
             }
@@ -107,31 +122,31 @@ internal class BucketListFragment : Fragment(R.layout.fragment_bucket_list) {
     }
 
     private fun changeRecyclerViewItemModeTo(bucketRecyclerViewItemMode: BucketRecyclerViewItemMode) {
-        if (recyclerViewBuckets.layoutManager is GridLayoutManager) {
+        if (binding.recyclerViewBuckets.layoutManager is GridLayoutManager) {
             bucketAdapter.viewHolderId = bucketRecyclerViewItemMode.value
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) TransitionManager.beginDelayedTransition(recyclerViewBuckets)
-            (recyclerViewBuckets.layoutManager as GridLayoutManager).spanCount = getSpanCountBasedOnRecyclerViewMode()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) TransitionManager.beginDelayedTransition(binding.recyclerViewBuckets)
+            (binding.recyclerViewBuckets.layoutManager as GridLayoutManager).spanCount = getSpanCountBasedOnRecyclerViewMode()
         }
     }
 
 
     private fun showErrorLayout() {
         hideLoading()
-        recyclerViewBuckets.visibility = View.GONE
-        errorLayoutBucketList.show()
-        errorLayoutBucketList.setOnRetryClickListener { bucketListViewModel.retry() }
+        binding.recyclerViewBuckets.visibility = View.GONE
+        binding.errorLayoutBucketList.show()
+        binding.errorLayoutBucketList.setOnRetryClickListener { bucketListViewModel.retry() }
     }
 
 
     private fun showLoading() {
-        errorLayoutBucketList.hide()
-        contentLoadingProgressBarBucketList.visibility = View.VISIBLE
-        if (recyclerViewBuckets.visibility == View.VISIBLE) {
-            recyclerViewBuckets.startAnimation(
+        binding.errorLayoutBucketList.hide()
+        binding.contentLoadingProgressBarBucketList.visibility = View.VISIBLE
+        if (binding.recyclerViewBuckets.visibility == View.VISIBLE) {
+            binding.recyclerViewBuckets.startAnimation(
                 AlphaAnimation(1f, 0.5f).apply {
                     duration = 250
                     setOnAnimationEndListener {
-                        recyclerViewBuckets.visibility = View.GONE
+                        binding.recyclerViewBuckets.visibility = View.GONE
                     }
                 }
             )
@@ -139,14 +154,14 @@ internal class BucketListFragment : Fragment(R.layout.fragment_bucket_list) {
     }
 
     private fun hideLoading() {
-        errorLayoutBucketList.hide()
-        contentLoadingProgressBarBucketList.visibility = View.GONE
-        recyclerViewBuckets.visibility = View.INVISIBLE
-        recyclerViewBuckets.startAnimation(
+        binding.errorLayoutBucketList.hide()
+        binding.contentLoadingProgressBarBucketList.visibility = View.GONE
+        binding.recyclerViewBuckets.visibility = View.INVISIBLE
+        binding.recyclerViewBuckets.startAnimation(
             AlphaAnimation(0.5f, 1f).apply {
                 duration = 250
                 setOnAnimationEndListener {
-                    recyclerViewBuckets.visibility = View.VISIBLE
+                    binding.recyclerViewBuckets.visibility = View.VISIBLE
                 }
             }
         )
@@ -163,8 +178,9 @@ internal class BucketListFragment : Fragment(R.layout.fragment_bucket_list) {
     } else 1
 
     override fun onDestroyView() {
-        recyclerViewBuckets?.adapter = null
-        recyclerViewBuckets?.layoutManager = null
+        binding.recyclerViewBuckets.adapter = null
+        binding.recyclerViewBuckets.layoutManager = null
+        _binding = null
         super.onDestroyView()
     }
 }

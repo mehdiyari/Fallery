@@ -8,7 +8,7 @@ import ir.mehdiyari.fallery.buckets.bucketContent.preview.AbstractMediaPreviewFr
 import ir.mehdiyari.fallery.buckets.bucketContent.preview.PreviewFragment
 import ir.mehdiyari.fallery.models.Media
 
-internal class MediaPreviewAdapter constructor(
+internal class MediaPreviewAdapter(
     previewFragment: PreviewFragment,
     private val onViewPagerClick: View.OnClickListener? = null
 ) : FragmentStateAdapter(previewFragment) {

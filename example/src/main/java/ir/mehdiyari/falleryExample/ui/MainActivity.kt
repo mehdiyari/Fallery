@@ -3,27 +3,37 @@ package ir.mehdiyari.falleryExample.ui
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
-import android.content.pm.PackageManager
 import android.graphics.Color
-import android.net.Uri
-import android.os.*
-import android.provider.Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.view.animation.TranslateAnimation
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
-import ir.mehdiyari.fallery.main.fallery.*
+import ir.mehdiyari.fallery.main.fallery.BucketRecyclerViewItemMode
+import ir.mehdiyari.fallery.main.fallery.CameraEnabledOptions
+import ir.mehdiyari.fallery.main.fallery.CaptionEnabledOptions
+import ir.mehdiyari.fallery.main.fallery.FalleryBucketsSpanCountMode
+import ir.mehdiyari.fallery.main.fallery.FalleryBuilder
+import ir.mehdiyari.fallery.main.fallery.FalleryOptions
+import ir.mehdiyari.fallery.main.fallery.getFalleryCaptionFromIntent
+import ir.mehdiyari.fallery.main.fallery.getFalleryResultMediasFromIntent
+import ir.mehdiyari.fallery.main.fallery.startFalleryWithOptions
 import ir.mehdiyari.fallery.models.BucketType
 import ir.mehdiyari.falleryExample.R
+import ir.mehdiyari.falleryExample.databinding.ActivityMainBinding
 import ir.mehdiyari.falleryExample.ui.customGallery.CustomOnlineBucketContentProvider
 import ir.mehdiyari.falleryExample.ui.customGallery.CustomOnlineBucketProvider
 import ir.mehdiyari.falleryExample.utils.FalleryExample
 import ir.mehdiyari.falleryExample.utils.GlideImageLoader
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+
+    private var _binding: ActivityMainBinding? = null
+    private val binding get() = _binding!!
 
     private val fileProviderAuthority by lazy { "${application.packageName}.provider" }
     private var itemIdSelected: Int = R.id.menuDefaultOptions
@@ -34,7 +44,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        ActivityMainBinding.inflate(layoutInflater).also {
+            _binding = it
+            setContentView(it.root)
+        }
         if (savedInstanceState != null) {
             itemIdSelected = savedInstanceState.getInt("itemIdSelected")
             try {
@@ -49,7 +62,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        bottomAppBarExample.setOnMenuItemClickListener {
+        binding.bottomAppBarExample.setOnMenuItemClickListener {
             if (it.itemId == R.id.menuClear) {
                 listCurrentMedias = listOf()
                 mediaAdapter.submitList(listCurrentMedias)
@@ -59,7 +72,7 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        bottomAppBarExample.setNavigationOnClickListener {
+        binding.bottomAppBarExample.setNavigationOnClickListener {
             if (supportFragmentManager.getFragment(Bundle(), "bndf") == null) {
                 val bottomNavigationDrawerFragment = BottomNavigationDrawerFragment()
                 bottomNavigationDrawerFragment.onMenuItemSelected = { itemSelected ->
@@ -73,14 +86,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        fabOpenFallery.setOnClickListener {
+        binding.fabOpenFallery.setOnClickListener {
             openFalleryBasedOnSelectedMode()
         }
 
 
         visibleRecyclerViewIfCurrentListIsNotEmpty()
         mediaAdapter.submitList(listCurrentMedias)
-        recyclerViewResults.apply {
+        binding.recyclerViewResults.apply {
             layoutManager = LinearLayoutManager(this@MainActivity)
             adapter = mediaAdapter
         }
@@ -88,11 +101,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun visibleRecyclerViewIfCurrentListIsNotEmpty() {
         if (listCurrentMedias.isEmpty()) {
-            textViewNotSelectedMediaMessage.visibility = View.VISIBLE
-            recyclerViewResults.visibility = View.GONE
+            binding.textViewNotSelectedMediaMessage.visibility = View.VISIBLE
+            binding.recyclerViewResults.visibility = View.GONE
         } else {
-            textViewNotSelectedMediaMessage.visibility = View.GONE
-            recyclerViewResults.visibility = View.VISIBLE
+            binding.textViewNotSelectedMediaMessage.visibility = View.GONE
+            binding.recyclerViewResults.visibility = View.VISIBLE
         }
     }
 
@@ -135,7 +148,7 @@ class MainActivity : AppCompatActivity() {
             R.id.menuDraculaTheme -> {
                 FalleryBuilder()
                     .setImageLoader(glideImageLoader)
-                    .setTheme(R.style.Fallery_Dracula)
+                    .setTheme(ir.mehdiyari.fallery.R.style.Fallery_Dracula)
                     .build()
             }
             R.id.menuLandscapeOrientation -> {
@@ -200,49 +213,6 @@ class MainActivity : AppCompatActivity() {
                         )
                     ).build()
             }
-            R.id.menuGrantExternalStoragePermission -> {
-                val builder = FalleryBuilder()
-                    .setImageLoader(glideImageLoader)
-                    .setGrantExternalStoragePermission(false)
-                    .build()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        Toast.makeText(this@MainActivity, "Please grant external storage permission", Toast.LENGTH_SHORT).show()
-                        requestPermissions(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 10)
-                        null
-                    } else {
-                        builder
-                    }
-                } else {
-                    builder
-                }
-            }
-            R.id.menuGrantSharedStoragePermission -> {
-                val builder = FalleryBuilder()
-                    .setImageLoader(glideImageLoader)
-                    .setGrantSharedStoragePermission(false)
-                    .build()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                        Toast.makeText(this@MainActivity, "Please grant external storage permission", Toast.LENGTH_SHORT).show()
-                        requestPermissions(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), 10)
-                        null
-                    } else {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && !Environment.isExternalStorageManager()) {
-                            Toast.makeText(this@MainActivity, "App: Please grant shared storage permission before starting fallery", Toast.LENGTH_SHORT).show()
-                            Intent(ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION).also {
-                                it.data = Uri.fromParts("package", packageName, null)
-                                startActivity(it)
-                            }
-                            null
-                        } else {
-                            builder
-                        }
-                    }
-                } else {
-                    builder
-                }
-            }
             R.id.menuCustomTheme -> {
                 FalleryBuilder()
                     .setImageLoader(glideImageLoader)
@@ -264,10 +234,10 @@ class MainActivity : AppCompatActivity() {
     private fun animateLayouts() {
         Handler(Looper.getMainLooper()).postDelayed({
             Handler(Looper.getMainLooper()).postDelayed({
-                bottomAppBarExample.fabCradleMargin = resources.getDimension(R.dimen.min_fabCradleMargin)
-                bottomAppBarExample.fabCradleRoundedCornerRadius = resources.getDimension(R.dimen.min_fabCradleRoundedCornerRadius)
+                binding.bottomAppBarExample.fabCradleMargin = resources.getDimension(R.dimen.min_fabCradleMargin)
+                binding.bottomAppBarExample.fabCradleRoundedCornerRadius = resources.getDimension(R.dimen.min_fabCradleRoundedCornerRadius)
             }, 60)
-            fabOpenFallery.startAnimation(
+            binding.fabOpenFallery.startAnimation(
                 TranslateAnimation(
                     0F, 0F, 0F, -220F
                 ).apply {
@@ -279,10 +249,10 @@ class MainActivity : AppCompatActivity() {
 
         Handler(Looper.getMainLooper()).postDelayed({
             Handler(Looper.getMainLooper()).postDelayed({
-                bottomAppBarExample.fabCradleMargin = resources.getDimension(R.dimen.fabCradleMargin)
-                bottomAppBarExample.fabCradleRoundedCornerRadius = resources.getDimension(R.dimen.fabCradleRoundedCornerRadius)
+                binding.bottomAppBarExample.fabCradleMargin = resources.getDimension(R.dimen.fabCradleMargin)
+                binding.bottomAppBarExample.fabCradleRoundedCornerRadius = resources.getDimension(R.dimen.fabCradleRoundedCornerRadius)
             }, 60)
-            fabOpenFallery.startAnimation(
+            binding.fabOpenFallery.startAnimation(
                 TranslateAnimation(
                     0F, 0F, -220F, 0F
                 ).apply {
@@ -313,7 +283,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         if (isFinishing) FalleryExample.customGalleryApiService = null
-        bottomAppBarExample?.setNavigationOnClickListener(null)
+        binding.bottomAppBarExample.setNavigationOnClickListener(null)
         super.onDestroy()
     }
 

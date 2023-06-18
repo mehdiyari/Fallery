@@ -74,7 +74,10 @@ internal fun Activity.getIntentForTakingPhoto(
 
         try {
             imageFile.parentFile?.mkdirs()
-            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, FileProvider.getUriForFile(this, fileProviderAuthority, imageFile))
+            takePictureIntent.putExtra(
+                MediaStore.EXTRA_OUTPUT,
+                FileProvider.getUriForFile(this, fileProviderAuthority, imageFile)
+            )
             takePictureIntent
         } catch (t: Throwable) {
             t.printStackTrace()
@@ -84,4 +87,5 @@ internal fun Activity.getIntentForTakingPhoto(
     }
 }
 
-internal fun generatePhotoFilename(extension: String = "jpg"): String = "photo" + SimpleDateFormat("yyyyMMdd_HHmmssSSS", Locale.US).format(Date()) + extension
+internal fun generatePhotoFilename(extension: String = "jpg"): String =
+    "photo_${SimpleDateFormat("yyyy-MM-dd_HH-mm-ss-SSS", Locale.US).format(Date())}.${extension}"

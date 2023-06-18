@@ -3,7 +3,9 @@ package ir.mehdiyari.fallery.buckets.bucketContent.content
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -13,15 +15,18 @@ import ir.mehdiyari.fallery.R
 import ir.mehdiyari.fallery.buckets.bucketContent.BucketContentSpanCount
 import ir.mehdiyari.fallery.buckets.bucketContent.BucketContentViewModel
 import ir.mehdiyari.fallery.buckets.bucketList.LoadingViewState
+import ir.mehdiyari.fallery.databinding.FragmentBucketContentBinding
 import ir.mehdiyari.fallery.main.di.FalleryActivityComponentHolder
 import ir.mehdiyari.fallery.main.fallery.FalleryBucketsSpanCountMode
 import ir.mehdiyari.fallery.main.ui.FalleryViewModel
 import ir.mehdiyari.fallery.utils.divideScreenToEqualPart
 import ir.mehdiyari.fallery.utils.dpToPx
-import kotlinx.android.synthetic.main.fragment_bucket_content.*
 import kotlinx.coroutines.launch
 
-internal class BucketContentFragment : Fragment(R.layout.fragment_bucket_content) {
+internal class BucketContentFragment : Fragment() {
+
+    private var _binding: FragmentBucketContentBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var bucketContentViewModel: BucketContentViewModel
     private lateinit var falleryViewModel: FalleryViewModel
@@ -31,7 +36,8 @@ internal class BucketContentFragment : Fragment(R.layout.fragment_bucket_content
     }
 
     private var recyclerViewTouchListener: RecyclerViewTouchListener? = null
-    private val onChangeSpanCountCallback by lazy<(Boolean) -> Unit> { {
+    private val onChangeSpanCountCallback by lazy<(Boolean) -> Unit> {
+        {
             bucketContentViewModel.changeSpanCountBasedOnUserTouch(
                 it,
                 recyclerViewTouchListener!!.maxSpanCount.toInt(),
@@ -42,6 +48,16 @@ internal class BucketContentFragment : Fragment(R.layout.fragment_bucket_content
         }
     }
     private var bucketContentLayoutManager: GridLayoutManager? = null
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return FragmentBucketContentBinding.inflate(inflater).also {
+            _binding = it
+        }.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -63,7 +79,7 @@ internal class BucketContentFragment : Fragment(R.layout.fragment_bucket_content
             requireContext(),
             validSpanCount
         )
-        recyclerViewBucketContent.apply {
+        binding.recyclerViewBucketContent.apply {
             adapter = bucketContentAdapter
             (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
             setHasFixedSize(true)
@@ -90,15 +106,16 @@ internal class BucketContentFragment : Fragment(R.layout.fragment_bucket_content
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun initializeGridSpanCountBasedOnUserTouches() {
         if (recyclerViewTouchListener == null) {
             recyclerViewTouchListener = RecyclerViewTouchListener(
-                recyclerViewBucketContent,
+                binding.recyclerViewBucketContent,
                 requireContext(),
                 onChangeSpanCountCallback
             )
         }
-        recyclerViewBucketContent.setOnTouchListener(recyclerViewTouchListener)
+        binding.recyclerViewBucketContent.setOnTouchListener(recyclerViewTouchListener)
 
         viewLifecycleOwner.lifecycleScope.launch {
             bucketContentViewModel.spanCountStateFlow.collect {
@@ -145,6 +162,7 @@ internal class BucketContentFragment : Fragment(R.layout.fragment_bucket_content
                         is LoadingViewState.ShowLoading -> showLoading()
                         is LoadingViewState.HideLoading -> hideLoading()
                         is LoadingViewState.Error -> showErrorLayout()
+                        else -> {}
                     }
                 }
             }
@@ -170,31 +188,33 @@ internal class BucketContentFragment : Fragment(R.layout.fragment_bucket_content
 
     private fun showErrorLayout() {
         hideLoading()
-        recyclerViewBucketContent.visibility = View.GONE
-        errorLayoutBucketContent.show()
-        errorLayoutBucketContent.setOnRetryClickListener {
+        binding.recyclerViewBucketContent.visibility = View.GONE
+        binding.errorLayoutBucketContent.show()
+        binding.errorLayoutBucketContent.setOnRetryClickListener {
             bucketContentViewModel.retry(requireArguments().getLong("bucket_id"))
         }
     }
 
     private fun showLoading() {
-        errorLayoutBucketContent.hide()
-        recyclerViewBucketContent.visibility = View.GONE
-        contentLoadingProgressBarBucketContent.visibility = View.VISIBLE
+        binding.errorLayoutBucketContent.hide()
+        binding.recyclerViewBucketContent.visibility = View.GONE
+        binding.contentLoadingProgressBarBucketContent.visibility = View.VISIBLE
     }
 
     private fun hideLoading() {
-        errorLayoutBucketContent.hide()
-        recyclerViewBucketContent.visibility = View.VISIBLE
-        contentLoadingProgressBarBucketContent.visibility = View.GONE
+        binding.errorLayoutBucketContent.hide()
+        binding.recyclerViewBucketContent.visibility = View.VISIBLE
+        binding.contentLoadingProgressBarBucketContent.visibility = View.GONE
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     override fun onDestroyView() {
-        recyclerViewBucketContent?.setOnTouchListener(null)
+        binding.recyclerViewBucketContent.setOnTouchListener(null)
         recyclerViewTouchListener = null
-        recyclerViewBucketContent?.adapter = null
-        recyclerViewBucketContent?.layoutManager = null
+        binding.recyclerViewBucketContent.adapter = null
+        binding.recyclerViewBucketContent.layoutManager = null
         bucketContentLayoutManager = null
+        _binding = null
         super.onDestroyView()
     }
 }

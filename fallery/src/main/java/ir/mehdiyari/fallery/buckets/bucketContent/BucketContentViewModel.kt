@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
 
-internal class BucketContentViewModel constructor(
+internal class BucketContentViewModel(
     private val abstractBucketContentProvider: AbstractBucketContentProvider,
     private val bucketType: BucketType,
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO

@@ -61,6 +61,8 @@ internal class FalleryViewModel(
         }
     }
 
+    var shouldInitializeAfterStart: Boolean = false
+
     init {
         _currentFragmentLiveData.value = FalleryView.BucketList
         if (mediaSelectionTracker.isNotEmpty() && captionOrSendActionState) {

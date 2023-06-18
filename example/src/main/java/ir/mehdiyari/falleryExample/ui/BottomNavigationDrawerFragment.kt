@@ -10,28 +10,36 @@ import android.view.ViewGroup
 import androidx.core.view.forEach
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import ir.mehdiyari.falleryExample.R
-import kotlinx.android.synthetic.main.navigation_view.*
+import ir.mehdiyari.falleryExample.databinding.NavigationViewBinding
 
 class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
+
+    private var _binding: NavigationViewBinding? = null
+    private val binding get() = _binding!!
 
     var selectedItemId: Int = R.id.menuDefaultOptions
 
     var onMenuItemSelected: ((itemId: Int) -> Unit)? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(R.layout.navigation_view, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = NavigationViewBinding.inflate(layoutInflater).also {
+        _binding = it
+    }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        navigationViewExample.menu.findItem(selectedItemId).isChecked = true
-        navigationViewExample.setNavigationItemSelectedListener {
+        binding.navigationViewExample.menu.findItem(selectedItemId).isChecked = true
+        binding.navigationViewExample.setNavigationItemSelectedListener {
             handleOnItemClick(it)
             true
         }
     }
 
     private fun handleOnItemClick(menuItem: MenuItem) {
-        navigationViewExample.menu.forEach {
+        binding.navigationViewExample.menu.forEach {
             if (it.isChecked) {
                 it.isChecked = false
                 return@forEach
@@ -45,8 +53,9 @@ class BottomNavigationDrawerFragment : BottomSheetDialogFragment() {
         }, 400)
     }
 
-    override fun onDestroy() {
-        navigationViewExample?.setNavigationItemSelectedListener(null)
-        super.onDestroy()
+    override fun onDestroyView() {
+        binding.navigationViewExample.setNavigationItemSelectedListener(null)
+        _binding = null
+        super.onDestroyView()
     }
 }

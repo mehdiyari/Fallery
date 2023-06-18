@@ -17,7 +17,7 @@ import ir.mehdiyari.fallery.models.MediaBucket
 import ir.mehdiyari.fallery.utils.getPhotoDimension
 import ir.mehdiyari.fallery.utils.toReadableCount
 
-internal class BucketListAdapter constructor(
+internal class BucketListAdapter(
     mediaBucketDiffCallback: MediaBucketDiffCallback,
     private val imageLoader: FalleryImageLoader,
     private val placeHolderColor: Int

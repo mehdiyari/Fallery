@@ -6,7 +6,7 @@ group = 'com.github.mehdiyari'
 
 android {
     namespace 'ir.mehdiyari.fallery'
-    compileSdkVersion 33
+    compileSdkVersion 34
 
     testOptions {
         unitTests.all {
@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 33
+        targetSdkVersion 34
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'

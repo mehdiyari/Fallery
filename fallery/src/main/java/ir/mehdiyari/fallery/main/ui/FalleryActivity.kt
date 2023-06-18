@@ -93,11 +93,22 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
         if (!falleryOptions.grantExternalStoragePermission) {
             falleryViewModel.storagePermissionGranted()
         } else {
-            permissionChecker(Manifest.permission.WRITE_EXTERNAL_STORAGE, granted = {
+            val permissions = mutableListOf<String>()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                permissions.add(Manifest.permission.READ_MEDIA_VIDEO)
+                permissions.add(Manifest.permission.READ_MEDIA_IMAGES)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    permissions.add(Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED)
+                }
+            } else {
+                permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+            }
+
+            permissionChecker(permissions.toTypedArray(), onAllGranted = {
                 falleryViewModel.storagePermissionGranted()
-            }, denied = {
+            }, onDenied = {
                 requestPermissions(
-                    arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                    permissions.toTypedArray(),
                     WRITE_EXTERNAL_REQUEST_CODE
                 )
             })
@@ -452,13 +463,14 @@ internal class FalleryActivity : AppCompatActivity(), FalleryToolbarVisibilityCo
                 binding.viewStubCaptionLayout.inflate()
                 captionBinding.imageViewSendMessage.setOnClickListener { falleryViewModel.prepareSelectedResults() }
                 falleryOptions.captionEnabledOptions.editTextLayoutResId.let {
-                    LayoutInflater.from(this).inflate(it, captionBinding.frameLayoutCaptionHolder, false)
+                    LayoutInflater.from(this)
+                        .inflate(it, captionBinding.frameLayoutCaptionHolder, false)
                         .findViewById<AppCompatEditText>(R.id.falleryEditTextCaption).apply {
-                        layoutParams = FrameLayout.LayoutParams(
-                            FrameLayout.LayoutParams.MATCH_PARENT,
-                            FrameLayout.LayoutParams.MATCH_PARENT
-                        )
-                    }
+                            layoutParams = FrameLayout.LayoutParams(
+                                FrameLayout.LayoutParams.MATCH_PARENT,
+                                FrameLayout.LayoutParams.MATCH_PARENT
+                            )
+                        }
                 }
             } catch (ignored: Throwable) {
                 Log.e(

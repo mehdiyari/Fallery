@@ -10,7 +10,7 @@ import ir.mehdiyari.fallery.models.MediaBucket
 import ir.mehdiyari.fallery.utils.*
 import java.io.File
 
-internal class MediaBucketProvider constructor(
+internal class MediaBucketProvider(
     private val cacheDir: CacheDir,
     private val contentResolver: ContentResolver
 ) : AbstractMediaBucketProvider {
@@ -29,7 +29,7 @@ internal class MediaBucketProvider constructor(
                 getQueryByMediaType(bucketType),
                 getQueryArgByMediaType(bucketType),
                 "date_added DESC"
-            )?.use { cursor ->
+            )?.also { cursor ->
                 while (cursor.moveToNext()) {
                     val bucketId = cursor.getLong(cursor.getColumnIndex("bucket_id"))
                     if (isAndroidTenOrHigher())
@@ -38,6 +38,7 @@ internal class MediaBucketProvider constructor(
                         extractBucket(bucketType, bucketId, cursor, dateAddedList, bucketList)
 
                 }
+                cursor.close()
             }
 
             if (!isAndroidTenOrHigher() && bucketType == BucketType.VIDEO_PHOTO_BUCKETS && dateAddedList.isNotEmpty()) {
@@ -45,6 +46,7 @@ internal class MediaBucketProvider constructor(
             } else bucketList
         }.toList().addAllMediaModel()
 
+    @SuppressLint("Range")
     private fun extractBucket(
         bucketType: BucketType,
         bucketId: Long,
@@ -68,6 +70,7 @@ internal class MediaBucketProvider constructor(
         }
     }
 
+    @SuppressLint("Range")
     private fun extractBucketForAndroidQAndHigher(
         bucketList: MutableList<MediaBucket>,
         bucketId: Long,
@@ -174,7 +177,7 @@ internal class MediaBucketProvider constructor(
             """${query.first} AND bucket_id=?""",
             arrayOf(*query.second, bucketId.toString()),
             "date_added DESC"
-        )?.use { cursor ->
+        )?.also { cursor ->
             val path = if (cursor.moveToFirst()) {
                 cursor.getString(cursor.getColumnIndex(MediaStore.MediaColumns.DATA)) to cursor.getLong(
                     cursor.getColumnIndex(MediaStore.MediaColumns.DATE_ADDED)

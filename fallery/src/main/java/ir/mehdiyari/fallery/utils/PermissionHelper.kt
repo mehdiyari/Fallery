@@ -4,19 +4,25 @@ import android.content.pm.PackageManager
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 
-
 internal inline fun AppCompatActivity.permissionChecker(
-    permission: String,
-    granted: () -> Unit = {},
-    denied: () -> Unit = {}
+    permissions: Array<String>,
+    onAllGranted: () -> Unit = {},
+    onDenied: (List<String>) -> Unit = {}
 ) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
-            denied()
+        val notGranted = mutableListOf<String>()
+        for (permission in permissions) {
+            if (checkSelfPermission(permission) != PackageManager.PERMISSION_GRANTED) {
+                notGranted.add(permission)
+            }
+        }
+
+        if (notGranted.isNotEmpty()) {
+            onDenied(notGranted)
         } else {
-            granted()
+            onAllGranted()
         }
     } else {
-        granted()
+        onAllGranted()
     }
 }

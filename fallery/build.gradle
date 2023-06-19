@@ -77,3 +77,16 @@ dependencies {
     testImplementation "com.google.truth:truth:1.1.3"
     testImplementation "android.arch.core:core-testing:1.1.1"
 }
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = group
+                artifactId = 'fallery'
+                version = version
+            }
+        }
+    }
+}

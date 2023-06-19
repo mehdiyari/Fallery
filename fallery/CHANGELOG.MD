@@ -1,3 +1,12 @@
+## Fallery version 1.0.3
+
+1. Update Dependencies
+2. Remove MANAGE_EXTERNAL_STORAGE permission
+3. Support Android +13 by 
+4. Add a new publish task
+5. Migrate to view binding
+6. Minor bug fixes
+
 ## Fallery version 1.0.2
 
 1. Update library versions

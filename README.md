@@ -1,6 +1,6 @@
 # Fallery [![](https://jitpack.io/v/mehdiyari/Fallery.svg)](https://jitpack.io/#mehdiyari/Fallery)
 
-A fully customizable media picker for android apps.
+Fallery is A fully customizable media picker for Android apps with many features.
 
 # Demo
 
@@ -8,28 +8,35 @@ A fully customizable media picker for android apps.
 
 # Key Features
 
-1. Select media(photo, video) from android media store with custom [offline gallery](http://mehdiyari.ir/2020/08/14/create-a-custom-offline-online-gallery-with-fallery/) or custom [online gallery](http://mehdiyari.ir/2020/08/14/create-a-custom-offline-online-gallery-with-fallery/)
-2. Compatible with android API Level 14 to 32
-3. Content Observer
+1. Select media(photo, video) from android media store with
+   custom [Offline Gallery](http://mehdiyari.ir/2020/08/14/create-a-custom-offline-online-gallery-with-fallery/)
+   or
+   custom [Online Gallery](http://mehdiyari.ir/2020/08/14/create-a-custom-offline-online-gallery-with-fallery/)
+2. Compatible with Android API Level +14
+3. Content Observer(When a new media file is added to the device, fallery is informed and shows new
+   media in the UI)
 4. Filter media based on types(Photos, videos, both)
 5. Modern user interface with the capability to add new themes and languages
-6. Select media with a caption
+6. Select media with a text caption
 7. Taking photos from the camera with intent
-8. Showing bucket list in two different UI(grid and linear), which user can switch between them in runtime
-9. Support set max selectable media
-10. Support orientation
-11. Support custom edits text layout for the caption(for emoji compatibility, etc.)
-12. Support enable or disable media counts in the fallery toolbar
-13. Support Vertical, Horizontal scrolling in showing media view-pager
-14. Support any view-pager transformer in media view-pager
-15. Support custom onClick for video toggle in the video preview screen
-16. Automatic grant external storage permissions
-17. Automatic grant shared storage permissions(only for android +10)
-18. Support changing row count of images based on user zoom-in or zoom-out. * New
+8. Show bucket list in two different UI(Grid and linear), which user can switch between them in
+   runtime
+9. Support max selectable media
+10. Support screen orientation
+11. Support custom edits text layout for the text caption(for emoji compatibility, etc.)
+12. Support turning on or off media counts in the fallery toolbar
+13. Support vertical and horizontal scrolling in showing media view-pager
+14. Support custom view-pager transformer in media view-pager
+15. Support custom action for video toggle in the video preview screen.
+16. Support requests external storage permissions for all Android versions automatically.
+17. Support changing the row count of images based on user zoom-in or zoom-out.
 
 ## Usage
+
 ### Gradle
-Step 1. Add it in your root `build.gradle` at the end of repositories:
+
+Step 1. Add this in your project root `build.gradle` at the end of repositories:
+
 ```gradle
 allprojects {
   repositories {
@@ -133,15 +140,17 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 ```
-For more details about how to using Fallery please check example module or [Fallery blog post](http://mehdiyari.ir/2020/08/14/fallery-a-fully-customizable-media-picker-for-android/).
+
+For more details about using Fallery, please check the example module
+or [Fallery Blog Post](https://mehdiyari.medium.com/fallery-a-fully-customizable-media-picker-for-android-f391d24ba791).
 
 ## Contribute
 
-If you have free time I would very much appreciate your contributions.
+I would appreciate your contributions to PRs, wiki, issues, etc.
 
 ## License
 
-    Copyright 2022 Mehdi Yari
+    Copyright 2023 Mehdi Yari
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

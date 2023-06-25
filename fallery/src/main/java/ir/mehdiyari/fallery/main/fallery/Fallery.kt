@@ -75,7 +75,7 @@ fun Intent.getFalleryCaptionFromIntent(): String? = this.getStringExtra(FALLERY_
  *      }
  *
  *      Button(onClick = { falleryLauncher.launch(falleryOptions) }) {
- *             Text(text = "Take a picture")
+ *             Text(text = "Open Fallery")
  *      }
  *
  * </pre>

@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'maven-publish'
 
-version = "1.0.3"
+version = "1.0.4"
 group = 'com.github.mehdiyari'
 
 android {
@@ -21,7 +21,7 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles 'consumer-rules.pro'
-        versionCode 5
+        versionCode 6
     }
 
     buildTypes {

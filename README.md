@@ -30,6 +30,7 @@ Fallery is A fully customizable media picker for Android apps with many features
 15. Support custom action for video toggle in the video preview screen.
 16. Support requests external storage permissions for all Android versions automatically.
 17. Support changing the row count of images based on user zoom-in or zoom-out.
+18. Support starting Fallery from composable functions.
 
 ## Usage
 

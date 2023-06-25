@@ -37,8 +37,8 @@ class MainActivity : AppCompatActivity() {
     private var listCurrentMedias = listOf<Pair<String, String>>()
     private val glideImageLoader by lazy { GlideImageLoader() }
     private val falleryActivityResult =
-        registerFalleryResultCallback(onResult = { result, caption ->
-            handleFalleryResult(result, caption)
+        registerFalleryResultCallback(onResult = { result ->
+            handleFalleryResult(result.mediaPathList, result.caption)
         })
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -250,7 +250,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleFalleryResult(result: Array<String>?, caption: String?) {
+    private fun handleFalleryResult(result: List<String>?, caption: String?) {
         listCurrentMedias = mutableListOf<Pair<String, String>>().apply {
             addAll(listCurrentMedias)
             result?.onEach { add(it to (caption ?: "")) }

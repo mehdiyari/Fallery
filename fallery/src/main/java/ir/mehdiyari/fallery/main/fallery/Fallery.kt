@@ -26,20 +26,10 @@ fun Activity.startFalleryWithOptions(requestCode: Int, falleryOptions: FalleryOp
 
 @JvmName("registerFalleryResultCallback")
 fun AppCompatActivity.registerFalleryResultCallback(
-    onResult: (Array<String>?, String?) -> Unit,
-): ActivityResultLauncher<FalleryOptions> = registerForActivityResult(object :
-    ActivityResultContract<FalleryOptions, Pair<Array<String>?, String?>>() {
-    override fun createIntent(context: Context, input: FalleryOptions): Intent {
-        FalleryCoreComponentHolder.createComponent(input)
-        return Intent(context, FalleryActivity::class.java)
-    }
-
-    override fun parseResult(resultCode: Int, intent: Intent?): Pair<Array<String>?, String?> {
-        return intent?.getFalleryResultMediasFromIntent() to intent?.getFalleryCaptionFromIntent()
-    }
-}) {
-    onResult(it.first, it.second)
-}
+    onResult: (FalleryResult) -> Unit,
+): ActivityResultLauncher<FalleryOptions> = registerForActivityResult(
+    getFalleryActivityResultContract(), onResult
+)
 
 @JvmName("startFalleryFromFragmentWithOptions")
 @Deprecated(
@@ -53,20 +43,10 @@ fun Fragment.startFalleryWithOptions(requestCode: Int, falleryOptions: FalleryOp
 
 @JvmName("registerFalleryResultCallback")
 fun Fragment.registerFalleryResultCallback(
-    onResult: (Array<String>?, String?) -> Unit,
-): ActivityResultLauncher<FalleryOptions> = registerForActivityResult(object :
-    ActivityResultContract<FalleryOptions, Pair<Array<String>?, String?>>() {
-    override fun createIntent(context: Context, input: FalleryOptions): Intent {
-        FalleryCoreComponentHolder.createComponent(input)
-        return Intent(context, FalleryActivity::class.java)
-    }
-
-    override fun parseResult(resultCode: Int, intent: Intent?): Pair<Array<String>?, String?> {
-        return intent?.getFalleryResultMediasFromIntent() to intent?.getFalleryCaptionFromIntent()
-    }
-}) {
-    onResult(it.first, it.second)
-}
+    onResult: (FalleryResult) -> Unit,
+): ActivityResultLauncher<FalleryOptions> = registerForActivityResult(
+    getFalleryActivityResultContract(), onResult
+)
 
 @JvmName("getResultMediasFromIntent")
 fun Intent.getFalleryResultMediasFromIntent(): Array<String>? {

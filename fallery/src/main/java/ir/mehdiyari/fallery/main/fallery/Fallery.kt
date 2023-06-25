@@ -79,3 +79,42 @@ fun Intent.getFalleryResultMediasFromIntent(): Array<String>? {
 
 @JvmName("getCaptionFromIntent")
 fun Intent.getFalleryCaptionFromIntent(): String? = this.getStringExtra(FALLERY_CAPTION_KEY)
+
+
+/**
+ * API for getting [ActivityResultContract] for register activityResult.
+ * This API can be used inside composable functions for starting fallery and get the result.
+ *
+ * <p>
+ * <pre>
+ *
+ *      val falleryLauncher = rememberLauncherForActivityResult(
+ *             getFalleryActivityResultContract()
+ *      ) { result ->
+ *             doSomethingWithPhotosAndCaption(result.mediaPathList, result.caption)
+ *      }
+ *
+ *      Button(onClick = { falleryLauncher.launch(falleryOptions) }) {
+ *             Text(text = "Take a picture")
+ *      }
+ *
+ * </pre>
+ * </p>
+ *
+ */
+@JvmName("getFalleryActivityResultContract")
+fun getFalleryActivityResultContract(): ActivityResultContract<FalleryOptions, FalleryResult> {
+    return object : ActivityResultContract<FalleryOptions, FalleryResult>() {
+        override fun createIntent(context: Context, input: FalleryOptions): Intent {
+            FalleryCoreComponentHolder.createComponent(input)
+            return Intent(context, FalleryActivity::class.java)
+        }
+
+        override fun parseResult(resultCode: Int, intent: Intent?): FalleryResult {
+            return FalleryResult(
+                intent?.getFalleryResultMediasFromIntent()?.toList(),
+                intent?.getFalleryCaptionFromIntent()
+            )
+        }
+    }
+}

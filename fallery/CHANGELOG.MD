@@ -1,8 +1,13 @@
+## Fallery version 1.0.4
+
+1. Support starting fallery from composable functions
+2. Minor bug fixes
+
 ## Fallery version 1.0.3
 
 1. Update Dependencies
 2. Remove MANAGE_EXTERNAL_STORAGE permission
-3. Support Android +13 by 
+3. Support Android +13 by
 4. Add a new publish task
 5. Migrate to view binding
 6. Minor bug fixes
@@ -38,7 +43,7 @@
      10. Fix memory leak of bottomNavigationDrawerFragment in MainActivity 
      11. Fix failed tests in BucketListViewModelTest.kt 
      12. Remove unused classes 
-    
+
 #### Update third-party libraries
     1. Update gradle to 6.8.3 
     2. Update kotlin version to 1.4.32 
@@ -48,7 +53,6 @@
     6. Update fallery libraries version 
     7. Update compile and target sdk to 30 
     8. Update kotlinx-coroutines-test dependency to 1.4.1 
-    
 
 ## Fallery version 0.9.2
 

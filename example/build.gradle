@@ -45,26 +45,26 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.22"
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation libs.kotlin.stdlib.jdk7
+    implementation libs.appcompat
+    implementation libs.core.ktx
+    implementation libs.androidx.constraintlayout
+    testImplementation libs.junit
+    androidTestImplementation libs.androidx.test.ext.junit
+    androidTestImplementation libs.espresso.core
 
-    implementation 'com.google.android.material:material:1.11.0'
+    implementation libs.material
     implementation project(":fallery")
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0'
+    implementation libs.kotlinx.coroutines.android
+    implementation libs.kotlinx.coroutines.core
 
-    implementation 'com.github.bumptech.glide:glide:4.16.0'
-    kapt 'com.github.bumptech.glide:compiler:4.16.0'
-    implementation 'com.android.support:multidex:1.0.3'
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-moshi:2.9.0'
-    implementation 'com.makeramen:roundedimageview:2.3.0'
+    implementation libs.glide
+    kapt libs.compiler
+    implementation libs.multidex
+    implementation libs.retrofit
+    implementation libs.converter.moshi
+    implementation libs.roundedimageview
 
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:2.13"
-    implementation "com.squareup.leakcanary:leakcanary-object-watcher-android:2.13"
+    debugImplementation libs.leakcanary.android
+    implementation libs.leakcanary.object.watcher.android
 }

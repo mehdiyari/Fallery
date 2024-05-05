@@ -2,7 +2,7 @@
 agp = "8.3.1"
 androidJunit5 = "1.9.3.0"
 androidx-lifecycle-runtime-ktx = "2.6.1"
-aspectRatioImageView = "v1.0.0"
+aspectRatioImageView = "1.0.1"
 gradle = "8.2.2"
 kspPlugin = "1.9.23-1.0.20"
 constraintlayout = "2.1.4"

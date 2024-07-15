@@ -26,7 +26,7 @@ multidex = "1.0.3"
 photoView = "2.3.0"
 retrofit = "2.9.0"
 roundedimageview = "2.3.0"
-truth = "1.4.2"
+truth = "1.4.4"
 
 [libraries]
 android-junit5 = { module = "de.mannodermaus.gradle.plugins:android-junit5", version.ref = "androidJunit5" }

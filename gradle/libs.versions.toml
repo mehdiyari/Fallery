@@ -24,7 +24,7 @@ mockk = "1.13.11"
 lifecycle-runtime-ktx = "2.8.3"
 multidex = "1.0.3"
 photoView = "2.3.0"
-retrofit = "2.9.0"
+retrofit = "2.11.0"
 roundedimageview = "2.3.0"
 truth = "1.4.2"
 

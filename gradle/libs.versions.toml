@@ -1,6 +1,6 @@
 [versions]
 agp = "8.4.1"
-androidJunit5 = "1.10.0.0"
+androidJunit5 = "1.10.2.0"
 androidx-lifecycle-runtime-ktx = "2.8.3"
 aspectRatioImageView = "1.0.1"
 gradle = "8.4.1"
